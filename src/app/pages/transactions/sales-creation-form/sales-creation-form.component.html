@@ -1,0 +1,160 @@
+<!-- sales-creation-form.component.html -->
+<div style="height:100%; width: 100%;">
+
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>
+        New Sale
+      </ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <!-- <ion-content>
+    <div style="display:flex; flex-direction: row;">
+
+      <ion-card>
+        <form [formGroup]="salesForm" (ngSubmit)="createSale()">
+          <ion-item>
+            <ion-label position="floating">Customer Name</ion-label>
+            <ion-input formControlName="customerName"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Phone Number</ion-label>
+            <ion-input formControlName="productName"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Address</ion-label>
+            <ion-input formControlName="productName"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">GSTIN</ion-label>
+            <ion-input formControlName="productName"></ion-input>
+          </ion-item>
+        </form>
+      </ion-card>
+      <ion-card>
+        <form [formGroup]="salesForm" (ngSubmit)="createSale()">
+          <ion-item>
+            <ion-label position="floating">Customer Name</ion-label>
+            <ion-input formControlName="customerName"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Phone Number</ion-label>
+            <ion-input formControlName="productName"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Address</ion-label>
+            <ion-input formControlName="productName"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">GSTIN</ion-label>
+            <ion-input formControlName="productName"></ion-input>
+          </ion-item>
+        </form>
+      </ion-card>
+    </div>
+    <ion-accordion-group>
+      <ion-accordion value="first">
+        <ion-item slot="header" color="light">
+          <ion-label>First Accordion</ion-label>
+        </ion-item>
+        <div class="ion-padding" slot="content">First Content</div>
+      </ion-accordion>
+    </ion-accordion-group>
+  </ion-content> -->
+
+  <!-- sales-form.component.html -->
+  <form [formGroup]="salesForm" (ngSubmit)="createSale()">
+    <div class="form-row" style="display: flex;">
+      <div class="form-group col">
+        <ion-label position="floating"for="slNo">SL. NO.</ion-label>
+      </div>
+      <div class="form-group col">
+        <ion-label position="floating"for="items">ITEMS</ion-label>
+      </div>
+      <div class="form-group col">
+        <ion-label position="floating"for="hsnSac">HSN/SAC</ion-label>
+      </div>
+      <div class="form-group col">
+        <ion-label position="floating"for="quantity">QUANTITY</ion-label>
+      </div>
+      <div class="form-group col">
+        <ion-label position="floating"for="unit1">UNIT</ion-label>
+      </div>
+      <div class="form-group col">
+        <ion-label position="floating"for="sellingPrice">SELLING PRICE</ion-label>
+      </div>
+      <div class="form-group col">
+        <ion-label position="floating"for="rate">RATE (INCL. DISCOUNT)</ion-label>
+      </div>
+      <div class="form-group col">
+        <ion-label position="floating"for="discount">DISCOUNT</ion-label>
+      </div>
+      <div class="form-group col">
+        <ion-label position="floating"for="unit2">UNIT</ion-label>
+      </div>
+      <div class="form-group col">
+        <ion-label position="floating"for="gst">GST (%)</ion-label>
+      </div>
+      <div class="form-group col">
+        <ion-label position="floating"for="amount1">AMOUNT (₹)</ion-label>
+      </div>
+      <div class="form-group col">
+        <ion-label position="floating"for="amount2">AMOUNT (₹)</ion-label>
+      </div>
+    </div>
+    <div class="form-row" style="display: flex;" formArrayName="salesItems"
+      *ngFor="let item of getFormControls.controls; let i=index">
+      <div class="form-group col">
+        <ion-input type="text" class="form-control" formControlName="slNo" required></ion-input>
+      </div>
+      <div class="form-group col">
+        <ion-input type="text" class="form-control" formControlName="items" required></ion-input>
+      </div>
+      <div class="form-group col">
+        <ion-input type="text" class="form-control" formControlName="hsnSac" required></ion-input>
+      </div>
+      <div class="form-group col">
+        <ion-input type="number" class="form-control" formControlName="quantity" required></ion-input>
+      </div>
+      <div class="form-group col">
+        <ion-input type="text" class="form-control" formControlName="unit1" required></ion-input>
+      </div>
+      <div class="form-group col">
+        <ion-input type="number" class="form-control" formControlName="sellingPrice" required></ion-input>
+      </div>
+      <div class="form-group col">
+        <ion-input type="number" class="form-control" formControlName="rate" required></ion-input>
+      </div>
+      <div class="form-group col">
+        <ion-input type="number" class="form-control" formControlName="discount" required></ion-input>
+      </div>
+      <div class="form-group col">
+        <ion-input type="text" class="form-control" formControlName="unit2" required></ion-input>
+      </div>
+      <div class="form-group col">
+        <ion-input type="number" class="form-control" formControlName="gst" required></ion-input>
+      </div>
+      <div class="form-group col">
+        <ion-input type="number" class="form-control" formControlName="amount1" required></ion-input>
+      </div>
+      <div class="form-group col">
+        <ion-input type="number" class="form-control" formControlName="amount2" required></ion-input>
+      </div>
+      <div class="form-group col">
+        <button type="button" class="btn btn-danger" (click)="removeItem(i)">Remove Item</button>
+      </div>
+
+    </div>
+    <div class="form-row">
+      <div class="form-group col">
+        <button type="button" class="btn btn-success" (click)="addItem()">Add Item</button>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col">
+        <button type="submit" class="btn btn-primary">Create Sale</button>
+      </div>
+    </div>
+  </form>
+</div>
