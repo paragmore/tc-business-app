@@ -17,6 +17,6 @@
       </ion-content>
     </ion-menu>
     <ion-router-outlet id="main-content"></ion-router-outlet>
+    <!-- <app-tabs *ngIf="(screenState$ | async)?.isMobile"></app-tabs> -->
   </ion-split-pane>
-  <app-tabs *ngIf="(screenState$ | async)?.isMobile"></app-tabs>
 </ion-app>

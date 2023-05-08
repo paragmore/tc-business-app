@@ -1,0 +1,19 @@
+<ion-segment value="all">
+  <ion-segment-button value="all">
+    <ion-label>All</ion-label>
+  </ion-segment-button>
+  <ion-segment-button value="sales">
+    <ion-label>Sales</ion-label>
+  </ion-segment-button>
+  <ion-segment-button value="segment">
+    <ion-label>Purchases</ion-label>
+  </ion-segment-button>
+</ion-segment>
+<div *ngFor="let item of transactions; index as i;">
+  <app-transactions-list-card [transactionDetails]="item">
+
+  </app-transactions-list-card>
+</div>
+<ion-buttons slot=" end">
+  <ion-button>Create Sale</ion-button>
+</ion-buttons>

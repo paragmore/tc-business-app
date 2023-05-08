@@ -1,4 +1,5 @@
 import { Component, EnvironmentInjector, inject } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 @Component({
@@ -6,7 +7,7 @@ import { IonicModule } from '@ionic/angular';
   templateUrl: 'tabs.page.html',
   styleUrls: ['tabs.page.scss'],
   standalone: true,
-  imports: [IonicModule],
+  imports: [IonicModule, RouterLink, RouterLinkActive],
 })
 export class TabsPage {
   public environmentInjector = inject(EnvironmentInjector);

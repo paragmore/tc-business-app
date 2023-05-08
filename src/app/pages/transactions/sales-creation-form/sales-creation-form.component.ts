@@ -11,6 +11,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { ScreenModel } from 'src/app/store/models/screen.models';
+import { AppState } from 'src/app/store/models/state.model';
 @Component({
   selector: 'app-sales-creation-form',
   templateUrl: './sales-creation-form.component.html',
@@ -20,8 +24,9 @@ import { IonicModule } from '@ionic/angular';
 })
 export class SalesCreationFormComponent {
   salesForm: FormGroup;
+  public screenState$: Observable<ScreenModel> | undefined;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private store: Store<AppState>) {
     this.salesForm = this.fb.group({});
   }
 
@@ -29,15 +34,38 @@ export class SalesCreationFormComponent {
     this.salesForm = this.fb.group({
       salesItems: this.fb.array([this.createSalesItem()]),
       customerName: ['', Validators.required],
-      productName: ['', Validators.required],
-      quantity: ['', Validators.required],
-      price: ['', Validators.required],
+      // phoneNumber: ['', Validators.required],
+      // customerGSTIN: ['', Validators.required],
+      // invoiceNumber: ['', Validators.required],
+      // invoiceDate: ['', Validators.required],
+      // storeGSTIN: ['', Validators.required],
+      // state: ['', Validators.required],
+      // partyDetails: this.createPartyFormGroup(),
+      // invoiceDetails: this.createInvoiceFormGroup(),
     });
+    this.screenState$ = this.store.select((store) => store.screen);
   }
 
   createSale() {
     // Handle sale creation logic here
   }
+
+  // createPartyFormGroup(): FormGroup {
+  //   return this.fb.group({
+  //     customerName: ['', Validators.required],
+  //     phoneNumber: ['', Validators.required],
+  //     customerGSTIN: ['', Validators.required],
+  //   });
+  // }
+
+  // createInvoiceFormGroup(): FormGroup {
+  //   return this.fb.group({
+  //     invoiceNumber: ['', Validators.required],
+  //     invoiceDate: ['', Validators.required],
+  //     storeGSTIN: ['', Validators.required],
+  //     state: ['', Validators.required],
+  //   });
+  // }
 
   createSalesItem(): FormGroup {
     return this.fb.group({

@@ -18,10 +18,10 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./folder/folder.page').then((m) => m.FolderPage),
   },
-  {
-    path: '',
-    loadChildren: () => import('./tabs/tabs.routes').then((m) => m.routes),
-  },
+  // {
+  //   path: '',
+  //   loadChildren: () => import('./tabs/tabs.routes').then((m) => m.routes),
+  // },
   {
     path: '',
     redirectTo: 'home',
