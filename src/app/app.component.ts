@@ -19,7 +19,7 @@ export class AppComponent {
   public appPages = [
     { title: 'Home', url: '/home', icon: 'mail' },
     { title: 'Transactions', url: '/transactions', icon: 'paper-plane' },
-    { title: 'Favorites', url: '/folder/favorites', icon: 'heart' },
+    { title: 'Items', url: '/items', icon: 'heart' },
     { title: 'Archived', url: '/folder/archived', icon: 'archive' },
     { title: 'Trash', url: '/folder/trash', icon: 'trash' },
     { title: 'Spam', url: '/folder/spam', icon: 'warning' },

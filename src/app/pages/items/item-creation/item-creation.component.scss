@@ -1,0 +1,22 @@
+ion-modal {
+  // display: flex;
+  // // justify-content: flex-end;
+  justify-content: end;
+  height: 100%;
+}
+
+ion-modal .ion-page {
+  height: 100%;
+  width: 100px;
+  display: flex;
+  flex-direction: column;
+}
+
+ion-modal {
+  --height: 100%;
+  --width: 500px
+}
+
+ion-modal .ion-page .ion-content {
+  flex-grow: 1;
+}
