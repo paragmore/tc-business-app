@@ -1,7 +1,41 @@
 <ion-list>
-  <ion-item>
-    <ion-label>
-      {{transactionDetails?.transactionId}}{{transactionDetails?.type}}
-    </ion-label>
-  </ion-item>
+  <ion-card>
+    <ion-row>
+      <ion-col>
+        <ion-row>
+          <ion-chip>
+            #-INV -{{transactionDetails?.transactionId}}
+          </ion-chip>
+        </ion-row>
+        <ion-row>
+          <ion-text>
+            {{transactionDetails?.customerName}}
+          </ion-text>
+        </ion-row>
+        <ion-row>
+          <ion-text>
+            {{transactionDetails?.timeStamp}}
+          </ion-text>
+        </ion-row>
+        <ion-row>
+          <ion-chip color="success">
+            {{transactionDetails?.type}}
+          </ion-chip>
+        </ion-row>
+      </ion-col>
+      <ion-col>
+        <ion-row>
+          <ion-title>
+            {{transactionDetails?.amount}}
+          </ion-title>
+        </ion-row>
+        <ion-row>
+          <ion-text>
+            {{transactionDetails?.modeOfPayment}}
+          </ion-text>
+        </ion-row>
+      </ion-col>
+    </ion-row>
+  </ion-card>
+
 </ion-list>

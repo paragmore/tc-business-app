@@ -6,13 +6,20 @@ import { IonicModule } from '@ionic/angular';
   templateUrl: './transactions-list-card.component.html',
   styleUrls: ['./transactions-list-card.component.scss'],
   standalone: true,
-  imports:[IonicModule]
+  imports: [IonicModule],
 })
-export class TransactionsListCardComponent  implements OnInit {
-
-  @Input() transactionDetails: { transactionId: string; type: string; } | undefined
-  constructor() { }
+export class TransactionsListCardComponent implements OnInit {
+  @Input() transactionDetails:
+    | {
+        transactionId: string;
+        type: string;
+        customerName: string;
+        amount: number;
+        modeOfPayment: string;
+        timeStamp: string;
+      }
+    | undefined;
+  constructor() {}
 
   ngOnInit() {}
-
 }

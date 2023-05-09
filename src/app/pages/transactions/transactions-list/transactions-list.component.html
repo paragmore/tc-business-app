@@ -1,3 +1,30 @@
+<ion-card>
+  <ion-grid>
+    <ion-row>
+      <ion-title>
+        Transaction summary
+      </ion-title>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        Sales
+        <ion-title color="success">
+          ₹1,000
+        </ion-title>
+      </ion-col>
+      <ion-col>
+        Purchases
+        <ion-title color="danger">
+          ₹500
+        </ion-title>
+      </ion-col>
+      <ion-col>
+
+        <ion-button>View Reports</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-card>
 <ion-segment value="all">
   <ion-segment-button value="all">
     <ion-label>All</ion-label>
@@ -9,11 +36,59 @@
     <ion-label>Purchases</ion-label>
   </ion-segment-button>
 </ion-segment>
-<div *ngFor="let item of transactions; index as i;">
-  <app-transactions-list-card [transactionDetails]="item">
+<ion-row>
+  <div>
+    <ion-label position="stacked">Search</ion-label>
+    <ion-searchbar placeholder="Search by Customer name, Transaction name / id"></ion-searchbar>
+  </div>
+  <div>
+    <ion-label position="stacked">Filter by</ion-label>
+    <ion-list>
+      <ion-item>
+        <ion-select aria-label="Fruit" interface="popover" placeholder="All">
+          <ion-select-option value="apples">Apples</ion-select-option>
+          <ion-select-option value="oranges">Oranges</ion-select-option>
+          <ion-select-option value="bananas">Bananas</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+  </div>
+  <div>
+    <ion-label position="stacked">Sort by</ion-label>
+    <ion-list>
+      <ion-item>
+        <ion-select aria-label="Fruit" interface="popover" placeholder="Most recent">
+          <ion-select-option value="apples">Apples</ion-select-option>
+          <ion-select-option value="oranges">Oranges</ion-select-option>
+          <ion-select-option value="bananas">Bananas</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+  </div>
+</ion-row>
+<ion-row>
+  <ion-grid>
+    <ion-row class="header-row">
+      <ion-col>
+        <ion-text color="primary">Transaction</ion-text>
+      </ion-col>
 
-  </app-transactions-list-card>
-</div>
-<ion-buttons slot=" end">
-  <ion-button (click)="navigateToCreateSales()" >Create Sale</ion-button>
-</ion-buttons>
+      <ion-col>
+        <ion-text color="primary">Amount</ion-text>
+      </ion-col>
+
+    </ion-row>
+
+  </ion-grid>
+</ion-row>
+<ion-list style="overflow: scroll; height: 400px;">
+  <div  *ngFor="let item of transactions; index as i;">
+    <app-transactions-list-card [transactionDetails]="item">
+
+    </app-transactions-list-card>
+  </div>
+</ion-list>
+
+<ion-button
+  style="display: flex;  position: sticky;height: 60px; align-items: center;bottom: 0px; justify-content: flex-end; padding: 10px; "
+  (click)="navigateToCreateSales()" type="submit" class="btn btn-primary">Create Sale</ion-button>

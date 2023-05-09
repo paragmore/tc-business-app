@@ -9,11 +9,41 @@ import { Router } from '@angular/router';
   templateUrl: './transactions-list.component.html',
   styleUrls: ['./transactions-list.component.scss'],
   standalone: true,
-  imports:[IonicModule, CommonModule, TransactionsListCardComponent]
+  imports: [IonicModule, CommonModule, TransactionsListCardComponent],
 })
 export class TransactionsListComponent implements OnInit {
-  public transactions: Array<{ transactionId: string; type: string }> = [
-    { transactionId: '1', type: 'sale' },
+  public transactions: Array<{
+    transactionId: string;
+    type: string;
+    customerName: string;
+    amount: number;
+    modeOfPayment: string;
+    timeStamp: string;
+  }> = [
+    {
+      transactionId: '1',
+      type: 'sale',
+      amount: 1000,
+      customerName: 'Parag',
+      modeOfPayment: 'Online',
+      timeStamp: '09 May 2023',
+    },
+    {
+      transactionId: '2',
+      type: 'purchare',
+      amount: 100,
+      customerName: 'Store',
+      modeOfPayment: 'Cash',
+      timeStamp: '08 May 2023',
+    },
+    {
+      transactionId: '3',
+      type: 'sale',
+      amount: 5000,
+      customerName: 'Parag',
+      modeOfPayment: 'Online',
+      timeStamp: '09 May 2023',
+    },
   ];
   constructor(private router: Router) {}
 

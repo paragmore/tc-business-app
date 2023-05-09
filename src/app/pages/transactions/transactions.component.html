@@ -1,7 +1,4 @@
-
 <ion-content [fullscreen]="true">
-  <div>
-    <app-transactions-list></app-transactions-list>
-  </div>
-
+  <app-divided-page-builder style="height: 100%;" [detailsComponent]="transactionDetailsComponent"
+    [listComponent]="transactionsListComponent"></app-divided-page-builder>
 </ion-content>
