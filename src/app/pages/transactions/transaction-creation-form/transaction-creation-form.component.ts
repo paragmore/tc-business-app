@@ -1,4 +1,4 @@
-// sales-creation-form.component.ts
+// transaction-creation-form.component.ts
 
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
@@ -16,13 +16,13 @@ import { Observable } from 'rxjs';
 import { ScreenModel } from 'src/app/store/models/screen.models';
 import { AppState } from 'src/app/store/models/state.model';
 @Component({
-  selector: 'app-sales-creation-form',
-  templateUrl: './sales-creation-form.component.html',
-  styleUrls: ['./sales-creation-form.component.scss'],
+  selector: 'app-transaction-creation-form',
+  templateUrl: './transaction-creation-form.component.html',
+  styleUrls: ['./transaction-creation-form.component.scss'],
   standalone: true,
   imports: [IonicModule, FormsModule, ReactiveFormsModule, CommonModule],
 })
-export class SalesCreationFormComponent {
+export class TransactionCreationFormComponent {
   salesForm: FormGroup;
   public screenState$: Observable<ScreenModel> | undefined;
 

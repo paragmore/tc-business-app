@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
-import { SalesCreationFormComponent } from './sales-creation-form/sales-creation-form.component';
+import { TransactionCreationFormComponent } from './transaction-creation-form/transaction-creation-form.component';
 import { TransactionsListComponent } from './transactions-list/transactions-list.component';
 
 @Component({
@@ -9,7 +9,7 @@ import { TransactionsListComponent } from './transactions-list/transactions-list
   templateUrl: './transactions.component.html',
   styleUrls: ['./transactions.component.scss'],
   standalone: true,
-  imports: [SalesCreationFormComponent, IonicModule, TransactionsListComponent]
+  imports: [TransactionCreationFormComponent, IonicModule, TransactionsListComponent]
 })
 export class TransactionsComponent  implements OnInit {
 

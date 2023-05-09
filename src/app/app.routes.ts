@@ -2,6 +2,14 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
+    path: 'transactions/create',
+    loadComponent: () =>
+      import('./pages/transactions/transaction-creation-form/transaction-creation-form.component').then(
+        (m) => m.TransactionCreationFormComponent
+      ),
+    pathMatch: 'full',
+  },
+  {
     path: 'transactions',
     loadComponent: () =>
       import('./pages/transactions/transactions.component').then(
@@ -11,9 +19,7 @@ export const routes: Routes = [
   {
     path: 'items',
     loadComponent: () =>
-      import('./pages/items/items.component').then(
-        (m) => m.ItemsComponent
-      ),
+      import('./pages/items/items.component').then((m) => m.ItemsComponent),
   },
   {
     path: 'home',
