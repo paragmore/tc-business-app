@@ -12,4 +12,69 @@
       <ion-title size="large">{{ route }}</ion-title>
     </ion-toolbar>
   </ion-header>
-  </ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-card>
+          <ion-title>
+            <h1>
+              Sales
+            </h1>
+          </ion-title>
+          <ion-row>
+            <ion-col>
+              ₹ 00.00
+              Total Sale (May)
+              arrow up0 %
+              This Month Growth
+
+            </ion-col>
+            <ion-col>
+
+              <app-revenue-chart></app-revenue-chart>
+            </ion-col>
+          </ion-row>
+        </ion-card>
+
+      </ion-col>
+      <ion-col>
+        <ion-card>
+          <ion-title>
+            <h1>
+              Expenses
+            </h1>
+          </ion-title>
+          <ion-row>
+            <ion-col>
+              ₹ 00.00
+              Total Sale (May)
+              arrow up0 %
+              This Month Growth
+
+            </ion-col>
+            <ion-col>
+
+              <app-revenue-chart></app-revenue-chart>
+            </ion-col>
+          </ion-row>
+        </ion-card>
+
+      </ion-col>
+      <ion-col>
+        <ion-label>
+          Stock inventory
+        </ion-label>
+        <ion-card>
+          <ion-row>
+            Stock Value
+          </ion-row>
+          <ion-row>
+            ₹ 00.00
+          </ion-row>
+
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>

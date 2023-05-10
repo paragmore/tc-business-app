@@ -8,6 +8,7 @@ import { AppComponent } from './app/app.component';
 import { environment } from './environments/environment';
 import { StoreModule } from '@ngrx/store';
 import { screenReducer } from './app/store/reducers/screen.reducer';
+import { HttpClientModule } from '@angular/common/http';
 
 if (environment.production) {
   enableProdMode();
@@ -18,6 +19,7 @@ bootstrapApplication(AppComponent, {
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     importProvidersFrom(IonicModule.forRoot({})),
     provideRouter(routes),
-    importProvidersFrom(StoreModule.forRoot({screen: screenReducer}))
+    importProvidersFrom(StoreModule.forRoot({screen: screenReducer})),
+    importProvidersFrom(HttpClientModule)
   ],
 });

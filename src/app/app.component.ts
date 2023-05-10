@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
@@ -20,13 +20,19 @@ export class AppComponent {
     { title: 'Home', url: '/home', icon: 'mail' },
     { title: 'Transactions', url: '/transactions', icon: 'paper-plane' },
     { title: 'Items', url: '/items', icon: 'heart' },
-    // { title: 'Archived', url: '/folder/archived', icon: 'archive' },
-    // { title: 'Trash', url: '/folder/trash', icon: 'trash' },
-    // { title: 'Spam', url: '/folder/spam', icon: 'warning' },
+    { title: 'Customers', url: '/customers', icon: 'archive' },
+    { title: 'Collections', url: '/folder/trash', icon: 'trash' },
+    { title: 'Orders', url: '/folder/spam', icon: 'warning' },
+    { title: 'Reports', url: '/folder/spam', icon: 'warning' },
+    { title: 'Settings', url: '/folder/spam', icon: 'warning' },
   ];
   public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
   public screenState$: Observable<ScreenModel> | undefined;
-  constructor(private store: Store<AppState>) {}
+  public currentRoute: string | undefined
+  constructor(private store: Store<AppState>,private router: Router) {
+    this.currentRoute = this.router.url;
+    console.log(this.currentRoute)
+  }
 
   private checkScreenSize() {
     const screenWidth = window.innerWidth;
@@ -35,6 +41,13 @@ export class AppComponent {
   ngOnInit(): void {
     this.screenState$ = this.store.select((store) => store.screen);
     this.checkScreenSize();
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        // URL has changed, do something
+        console.log('Router URL has changed:', event.url);
+        this.currentRoute = event.url
+      }
+    });
   }
 
   @HostListener('window:resize', ['$event'])
