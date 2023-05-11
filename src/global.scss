@@ -16,7 +16,7 @@
 @import "@ionic/angular/css/normalize.css";
 @import "@ionic/angular/css/structure.css";
 @import "@ionic/angular/css/typography.css";
-@import '@ionic/angular/css/display.css';
+@import "@ionic/angular/css/display.css";
 
 /* Optional CSS utils that can be commented out */
 @import "@ionic/angular/css/padding.css";
@@ -26,7 +26,7 @@
 @import "@ionic/angular/css/flex-utils.css";
 
 ion-input {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 16px;
   border: 1px solid #ccc;
   border-style: dotted;
@@ -35,4 +35,15 @@ ion-input {
   min-height: 40px !important;
   border-radius: 10px;
   --border-radius: 10px !important;
+}
+
+.login-modal {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  @media only screen and (min-width: 768px) {
+    --border-radius: 10px;
+    --height: fit-content;
+    --width: fit-content;
+  }
 }
