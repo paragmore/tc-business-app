@@ -1,3 +1,5 @@
 <ion-content class="ion-padding">
-  <ion-button expand="block" (click)="setOpen(true)">Open</ion-button>
+  <ion-button *ngIf="!(screenState$ | async)?.isMobile" expand="block" (click)="setOpen(true)">Open</ion-button>
+  <div *ngIf="(screenState$ | async)?.isMobile" id="login-inner-html-div" [innerHTML]="loginHtml">
+  </div>
 </ion-content>

@@ -4,6 +4,7 @@ import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/ro
 import { IonicModule } from '@ionic/angular';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import { AuthService } from './core/services/auth/auth.service';
 import { setScreen } from './store/actions/screen.action';
 import { ScreenModel } from './store/models/screen.models';
 import { AppState } from './store/models/state.model';
@@ -29,9 +30,13 @@ export class AppComponent {
   public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
   public screenState$: Observable<ScreenModel> | undefined;
   public currentRoute: string | undefined
-  constructor(private store: Store<AppState>,private router: Router) {
+  constructor(private store: Store<AppState>,private router: Router, private authService: AuthService) {
     this.currentRoute = this.router.url;
     console.log(this.currentRoute)
+  }
+
+  onLogoutClicked(){
+    this.authService.logout()
   }
 
   private checkScreenSize() {
@@ -49,6 +54,8 @@ export class AppComponent {
       }
     });
   }
+
+
 
   @HostListener('window:resize', ['$event'])
   onResize() {

@@ -9,6 +9,8 @@ import { CommonModule } from '@angular/common';
 import { LoginModalPage } from './login-modal.component';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../../app/store/models/state.model';
+import { ScreenModel } from '../../../app/store/models/screen.models';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -20,6 +22,7 @@ import { AppState } from '../../../app/store/models/state.model';
 export class LoginComponent implements OnInit {
   loginHtml: SafeHtml | undefined;
   modelData: any;
+  public screenState$: Observable<ScreenModel> | undefined;
 
   constructor(
     private http: HttpClient,
@@ -44,7 +47,7 @@ export class LoginComponent implements OnInit {
       },
       backdropDismiss: false,
       cssClass: 'login-modal',
-      id:'login-ionic-container'
+      id: 'login-ionic-container',
     });
     modal.onDidDismiss().then((modelData) => {
       if (modelData !== null) {
@@ -82,14 +85,7 @@ export class LoginComponent implements OnInit {
             script.innerHTML = scriptH;
           }
         }
-        const isMobileObservable = this.store.select(
-          (store) => store.screen.isMobile
-        );
-        isMobileObservable.subscribe((observer) => {
-          if (observer) {
-            this.openLoginModal();
-          }
-        });
+        this.screenState$ = this.store.select((store) => store.screen);
 
         document.body.appendChild(script);
       });
