@@ -8,10 +8,10 @@ import { Observable } from 'rxjs';
 export class AuthService {
   constructor() {}
   isAuthenticated(): boolean {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('accessToken');
     return !!token;
   }
   logout(): void {
-    localStorage.removeItem('authToken');
+    localStorage.removeItem('accessToken');
   }
 }

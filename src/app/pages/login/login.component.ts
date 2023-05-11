@@ -44,6 +44,7 @@ export class LoginComponent implements OnInit {
       },
       backdropDismiss: false,
       cssClass: 'login-modal',
+      id:'login-ionic-container'
     });
     modal.onDidDismiss().then((modelData) => {
       if (modelData !== null) {
@@ -56,7 +57,7 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     this.http
       .get(
-        'http://localhost:8000/auth?storeId=645228c0b530694160ad1ff4&userType=CUSTOMER',
+        'http://localhost:8000/auth?storeId=645228c0b530694160ad1ff4&userType=BUSINESS_ADMIN',
         {
           responseType: 'text',
         }
@@ -65,10 +66,10 @@ export class LoginComponent implements OnInit {
         this.loginHtml = this.sanitizer.bypassSecurityTrustHtml(html);
         const div = document.createElement('div');
         div.innerHTML = html;
-        const mainDiv = document.getElementById('login-ionic-container');
-        console.log(mainDiv);
-        mainDiv?.appendChild(div);
-        console.log(mainDiv);
+        // const mainDiv = document.getElementById('login-ionic-container');
+        // console.log(mainDiv);
+        // mainDiv?.appendChild(div);
+        // console.log(mainDiv);
         const script = document.createElement('script');
         if (div.querySelector('script') != null) {
           console.log(div.querySelector('script') != null);
