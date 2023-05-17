@@ -60,7 +60,7 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     this.http
       .get(
-        'http://localhost:8000/auth?storeId=645228c0b530694160ad1ff4&userType=BUSINESS_ADMIN',
+        'http://localhost:8000/auth?userType=BUSINESS_ADMIN',
         {
           responseType: 'text',
         }

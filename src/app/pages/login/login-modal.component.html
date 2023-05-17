@@ -1,6 +1,6 @@
 <ion-grid>
   <ion-row  *ngIf="!(screenState$ | async)?.isMobile" style="display: flex; flex-direction: row-reverse;padding-right: 20px; padding-top: 20px;">
-    <ion-icon size="large" name="close-outline"></ion-icon>
+    <ion-icon size="large" style="cursor: pointer;" (click)="closeModel()" name="close-outline"></ion-icon>
   </ion-row>
   <ion-row>
     <div id="login-inner-html-div" [innerHTML]="modalHtml">

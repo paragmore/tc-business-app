@@ -4,6 +4,7 @@ import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/ro
 import { IonicModule } from '@ionic/angular';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import { OnboardingModalComponent } from './components/onboarding-modal/onboarding-modal.component';
 import { AuthService } from './core/services/auth/auth.service';
 import { setScreen } from './store/actions/screen.action';
 import { ScreenModel } from './store/models/screen.models';
@@ -14,7 +15,7 @@ import { TabsPage } from './tabs/tabs.page';
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
   standalone: true,
-  imports: [IonicModule, RouterLink, RouterLinkActive, CommonModule, TabsPage],
+  imports: [IonicModule, RouterLink, RouterLinkActive, CommonModule, TabsPage, OnboardingModalComponent],
 })
 export class AppComponent {
   public appPages = [
