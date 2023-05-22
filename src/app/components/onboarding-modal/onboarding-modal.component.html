@@ -1,74 +1,79 @@
-<ion-modal class="common-modal" [isOpen]="isModalOpen">
-  <ng-template>
-    <h1>
-      Tell us a little about your business
-    </h1>
-    <ion-grid style="width: 100%; height: 100%;">
-      <form [formGroup]="businessForm" (ngSubmit)="submitForm()">
-        <ion-row>
-          <ion-col>
-            <ion-item>
-              <ion-label position="outline">First Name</ion-label>
-              <ion-input formControlName="firstName"></ion-input>
-            </ion-item>
-          </ion-col>
-          <ion-col>
-            <ion-item>
-              <ion-label position="outline">Last Name</ion-label>
-              <ion-input formControlName="lastName"></ion-input>
-            </ion-item>
-          </ion-col>
-        </ion-row>
-        <ion-item>
-          <ion-label>Business Type</ion-label>
-          <ion-select formControlName="businessType">
-            <ion-select-option value="Type 1">Type 1</ion-select-option>
-            <ion-select-option value="Type 2">Type 2</ion-select-option>
-            <ion-select-option value="Type 3">Type 3</ion-select-option>
-          </ion-select>
-        </ion-item>
-        <ion-item>
-          <ion-label>Is your business GST registered?{{isGstEnabled}}</ion-label>
-          <ion-radio-group (ionChange)="onGSTEnabledChanged($event)" allowEmptySelection="false"  formControlName="isGstEnabled" [value]="isGstEnabled">
-            <ion-row>
-              <ion-col>
-                <ion-item>
+<ion-modal  class="common-modal" [isOpen]="isModalOpen">
+  <ng-template >
+    <div style="padding:10px">
+      <h1>Tell us a little about your business</h1>
+      <ion-grid style="width: 100%; height: 100%">
+        <form [formGroup]="businessForm" (ngSubmit)="submitForm()">
+          <ion-row>
+            <ion-col>
+              <ion-input
+                placeholder="First Name"
+                formControlName="firstName"
+              ></ion-input>
+            </ion-col>
+            <ion-col>
+              <ion-input placeholder="Last Name" formControlName="lastName"></ion-input>
+            </ion-col>
+          </ion-row>
+          <ion-item>
+            <ion-label>Business Type</ion-label>
+            <ion-select formControlName="businessType">
+              <ion-select-option value="Type 1">Type 1</ion-select-option>
+              <ion-select-option value="Type 2">Type 2</ion-select-option>
+              <ion-select-option value="Type 3">Type 3</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-label
+              >Is your business GST registered?{{ isGstEnabled }}</ion-label
+            >
+            <ion-radio-group
+              (ionChange)="onGSTEnabledChanged($event)"
+              allowEmptySelection="false"
+              formControlName="isGstEnabled"
+              [value]="isGstEnabled"
+            >
+              <ion-row>
+                <ion-col>
                   <ion-label>Yes</ion-label>
                   <ion-radio [value]="true"></ion-radio>
-                </ion-item>
-              </ion-col>
-              <ion-col>
-                <ion-item>
+                </ion-col>
+                <ion-col>
                   <ion-label>No</ion-label>
                   <ion-radio [value]="false"></ion-radio>
-                </ion-item>
-              </ion-col>
-            </ion-row>
-          </ion-radio-group>
-        </ion-item>
-        <ion-item *ngIf="isGstEnabled">
-          <ion-label position="outline">GST number</ion-label>
-          <ion-input formControlName="gstNumber"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-label position="outline">Business Name</ion-label>
-          <ion-input formControlName="businessName"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-label>Business Domain</ion-label>
-          <ion-select formControlName="businessDomain">
-            <ion-select-option value="Domain 1">Domain 1</ion-select-option>
-            <ion-select-option value="Domain 2">Domain 2</ion-select-option>
-            <ion-select-option value="Domain 3">Domain 3</ion-select-option>
-          </ion-select>
-        </ion-item>
-        <ion-item>
-          <ion-checkbox formControlName="authorization"></ion-checkbox>
-          <ion-label>I authorize Tax payer corner to extract my credit report through an RBI-approved credit
-            bureau.</ion-label>
-        </ion-item>
-        <ion-button type="submit" [disabled]="businessForm.invalid">Submit</ion-button>
-      </form>
-    </ion-grid>
+                </ion-col>
+              </ion-row>
+            </ion-radio-group>
+          </ion-item>
+          <ion-item *ngIf="isGstEnabled">
+            <ion-label position="outline">GST number</ion-label>
+            <ion-input formControlName="gstNumber"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="outline">Business Name</ion-label>
+            <ion-input formControlName="businessName"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label>Business Domain</ion-label>
+            <ion-select formControlName="businessDomain">
+              <ion-select-option value="Domain 1">Domain 1</ion-select-option>
+              <ion-select-option value="Domain 2">Domain 2</ion-select-option>
+              <ion-select-option value="Domain 3">Domain 3</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-checkbox formControlName="authorization"></ion-checkbox>
+            <ion-label
+              >I authorize Tax payer corner to extract my credit report through an
+              RBI-approved credit bureau.</ion-label
+            >
+          </ion-item>
+          <ion-button type="submit" [disabled]="businessForm.invalid"
+            >Submit</ion-button
+          >
+        </form>
+      </ion-grid>
+    </div>
+
   </ng-template>
 </ion-modal>

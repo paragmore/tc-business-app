@@ -19,11 +19,17 @@ import { IonicModule } from '@ionic/angular';
 export class OnboardingModalComponent implements OnInit {
   @Input() isModalOpen: boolean | undefined;
 
-  isGstEnabled: boolean = false
+  isGstEnabled: boolean = false;
 
-  onGSTEnabledChanged(event: CustomEvent){
-    const selectedValue = event.detail.value
-    this.isGstEnabled = selectedValue
+  onGSTEnabledChanged(event: any) {
+    const selectedValue = event.detail.value;
+    this.isGstEnabled = selectedValue;
+
+    if (this.isGstEnabled) {
+      this.businessForm.addControl('gstNumber', this.formBuilder.control('', Validators.required));
+    } else {
+      this.businessForm.removeControl('gstNumber');
+    }
   }
 
   ngOnInit() {}
@@ -39,7 +45,6 @@ export class OnboardingModalComponent implements OnInit {
       firstName: [''],
       lastName: [''],
       businessType: [''],
-      gstNumber:['', Validators.required],
       businessName: ['', Validators.required],
       authorization: [false],
       businessDomain: [''],
@@ -49,7 +54,7 @@ export class OnboardingModalComponent implements OnInit {
   submitForm() {
     if (this.businessForm.valid) {
       // TODO: handle form submission
-      console.log(this.businessForm)
+      console.log(this.businessForm);
     }
   }
 }
