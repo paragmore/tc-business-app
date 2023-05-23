@@ -19,7 +19,7 @@ import { IonicModule } from '@ionic/angular';
 export class OnboardingModalComponent implements OnInit {
   @Input() isModalOpen: boolean | undefined;
 
-  isGstEnabled: boolean = false;
+  isGstEnabled: boolean = true;
 
   onGSTEnabledChanged(event: any) {
     const selectedValue = event.detail.value;
