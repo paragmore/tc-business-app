@@ -1,6 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener } from '@angular/core';
-import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import {
+  NavigationEnd,
+  Router,
+  RouterLink,
+  RouterLinkActive,
+} from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
@@ -10,12 +15,22 @@ import { setScreen } from './store/actions/screen.action';
 import { ScreenModel } from './store/models/screen.models';
 import { AppState } from './store/models/state.model';
 import { TabsPage } from './tabs/tabs.page';
+import { OnboardingService } from './core/services/onboarding/onboarding.service';
+import { setUserStoreInfo } from './store/actions/userStoreInfo.action';
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
   standalone: true,
-  imports: [IonicModule, RouterLink, RouterLinkActive, CommonModule, TabsPage, OnboardingModalComponent],
+  imports: [
+    IonicModule,
+    RouterLink,
+    RouterLinkActive,
+    CommonModule,
+    TabsPage,
+    OnboardingModalComponent,
+  ],
 })
 export class AppComponent {
   public appPages = [
@@ -30,14 +45,19 @@ export class AppComponent {
   ];
   public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
   public screenState$: Observable<ScreenModel> | undefined;
-  public currentRoute: string | undefined
-  constructor(private store: Store<AppState>,private router: Router, private authService: AuthService) {
+  public currentRoute: string | undefined;
+  constructor(
+    private store: Store<AppState>,
+    private router: Router,
+    private authService: AuthService,
+    private onboardingService: OnboardingService
+  ) {
     this.currentRoute = this.router.url;
-    console.log(this.currentRoute)
+    console.log(this.currentRoute);
   }
 
-  onLogoutClicked(){
-    this.authService.logout()
+  onLogoutClicked() {
+    this.authService.logout();
   }
 
   private checkScreenSize() {
@@ -51,12 +71,19 @@ export class AppComponent {
       if (event instanceof NavigationEnd) {
         // URL has changed, do something
         console.log('Router URL has changed:', event.url);
-        this.currentRoute = event.url
+        this.currentRoute = event.url;
       }
     });
+
+    this.onboardingService.getUserAndStoreInfo().subscribe(
+      (response) => {
+        console.log('response',response)
+        //@ts-ignore
+        this.store.dispatch(setUserStoreInfo({ userStoreInfo: response.body }));
+      },
+      (error) => {}
+    );
   }
-
-
 
   @HostListener('window:resize', ['$event'])
   onResize() {
