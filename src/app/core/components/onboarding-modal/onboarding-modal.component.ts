@@ -12,9 +12,14 @@ import { IonicModule, ModalController } from '@ionic/angular';
 import { OnboardingService } from '../../services/onboarding/onboarding.service';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../../store/models/state.model';
-import { StoreInfoModel, UserStoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
+import {
+  StoreInfoModel,
+  UserStoreInfoModel,
+} from 'src/app/store/models/userStoreInfo.models';
 import { Observable } from 'rxjs';
 import { CurrentStoreInfoService } from '../../services/currentStore/current-store-info.service';
+import { CameraService } from '../../services/camera/camera.service';
+import { ScreenModel } from 'src/app/store/models/screen.models';
 
 export interface VerifyGSTINResponseI {
   ntcrbs: string;
@@ -69,47 +74,10 @@ export class OnboardingModalComponent implements OnInit {
   isGstEnabled: boolean = true;
   userStoreInfoState$: Observable<UserStoreInfoModel> | undefined;
   userStoreInfoState: UserStoreInfoModel | undefined;
-  currentStoreInfo: StoreInfoModel | undefined
-  verifyGstinResponse: VerifyGSTINResponseI | undefined = {
-    ntcrbs: 'TRD:TWD',
-    adhrVFlag: 'No',
-    lgnm: 'Raymond Consumer Care Limited',
-    stj: 'State - Bihar,Division - Patna East,Circle - Patna City East',
-    dty: 'Regular',
-    cxdt: '',
-    gstin: '10AAJCR2207E1Z2',
-    nba: ['Wholesale Business', 'Warehouse / Depot'],
-    ekycVFlag: 'No',
-    cmpRt: 'NA',
-    rgdt: '24/03/2020',
-    ctb: 'Public Limited Company',
-    pradr: {
-      adr: 'Ward No - 56, Near Maa Santoshi Computer, Krishna Niketan School Road , Jakariyapur, Bari - Pahari - Agamkuan, Patna, Bihar, 800007',
-      addr: {
-        flno: '',
-        lg: '',
-        loc: ' Bari - Pahari - Agamkuan',
-        pncd: ' 800007',
-        bnm: ' Krishna Niketan School Road ',
-        city: '',
-        lt: '',
-        stcd: ' Bihar',
-        bno: '0',
-        dst: ' Patna',
-        st: ' Jakariyapur',
-      },
-    },
-    sts: 'Active',
-    tradeNam: 'Raymond Consumer Care Limited',
-    isFieldVisitConducted: 'No',
-    ctj: 'Commissionerate - PATNA I,Division - PATNA EAST DIVISION,Range - DEEDARGANJ RANGE (Jurisdictional Office)',
-    einvoiceStatus: 'No',
-    lstupdt: '',
-    adadr: [],
-    ctjCd: '',
-    errorMsg: null,
-    stjCd: '',
-  };
+  currentStoreInfo: StoreInfoModel | undefined;
+  verifyGstinResponse: VerifyGSTINResponseI | undefined;
+  public screenState$: Observable<ScreenModel> | undefined;
+
   onGSTEnabledChanged(event: any) {
     const selectedValue = event.detail.value;
     this.isGstEnabled = selectedValue;
@@ -122,10 +90,11 @@ export class OnboardingModalComponent implements OnInit {
     this.userStoreInfoState$?.subscribe(
       (userStoreInfo) => (this.userStoreInfoState = userStoreInfo)
     );
-   this.currentStoreInfoService.getCurrentStoreInfo().subscribe((reponse)=>{
-    console.log(reponse)
-    this.currentStoreInfo = reponse
-   })
+    this.currentStoreInfoService.getCurrentStoreInfo().subscribe((reponse) => {
+      console.log(reponse);
+      this.currentStoreInfo = reponse;
+    });
+    this.screenState$ = this.store.select((store) => store.screen);
   }
 
   // setOpen(isOpen: boolean) {
@@ -134,15 +103,21 @@ export class OnboardingModalComponent implements OnInit {
 
   gstinForm: FormGroup;
 
+  nonGSTForm: FormGroup;
+
   constructor(
     private formBuilder: FormBuilder,
     private onboardingService: OnboardingService,
     private store: Store<AppState>,
     private modalController: ModalController,
-    private currentStoreInfoService: CurrentStoreInfoService
+    private currentStoreInfoService: CurrentStoreInfoService,
+    private cameraService: CameraService
   ) {
     this.gstinForm = this.formBuilder.group({
       gstNumber: ['', Validators.required],
+    });
+    this.nonGSTForm = this.formBuilder.group({
+      name: ['', Validators.required],
     });
   }
 
@@ -151,16 +126,27 @@ export class OnboardingModalComponent implements OnInit {
     await this.modalController.dismiss(close);
   }
 
-  onboardGSTStore(){
-    if (!this.currentStoreInfo || !this.currentStoreInfo._id || ! this.verifyGstinResponse) {
+  async getPhoto() {
+    const photo = await this.cameraService.getPhoto();
+    console.log(photo);
+  }
+
+  onboardGSTStore() {
+    if (
+      !this.currentStoreInfo ||
+      !this.currentStoreInfo._id ||
+      !this.verifyGstinResponse
+    ) {
       return;
     }
-    this.onboardingService.onboardGSTStore(this.currentStoreInfo._id, this.verifyGstinResponse).subscribe((response)=> console.log(response))
+    this.onboardingService
+      .onboardGSTStore(this.currentStoreInfo._id, this.verifyGstinResponse)
+      .subscribe((response) => console.log(response));
   }
 
   submitForm() {
     if (this.gstinForm.valid) {
-      if (!this.currentStoreInfo ||!this.currentStoreInfo._id) {
+      if (!this.currentStoreInfo || !this.currentStoreInfo._id) {
         return;
       }
       this.onboardingService

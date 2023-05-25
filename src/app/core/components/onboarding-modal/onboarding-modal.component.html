@@ -1,4 +1,6 @@
-<div style="padding: 10px; height: 100%">
+<div
+  style="padding: 10px; height: 100%; padding-left: 30px; padding-right: 30px"
+>
   <ion-grid
     style="width: 100%; height: 100%; display: flex; flex-direction: column"
   >
@@ -64,7 +66,10 @@
           </ion-row>
         </ion-grid>
       </div>
-      <div *ngIf="!verifyGstinResponse" style="flex: 1">
+      <div
+        *ngIf="!verifyGstinResponse"
+        style="flex: 1; display: flex; flex-direction: column"
+      >
         <ion-input
           label="GST Number"
           label-placement="floating"
@@ -72,7 +77,29 @@
           formControlName="gstNumber"
         ></ion-input>
       </div>
-      <ion-label
+      <div
+        style="
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        "
+        *ngIf="(screenState$ | async)?.isMobile"
+      >
+        <ion-fab-button
+          *ngIf="!verifyGstinResponse"
+          type="submit"
+          shape="round"
+          (click)="getPhoto()"
+        >
+          <ion-icon name="camera"></ion-icon>
+        </ion-fab-button>
+        Scan GSTIN
+      </div>
+
+      <ion-button
+        style="margin-top: 40px; margin-bottom: 20px"
         (click)="
           onGSTEnabledChanged({
             detail: {
@@ -80,17 +107,26 @@
             }
           })
         "
-        style="width: 100%; text-align: center"
+        size="small"
+        fill="clear"
         color="medium"
-        >Business not GST registered? Click here</ion-label
       >
+        Business not GST registered? Click here
+      </ion-button>
+
       <ion-button
         *ngIf="!verifyGstinResponse"
         type="submit"
         [disabled]="gstinForm.invalid"
-        >Verify GSTIN</ion-button
-      >
-      <ion-button (click)="onboardGSTStore()" *ngIf="verifyGstinResponse" [disabled]="!verifyGstinResponse"
+        shape="round"
+        >Verify GSTIN
+        <ion-spinner name="dots"></ion-spinner>
+      </ion-button>
+
+      <ion-button
+        (click)="onboardGSTStore()"
+        *ngIf="verifyGstinResponse"
+        [disabled]="!verifyGstinResponse"
         >Confirm GSTIN</ion-button
       >
     </form>

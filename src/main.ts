@@ -11,6 +11,7 @@ import { screenReducer } from './app/store/reducers/screen.reducer';
 import { HttpClientModule } from '@angular/common/http';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { userStoreInfoReducer } from './app/store/reducers/userStoreInfo.reducer';
+import { defineCustomElements } from '@ionic/pwa-elements/loader';
 
 if (environment.production) {
   enableProdMode();
@@ -26,3 +27,5 @@ bootstrapApplication(AppComponent, {
     provideStoreDevtools()
   ],
 });
+
+defineCustomElements(window);
