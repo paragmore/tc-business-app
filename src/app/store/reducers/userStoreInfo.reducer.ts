@@ -11,7 +11,8 @@ const initialState: UserStoreInfoModel = {
   createdAt:'',
   phoneNumber:'',
   stores:[],
-  updatedAt:''
+  updatedAt:'',
+  defaultStoreId: '',
 };
 
 export const userStoreInfoReducer = createReducer(

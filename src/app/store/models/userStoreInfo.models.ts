@@ -5,6 +5,8 @@ export interface UserStoreInfoModel {
   createdAt: string;
   updatedAt: string;
   __v: number;
+  currentStoreId?: string;
+  defaultStoreId: string;
 }
 
 export interface StoreInfoModel {

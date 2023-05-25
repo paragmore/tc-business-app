@@ -6,10 +6,9 @@ import {
   RouterLink,
   RouterLinkActive,
 } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ModalController } from '@ionic/angular';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { OnboardingModalComponent } from './components/onboarding-modal/onboarding-modal.component';
 import { AuthService } from './core/services/auth/auth.service';
 import { setScreen } from './store/actions/screen.action';
 import { ScreenModel } from './store/models/screen.models';
@@ -17,6 +16,7 @@ import { AppState } from './store/models/state.model';
 import { TabsPage } from './tabs/tabs.page';
 import { OnboardingService } from './core/services/onboarding/onboarding.service';
 import { setUserStoreInfo } from './store/actions/userStoreInfo.action';
+import { OnboardingModalComponent } from './core/components/onboarding-modal/onboarding-modal.component';
 
 @Component({
   selector: 'app-root',
@@ -50,10 +50,27 @@ export class AppComponent {
     private store: Store<AppState>,
     private router: Router,
     private authService: AuthService,
-    private onboardingService: OnboardingService
+    private onboardingService: OnboardingService,
+    public modalController: ModalController
   ) {
     this.currentRoute = this.router.url;
     console.log(this.currentRoute);
+  }
+
+  async openOnboardingModal() {
+    const modal = await this.modalController.create({
+      component: OnboardingModalComponent,
+      componentProps: {},
+      backdropDismiss: false,
+      cssClass: 'login-modal',
+    });
+    modal.onDidDismiss().then((modelData) => {
+      if (modelData !== null) {
+        // this.modelData = modelData.data;
+        // console.log('Modal Data : ' + modelData.data);
+      }
+    });
+    return await modal.present();
   }
 
   onLogoutClicked() {
@@ -77,9 +94,30 @@ export class AppComponent {
 
     this.onboardingService.getUserAndStoreInfo().subscribe(
       (response) => {
-        console.log('response',response)
+        console.log('response', response);
+
         //@ts-ignore
-        this.store.dispatch(setUserStoreInfo({ userStoreInfo: response.body }));
+        if (
+          //@ts-ignore
+          !response.body.stores.find(
+            //@ts-ignore
+            (store) => store._id === response.body.defaultStoreId
+          ).name
+        ) {
+          this.openOnboardingModal();
+        }
+
+        //@ts-ignore
+        this.store.dispatch(
+          setUserStoreInfo({
+            userStoreInfo: {
+              //@ts-ignore
+              ...response.body,
+              //@ts-ignore
+              currentStoreId: response.body.defaultStoreId,
+            },
+          })
+        );
       },
       (error) => {}
     );
