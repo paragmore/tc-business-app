@@ -121,6 +121,14 @@ ion-item.selected {
 ion-split-pane {
   --side-width: 200px;
   --side-max-width: 200px;
-
 }
 
+.sidebar-col {
+  max-width: 70px !important;
+  background-color: var(--ion-color-primary);
+  border-radius: 20px;
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
