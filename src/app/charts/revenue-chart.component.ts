@@ -1,13 +1,12 @@
 import { Component } from '@angular/core';
-import { ChartConfiguration, ChartOptions, ChartType } from "chart.js";
-import { NgChartsModule } from 'ng2-charts';
+import { ChartConfiguration, ChartOptions } from "chart.js";
 
 @Component({
   selector: 'app-revenue-chart',
   templateUrl: './revenue-chart.component.html',
   styleUrls: [ './revenue-chart.component.css' ],
   standalone:true,
-  imports: [NgChartsModule]
+  imports: []
 })
 export class RevenueChartComponent {
   title = 'ng2-charts-demo';
