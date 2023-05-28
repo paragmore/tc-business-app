@@ -132,3 +132,25 @@ ion-split-pane {
   flex-direction: column;
   align-items: center;
 }
+
+.collapsed-menu-buttons-container {
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+}
+
+.desktop-menu-button-container {
+  border-radius: 10px;
+  border: 1px solid var(--ion-color-light);
+  padding: 7px;
+  cursor: pointer;
+}
+
+.desktop-menu-button-container :hover {
+  border-width: 2px !important;
+  transform: scale(1.2);
+}
+
+ion-icon {
+  font-size: 24px;
+}

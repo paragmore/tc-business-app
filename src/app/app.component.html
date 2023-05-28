@@ -49,14 +49,11 @@
             !currentRoute?.includes('login')
           "
         >
-          <ion-header [translucent]="true">
-            <ion-toolbar>
-              <ion-buttons slot="start">
-                <ion-menu-button></ion-menu-button>
-              </ion-buttons>
-            </ion-toolbar>
-          </ion-header>
-          <div>
+          <ion-menu-button>
+            <ion-icon color="light" name="arrow-forward"></ion-icon>
+          </ion-menu-button>
+
+          <div class="collapsed-menu-buttons-container">
             <div auto-hide="false" *ngFor="let p of appPages; let i = index">
               <div
                 routerDirection="root"
@@ -64,10 +61,11 @@
                 lines="none"
                 detail="false"
                 routerLinkActive="selected"
+                class="desktop-menu-button-container"
               >
                 <ion-icon
-                  style="color: #efeff5"
-                  size="large"
+                  style="color: var(--ion-color-light)"
+                  size="medium"
                   aria-hidden="true"
                   slot="start"
                   [ios]="p.icon + '-outline'"

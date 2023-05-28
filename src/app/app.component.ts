@@ -34,12 +34,12 @@ import { OnboardingModalComponent } from './core/components/onboarding-modal/onb
 })
 export class AppComponent {
   public appPages = [
-    { title: 'Home', url: '/home', icon: 'mail' },
-    { title: 'Transactions', url: '/transactions', icon: 'paper-plane' },
-    { title: 'Items', url: '/items', icon: 'heart' },
+    { title: 'Home', url: '/home', icon: 'home' },
+    { title: 'Transactions', url: '/transactions', icon: 'cash' },
+    { title: 'Items', url: '/items', icon: 'pricetags' },
     { title: 'Customers', url: '/customers', icon: 'archive' },
     { title: 'Collections', url: '/folder/trash', icon: 'trash' },
-    { title: 'Orders', url: '/folder/spam', icon: 'warning' },
+    { title: 'Orders', url: '/folder/spam', icon: 'cart' },
     { title: 'Reports', url: '/folder/spam', icon: 'warning' },
     { title: 'Settings', url: '/folder/spam', icon: 'warning' },
   ];
