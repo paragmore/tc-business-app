@@ -1,6 +1,12 @@
 <ion-button id="open-modal" expand="block">Add product</ion-button>
-<ion-modal class="modal-fullscreen" #modal trigger="open-modal" [canDismiss]="true"
-  [presentingElement]="presentingElement">
+<ion-modal
+  class="modal-fullscreen"
+  #modal
+  trigger="open-modal"
+  [canDismiss]="true"
+  [presentingElement]="presentingElement"
+  [isOpen]="true"
+>
   <ng-template>
     <ion-header>
       <ion-toolbar>
@@ -12,70 +18,135 @@
     </ion-header>
     <ion-content>
       <form>
-
-        <div style="padding:10px; margin: 10px;">
+        <h5>Product Details</h5>
+        <div style="padding: 10px; margin: 10px">
           <div>
-
             <ion-icon name="add-outline"></ion-icon>
             <ion-icon size="large" name="images-outline"></ion-icon>
           </div>
 
           <ion-label position="stacked">Add Photo</ion-label>
-
         </div>
-        <ion-label position="stacked">Product Name</ion-label>
-        <ion-input fill="outline"></ion-input>
-        <ion-label position="stacked">Units</ion-label>
-        <ion-input fill="outline"></ion-input>
         <ion-grid>
           <ion-row>
-            <div>
-
-              <ion-label position="stacked">Sales price</ion-label>
-              <ion-input fill="outline"></ion-input>
-            </div>
-            <div>
-
-              <ion-label position="stacked">Purchase price</ion-label>
-              <ion-input fill="outline"></ion-input>
-            </div>
+            <ion-col size-md="6" size-xs="12">
+              <ion-input
+                label="Product Name"
+                label-placement="floating"
+                fill="outline"
+              ></ion-input>
+            </ion-col>
+            <ion-col size-md="6" size-xs="12">
+              <ion-input
+                label="Product Category"
+                label-placement="floating"
+                fill="outline"
+              ></ion-input>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-input
+                label="Unit"
+                label-placement="floating"
+                fill="outline"
+              ></ion-input>
+            </ion-col>
           </ion-row>
         </ion-grid>
+
+        <ion-grid>
+          <ion-row>
+            <ion-col size-xs="6" size-md="4">
+              <ion-input
+                label="Sales price"
+                label-placement="floating"
+                fill="outline"
+              ></ion-input>
+            </ion-col>
+            <ion-col size-xs="6" size-md="4">
+              <ion-input
+                label="Purchase price"
+                label-placement="floating"
+                fill="outline"
+              ></ion-input>
+            </ion-col>
+            <ion-col size-xs="12" size-md="4">
+              <ion-input
+                label="Discounted price"
+                label-placement="floating"
+                fill="outline"
+              ></ion-input>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <h5>Tax and inventory</h5>
         <ion-toggle [checked]="true">Tax included</ion-toggle><br /><br />
         <ion-grid>
           <ion-row>
             <div>
-              <ion-label position="stacked">Opening stock</ion-label>
-              <ion-input fill="outline"></ion-input>
+              <ion-input
+                label="Opening stock"
+                label-placement="floating"
+                fill="outline"
+              ></ion-input>
             </div>
             <div>
-              <ion-label position="stacked">Low stock</ion-label>
-              <ion-input fill="outline"></ion-input>
+              <ion-input
+                label="Low stock"
+                label-placement="floating"
+                fill="outline"
+              ></ion-input>
             </div>
           </ion-row>
         </ion-grid>
         <ion-grid>
           <ion-row>
             <div>
-              <ion-label position="stacked">HSN code</ion-label>
-              <ion-input fill="outline"></ion-input>
+              <ion-input
+                label="HSN code"
+                label-placement="floating"
+                fill="outline"
+              ></ion-input>
             </div>
             <div>
-              <ion-label position="stacked">GST %</ion-label>
               <ion-list>
                 <ion-item>
-                  <ion-select aria-label="Fruit" interface="popover" placeholder="Select GST">
+                  <ion-select
+                    aria-label="Fruit"
+                    interface="popover"
+                    placeholder="Select GST %"
+                  >
                     <ion-select-option value="apples">Apples</ion-select-option>
-                    <ion-select-option value="oranges">Oranges</ion-select-option>
-                    <ion-select-option value="bananas">Bananas</ion-select-option>
+                    <ion-select-option value="oranges"
+                      >Oranges</ion-select-option
+                    >
+                    <ion-select-option value="bananas"
+                      >Bananas</ion-select-option
+                    >
                   </ion-select>
                 </ion-item>
               </ion-list>
             </div>
           </ion-row>
         </ion-grid>
+        <h5>Variants</h5>
       </form>
-      <ion-button>Add product</ion-button>
+
     </ion-content>
+    <ion-button
+    style="
+      display: flex;
+      position: sticky;
+      height: 60px;
+      align-items: center;
+      bottom: 0px;
+      justify-content: flex-end;
+      padding: 10px;
+    "
+    type="submit"
+    class="btn btn-primary"
+    >Add Product</ion-button
+  >
   </ng-template>
 </ion-modal>
