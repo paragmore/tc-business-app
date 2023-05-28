@@ -22,6 +22,7 @@ import { CameraService } from '../../services/camera/camera.service';
 import { ScreenModel } from 'src/app/store/models/screen.models';
 import * as Tesseract from 'tesseract.js';
 import { createWorker } from 'tesseract.js';
+
 export interface VerifyGSTINResponseI {
   ntcrbs: string;
   adhrVFlag: string;
@@ -118,7 +119,12 @@ export class OnboardingModalComponent implements OnInit {
       gstNumber: ['', Validators.required],
     });
     this.nonGSTForm = this.formBuilder.group({
-      name: ['', Validators.required],
+      businessName: ['', Validators.required],
+      firstName: [''],
+      lastName: [''],
+      businessType: [''],
+      businessDomain: [''],
+      authorization: [false],
     });
   }
 
@@ -151,7 +157,7 @@ export class OnboardingModalComponent implements OnInit {
     if (matches && matches.length > 0) {
       return matches[0];
     } else {
-      this.alert('Could not recognize GST number correctly', 'top', 1500)
+      this.alert('Could not recognize GST number correctly', 'top', 1500);
       return '';
     }
   }
@@ -173,8 +179,10 @@ export class OnboardingModalComponent implements OnInit {
     }
     const result = await this.worker?.recognize(image);
     this.ocrResult = result.data.text;
-    this.gstinForm.setValue({gstNumber:this.extractGSTNumber(this.ocrResult)})
-    console.log(this.ocrResult)
+    this.gstinForm.setValue({
+      gstNumber: this.extractGSTNumber(this.ocrResult),
+    });
+    console.log(this.ocrResult);
   }
 
   async alert(
@@ -210,13 +218,36 @@ export class OnboardingModalComponent implements OnInit {
       return;
     }
     this.onboardingService
-      .onboardGSTStore(this.currentStoreInfo._id, this.verifyGstinResponse)
+      .onboardStore({
+        storeId: this.currentStoreInfo._id,
+        gstInfo: this.verifyGstinResponse,
+      })
       .subscribe((response) => {
         //@ts-ignore
-        if(response.body.modifiedCount > 0){
-          this.closeModel()
+        if (response.body.modifiedCount > 0) {
+          this.closeModel();
         }
       });
+  }
+
+  onboardNonGSTStore() {
+    if (this.nonGSTForm.valid) {
+      if (!this.currentStoreInfo || !this.currentStoreInfo._id) {
+        return;
+      }
+      console.log(this.nonGSTForm.value);
+      this.onboardingService
+        .onboardStore({
+          storeId: this.currentStoreInfo._id,
+          name: this.nonGSTForm.value.businessName,
+        })
+        .subscribe((response) => {
+          //@ts-ignore
+          if (response.body.modifiedCount > 0) {
+            this.closeModel();
+          }
+        });
+    }
   }
 
   submitForm() {

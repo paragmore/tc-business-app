@@ -130,17 +130,32 @@
         >Confirm GSTIN</ion-button
       >
     </form>
-    <form *ngIf="!isGstEnabled">
+    <form
+      style="
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        margin-top: 10px;
+      "
+      [formGroup]="nonGSTForm"
+      *ngIf="!isGstEnabled"
+    >
       <div>
         <ion-row>
           <ion-col>
             <ion-input
+              label="First Name"
+              label-placement="floating"
+              fill="outline"
               placeholder="First Name"
               formControlName="firstName"
             ></ion-input>
           </ion-col>
           <ion-col>
             <ion-input
+              label="Last Name"
+              label-placement="floating"
+              fill="outline"
               placeholder="Last Name"
               formControlName="lastName"
             ></ion-input>
@@ -154,30 +169,12 @@
             <ion-select-option value="Type 3">Type 3</ion-select-option>
           </ion-select>
         </ion-item>
-        <ion-item>
-          <ion-radio-group
-            (ionChange)="onGSTEnabledChanged($event)"
-            allowEmptySelection="false"
-            formControlName="isGstEnabled"
-            [value]="isGstEnabled"
-          >
-            <ion-row>
-              <ion-col>
-                <ion-label>Yes</ion-label>
-                <ion-radio [value]="true"></ion-radio>
-              </ion-col>
-              <ion-col>
-                <ion-label>No</ion-label>
-                <ion-radio [value]="false"></ion-radio>
-              </ion-col>
-            </ion-row>
-          </ion-radio-group>
-        </ion-item>
-
-        <ion-item>
-          <ion-label position="outline">Business Name</ion-label>
-          <ion-input formControlName="businessName"></ion-input>
-        </ion-item>
+        <ion-input
+          label="Business Name"
+          label-placement="floating"
+          fill="outline"
+          formControlName="businessName"
+        ></ion-input>
         <ion-item>
           <ion-label>Business Domain</ion-label>
           <ion-select formControlName="businessDomain">
@@ -194,7 +191,22 @@
           RBI-approved credit bureau.</ion-label
         >
       </ion-item>
-      <ion-button type="submit" [disabled]="gstinForm.invalid"
+      <ion-button
+        style="margin-top: 40px; margin-bottom: 20px"
+        (click)="
+          onGSTEnabledChanged({
+            detail: {
+              value: true
+            }
+          })
+        "
+        size="small"
+        fill="clear"
+        color="medium"
+      >
+        Business GST registered? Click here
+      </ion-button>
+      <ion-button type="submit" [disabled]="nonGSTForm.invalid" (click)="onboardNonGSTStore()"
         >Submit Details</ion-button
       >
     </form>
