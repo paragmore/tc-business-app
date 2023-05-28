@@ -55,22 +55,23 @@
 
           <div class="collapsed-menu-buttons-container">
             <div auto-hide="false" *ngFor="let p of appPages; let i = index">
-              <div
-                routerDirection="root"
-                [routerLink]="[p.url]"
-                lines="none"
-                detail="false"
-                routerLinkActive="selected"
-                class="desktop-menu-button-container"
-              >
-                <ion-icon
-                  style="color: var(--ion-color-light)"
-                  size="medium"
-                  aria-hidden="true"
-                  slot="start"
-                  [ios]="p.icon + '-outline'"
-                  [md]="p.icon + '-sharp'"
-                ></ion-icon>
+              <div class="desktop-menu-button-outer-container">
+                <div
+                  routerDirection="root"
+                  [routerLink]="[p.url]"
+                  lines="none"
+                  detail="false"
+                  routerLinkActive="selected"
+                  class="desktop-menu-button-container"
+                >
+                  <ion-icon
+                    size="medium"
+                    aria-hidden="true"
+                    slot="start"
+                    [ios]="p.icon + '-outline'"
+                    [md]="p.icon + '-sharp'"
+                  ></ion-icon>
+                </div>
               </div>
             </div>
           </div>
