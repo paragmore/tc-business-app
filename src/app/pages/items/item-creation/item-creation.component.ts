@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CheckboxCustomEvent, IonicModule } from '@ionic/angular';
+import { CheckboxCustomEvent, IonicModule, ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'app-item-creation',
@@ -14,6 +14,9 @@ export class ItemCreationComponent  implements OnInit {
 
   presentingElement: Element | null = null;
 
+  constructor(private modalController: ModalController){
+
+  }
   ngOnInit() {
     this.presentingElement = document.querySelector('.ion-page');
   }
