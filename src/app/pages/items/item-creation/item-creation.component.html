@@ -38,10 +38,11 @@
             </ion-col>
             <ion-col size-md="6" size-xs="12">
               <ion-input
-              (click)="openCreateCategoryModal()"
+                (click)="openCreateCategoryModal()"
                 label="Product Category"
                 label-placement="floating"
                 fill="outline"
+                [value]="selectedCategoriesString"
               ></ion-input>
             </ion-col>
           </ion-row>
@@ -118,7 +119,6 @@
                     interface="popover"
                     placeholder="Select GST %"
                     fill="outline"
-
                   >
                     <ion-select-option value="apples">Apples</ion-select-option>
                     <ion-select-option value="oranges"
@@ -135,21 +135,20 @@
         </ion-grid>
         <h5>Variants</h5>
       </form>
-
     </ion-content>
     <ion-button
-    style="
-      display: flex;
-      position: sticky;
-      height: 60px;
-      align-items: center;
-      bottom: 0px;
-      justify-content: flex-end;
-      padding: 10px;
-    "
-    type="submit"
-    class="btn btn-primary"
-    >Add Product</ion-button
-  >
+      style="
+        display: flex;
+        position: sticky;
+        height: 60px;
+        align-items: center;
+        bottom: 0px;
+        justify-content: flex-end;
+        padding: 10px;
+      "
+      type="submit"
+      class="btn btn-primary"
+      >Add Product</ion-button
+    >
   </ng-template>
 </ion-modal>

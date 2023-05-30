@@ -1,3 +1,21 @@
-<p>
-  category-creation-modal works!
-</p>
+<div class="modal-outer-container">
+  <ion-grid>
+    <app-dialog-header style="width:100%" headerTitle="Create category" [onClose]="onClose">
+    </app-dialog-header>
+    <ion-row>
+      <ion-grid style="min-width: 400px">
+        <ion-row>
+          <ion-input
+            label-placement="floating"
+            fill="outline"
+            label="Category"
+            placeholder="Enter category name"
+          ></ion-input>
+        </ion-row>
+      </ion-grid>
+    </ion-row>
+    <ion-row>
+      <ion-button style="width: 100%"> Create category </ion-button>
+    </ion-row>
+  </ion-grid>
+</div>
