@@ -41,6 +41,7 @@ ion-input {
   align-items: center;
   justify-content: center;
   display: flex;
+  --backdrop-opacity: 0.5 !important;
   @media only screen and (min-width: 768px) {
     --border-radius: 10px;
     --height: fit-content;
@@ -59,7 +60,7 @@ ion-input {
   }
 }
 
-ion-menu{
+ion-menu {
   // --width: 50px
 }
 

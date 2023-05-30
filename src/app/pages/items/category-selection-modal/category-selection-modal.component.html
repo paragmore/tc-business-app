@@ -1,0 +1,30 @@
+<div class="modal-outer-container">
+  <h4>Select category</h4>
+  <ion-grid style="min-width: 400px">
+    <ion-row>
+      <ion-searchbar placeholder="Search categories"> </ion-searchbar>
+    </ion-row>
+    <ion-row>
+      <ion-grid>
+        <ion-list class="category-list">
+          <ion-item *ngFor="let category of categories">
+            <ion-row style="width: 100%; height: 32px">
+              <ion-checkbox style="width: 100%; height: 32px">
+                {{ category.name }}
+              </ion-checkbox>
+            </ion-row>
+          </ion-item>
+        </ion-list>
+      </ion-grid>
+    </ion-row>
+  </ion-grid>
+  <ion-button
+    (click)="openCreateCategoryModal()"
+    style="width: 100%"
+    fill="outline"
+  >
+    <ion-icon slot="start" name="add"></ion-icon> Add new category
+  </ion-button>
+
+  <ion-button style="width: 100%"> Select </ion-button>
+</div>

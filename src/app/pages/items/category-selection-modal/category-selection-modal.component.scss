@@ -1,0 +1,33 @@
+.category-list {
+  height: 60vh;
+  overflow-y: scroll;
+  @media only screen and (min-width: 768px) {
+    max-height: 300px;
+  }
+}
+
+.category-list::-webkit-scrollbar {
+  @media only screen and (min-width: 768px) {
+    display: none;
+  }
+}
+
+.category-list {
+  @media only screen and (min-width: 768px) {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
+.modal-outer-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  @media only screen and (min-width: 768px) {
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-top: 20px;
+    padding-bottom: 30px;
+  }
+}
