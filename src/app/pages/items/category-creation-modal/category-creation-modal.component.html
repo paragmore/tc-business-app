@@ -1,21 +1,34 @@
 <div class="modal-outer-container">
   <ion-grid>
-    <app-dialog-header style="width:100%" headerTitle="Create category" [onClose]="onClose">
+    <app-dialog-header
+      style="width: 100%"
+      headerTitle="Create category"
+      [onClose]="onCloseCategoryCreationModal"
+    >
     </app-dialog-header>
     <ion-row>
       <ion-grid style="min-width: 400px">
-        <ion-row>
-          <ion-input
-            label-placement="floating"
-            fill="outline"
-            label="Category"
-            placeholder="Enter category name"
-          ></ion-input>
-        </ion-row>
+        <form [formGroup]="categoryForm">
+          <ion-row>
+            <ion-input
+              label-placement="floating"
+              fill="outline"
+              label="Category"
+              formControlName="name"
+              placeholder="Enter category name"
+            ></ion-input>
+          </ion-row>
+        </form>
       </ion-grid>
     </ion-row>
     <ion-row>
-      <ion-button style="width: 100%"> Create category </ion-button>
+      <ion-button
+        [disabled]="categoryForm.invalid"
+        (click)="onCreateCategory()"
+        style="width: 100%"
+      >
+        Create category
+      </ion-button>
     </ion-row>
   </ion-grid>
 </div>

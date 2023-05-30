@@ -3,6 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { CategoryCreationModalComponent } from '../category-creation-modal/category-creation-modal.component';
 import { DialogHeaderComponent } from 'src/app/core/components/dialog-header/dialog-header.component';
+import { CategoryI } from 'src/app/core/services/products/products.service';
 
 @Component({
   selector: 'app-category-selection-modal',
@@ -96,12 +97,4 @@ export class CategorySelectionModalComponent implements OnInit {
     });
     return await modal.present();
   }
-}
-
-export interface CategoryI {
-  name: string;
-  description: string;
-  storeId: string;
-  slug: string;
-  _id: string;
 }

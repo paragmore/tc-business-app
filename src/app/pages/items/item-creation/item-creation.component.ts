@@ -4,10 +4,8 @@ import {
   IonicModule,
   ModalController,
 } from '@ionic/angular';
-import {
-  CategoryI,
-  CategorySelectionModalComponent,
-} from '../category-selection-modal/category-selection-modal.component';
+import { CategorySelectionModalComponent } from '../category-selection-modal/category-selection-modal.component';
+import { CategoryI } from 'src/app/core/services/products/products.service';
 
 @Component({
   selector: 'app-item-creation',
