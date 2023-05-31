@@ -42,7 +42,7 @@
   <ion-grid>
     <ion-row class="header-row">
       <ion-col>
-        <ion-text color="primary">Product Name</ion-text>
+        <ion-text color="primary">Product</ion-text>
       </ion-col>
 
       <ion-col>
@@ -50,48 +50,26 @@
       </ion-col>
 
       <ion-col>
-        <ion-text color="primary">Stock Quantity</ion-text>
+        <ion-text color="primary">Stock</ion-text>
       </ion-col>
     </ion-row>
-    <ion-row>
-      <ion-col>
-        <ion-text> CUp </ion-text>
-      </ion-col>
+    <ion-list>
+      <div *ngFor="let product of products; let i = index">
+        <ion-row>
+          <ion-col>
+            <ion-text> {{ product.name }} </ion-text>
+          </ion-col>
 
-      <ion-col>
-        <ion-text> ₹1,000 </ion-text>
-      </ion-col>
+          <ion-col>
+            <ion-text> ₹{{ product.sellsPrice }} </ion-text>
+          </ion-col>
 
-      <ion-col>
-        <ion-text> 200 </ion-text>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col>
-        <ion-text> CUp </ion-text>
-      </ion-col>
-
-      <ion-col>
-        <ion-text> ₹1,000 </ion-text>
-      </ion-col>
-
-      <ion-col>
-        <ion-text> 200 </ion-text>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col>
-        <ion-text> CUp </ion-text>
-      </ion-col>
-
-      <ion-col>
-        <ion-text> ₹1,000 </ion-text>
-      </ion-col>
-
-      <ion-col>
-        <ion-text> 200 </ion-text>
-      </ion-col>
-    </ion-row>
+          <ion-col>
+            <ion-text> {{ product.quantity }} </ion-text>
+          </ion-col>
+        </ion-row>
+      </div>
+    </ion-list>
   </ion-grid>
 </ion-row>
 <ion-row>

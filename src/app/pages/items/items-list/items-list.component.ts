@@ -8,13 +8,19 @@ import {
 import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
 import { CurrentStoreInfoService } from 'src/app/core/services/currentStore/current-store-info.service';
 import { PaginationComponentComponent } from 'src/app/core/components/pagination-component/pagination-component.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-items-list',
   templateUrl: './items-list.component.html',
   styleUrls: ['./items-list.component.scss'],
   standalone: true,
-  imports: [IonicModule, ItemCreationComponent, PaginationComponentComponent],
+  imports: [
+    IonicModule,
+    ItemCreationComponent,
+    PaginationComponentComponent,
+    CommonModule,
+  ],
 })
 export class ItemsListComponent implements OnInit {
   products: ProductI[] = [];
@@ -33,12 +39,14 @@ export class ItemsListComponent implements OnInit {
     this.currentStoreInfoService.getCurrentStoreInfo().subscribe((response) => {
       this.currentStoreInfo = response;
     });
+    this.loadProducts();
   }
 
   goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
       // Fetch the data for the selected page or update the list accordingly
+      this.loadProducts(page);
     }
   }
 
@@ -47,5 +55,31 @@ export class ItemsListComponent implements OnInit {
     // Fetch the data for the new page size or update the list accordingly
   }
 
-  loadProducts() {}
+  loadProducts(page?: number) {
+    if (!this.currentStoreInfo?._id) {
+      return;
+    }
+    this.productsService
+      .getAllStoreProducts(this.currentStoreInfo?._id, {
+        page: this.currentPage.toString(),
+        pageSize: this.pageSize.toString(),
+      })
+      .subscribe(
+        (response) => {
+          //@ts-ignore
+          if (response.message === 'Success') {
+            //@ts-ignore
+            console.log(response.body.products);
+            //@ts-ignore
+            this.products = [...response.body.products];
+            //@ts-ignore
+            const pagination = response.body.pagination;
+            this.currentPage = pagination.page;
+            this.pageSize = pagination.pageSize;
+            this.totalPages = pagination.totalPages;
+          }
+        },
+        (error) => {}
+      );
+  }
 }
