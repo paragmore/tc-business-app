@@ -52,6 +52,8 @@ export class ItemsListComponent implements OnInit {
 
   changePageSize(pageSize: number) {
     console.log(pageSize);
+    this.pageSize = pageSize;
+    this.loadProducts();
     // Fetch the data for the new page size or update the list accordingly
   }
 

@@ -1,10 +1,9 @@
-<ion-grid style="height: 100%;">
-  <ion-row style="height: 100%; overflow: hidden;">
-    <ion-col style="border-right: 1px solid;" size="12" size-sm="6">
-      <ng-content *ngComponentOutlet="listComponent">
-      </ng-content>
+<ion-grid style="height: 100%">
+  <ion-row style="height: 100%; overflow: hidden">
+    <ion-col style="border-right: 1px solid" size-md="6" size-sm="12">
+      <ng-content *ngComponentOutlet="listComponent"> </ng-content>
     </ion-col>
-    <ion-col size="12" size-sm="6">
+    <ion-col size-md="6" size-sm="12">
       <ng-content *ngComponentOutlet="detailsComponent"></ng-content>
     </ion-col>
   </ion-row>

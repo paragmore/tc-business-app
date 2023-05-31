@@ -1,77 +1,95 @@
-<ion-row>
-  <div>
-    <ion-label position="stacked">Search for products</ion-label>
-    <ion-searchbar placeholder="Search by Product name"></ion-searchbar>
-  </div>
-  <div>
-    <ion-label position="stacked">Filter by</ion-label>
-    <ion-list>
-      <ion-item>
-        <ion-select aria-label="Fruit" interface="popover" placeholder="All">
-          <ion-select-option value="apples">Apples</ion-select-option>
-          <ion-select-option value="oranges">Oranges</ion-select-option>
-          <ion-select-option value="bananas">Bananas</ion-select-option>
-        </ion-select>
-      </ion-item>
-    </ion-list>
-  </div>
-  <div>
-    <ion-label position="stacked">Sort by</ion-label>
-    <ion-list>
-      <ion-item>
-        <ion-select
-          aria-label="Fruit"
-          interface="popover"
-          placeholder="Most recent"
-        >
-          <ion-select-option value="apples">Apples</ion-select-option>
-          <ion-select-option value="oranges">Oranges</ion-select-option>
-          <ion-select-option value="bananas">Bananas</ion-select-option>
-        </ion-select>
-      </ion-item>
-    </ion-list>
-  </div>
-</ion-row>
-<app-pagination-component
-  [currentPage]="currentPage"
-  [totalPages]="totalPages"
-  (pageChange)="goToPage($event)"
-  (pageSizeChange)="changePageSize($event)"
-></app-pagination-component>
-<ion-row>
-  <ion-grid>
-    <ion-row class="header-row">
-      <ion-col>
-        <ion-text color="primary">Product</ion-text>
-      </ion-col>
+<div
+  style="
+    border-radius: 10px;
+    padding: 10px;
+    background-color: white;
+    margin: 10px;
+    height: 98%;
+    display: flex;
+    flex-direction: column;
+  "
+>
+  <ion-row>
+    <div>
+      <ion-label position="stacked">Search for products</ion-label>
+      <ion-searchbar placeholder="Search by Product name"></ion-searchbar>
+    </div>
+    <div>
+      <ion-label position="stacked">Filter by</ion-label>
+      <ion-list>
+        <ion-item>
+          <ion-select aria-label="Fruit" interface="popover" placeholder="All">
+            <ion-select-option value="apples">Apples</ion-select-option>
+            <ion-select-option value="oranges">Oranges</ion-select-option>
+            <ion-select-option value="bananas">Bananas</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-list>
+    </div>
+    <div>
+      <ion-label position="stacked">Sort by</ion-label>
+      <ion-list>
+        <ion-item>
+          <ion-select
+            aria-label="Fruit"
+            interface="popover"
+            placeholder="Most recent"
+          >
+            <ion-select-option value="apples">Apples</ion-select-option>
+            <ion-select-option value="oranges">Oranges</ion-select-option>
+            <ion-select-option value="bananas">Bananas</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-list>
+    </div>
+  </ion-row>
 
-      <ion-col>
-        <ion-text color="primary">Sales Price</ion-text>
-      </ion-col>
+  <ion-row style="flex: 1">
+    <ion-grid>
+      <ion-row class="header-row">
+        <ion-col>
+          <ion-text color="primary">Product</ion-text>
+        </ion-col>
 
-      <ion-col>
-        <ion-text color="primary">Stock</ion-text>
-      </ion-col>
-    </ion-row>
-    <ion-list>
-      <div *ngFor="let product of products; let i = index">
-        <ion-row>
-          <ion-col>
-            <ion-text> {{ product.name }} </ion-text>
-          </ion-col>
+        <ion-col>
+          <ion-text color="primary">Sells Price</ion-text>
+        </ion-col>
 
-          <ion-col>
-            <ion-text> ₹{{ product.sellsPrice }} </ion-text>
-          </ion-col>
+        <ion-col>
+          <ion-text color="primary">Stock</ion-text>
+        </ion-col>
+      </ion-row>
+      <ion-list style="background-color: white; overflow-y: scroll">
+        <div *ngFor="let product of products; let i = index">
+          <ion-row>
+            <ion-col>
+              <ion-text style="overflow-wrap: anywhere">
+                {{ product.name }}
+              </ion-text>
+            </ion-col>
 
-          <ion-col>
-            <ion-text> {{ product.quantity }} </ion-text>
-          </ion-col>
-        </ion-row>
-      </div>
-    </ion-list>
-  </ion-grid>
-</ion-row>
-<ion-row>
-  <app-item-creation> </app-item-creation>
-</ion-row>
+            <ion-col>
+              <ion-text> ₹{{ product.sellsPrice }} </ion-text>
+            </ion-col>
+
+            <ion-col>
+              <ion-text> {{ product.quantity }} </ion-text>
+            </ion-col>
+          </ion-row>
+        </div>
+      </ion-list>
+    </ion-grid>
+  </ion-row>
+  <ion-row style="width: 100%">
+    <app-pagination-component
+      style="width: 100%"
+      [currentPage]="currentPage"
+      [totalPages]="totalPages"
+      (pageChange)="goToPage($event)"
+      (pageSizeChange)="changePageSize($event)"
+    ></app-pagination-component>
+  </ion-row>
+  <ion-row>
+    <app-item-creation> </app-item-creation>
+  </ion-row>
+</div>
