@@ -7,14 +7,27 @@ import {
 import { CategorySelectionModalComponent } from '../category-selection-modal/category-selection-modal.component';
 import { CategoryI } from 'src/app/core/services/products/products.service';
 import { DiscountsModalComponent } from '../discounts-modal/discounts-modal.component';
-import { FormBuilder } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-item-creation',
   templateUrl: './item-creation.component.html',
   styleUrls: ['./item-creation.component.scss'],
   standalone: true,
-  imports: [IonicModule, CategorySelectionModalComponent],
+  imports: [
+    IonicModule,
+    CategorySelectionModalComponent,
+    ReactiveFormsModule,
+    FormsModule,
+    CommonModule,
+  ],
 })
 export class ItemCreationComponent implements OnInit {
   canDismiss = false;
@@ -23,12 +36,29 @@ export class ItemCreationComponent implements OnInit {
   selectedCategoryIds: string[] = [];
   selectedCategories: CategoryI[] = [];
   selectedCategoriesString: string = '';
+  productForm: FormGroup;
+  sameUnits: boolean = true;
+
   constructor(
     private modalController: ModalController,
     private formBuilder: FormBuilder
-  ) {}
+  ) {
+    this.productForm = this.formBuilder.group({
+      name: ['', Validators.required],
+      description: [''],
+      category: ['', Validators.required],
+      unit: ['', Validators.required],
+      sellsPrice: ['', Validators.required],
+      purchasePrice: [''],
+    });
+  }
   ngOnInit() {
     this.presentingElement = document.querySelector('.ion-page');
+  }
+
+  onSameUnitsToggled(event: any) {
+    this.sameUnits = event.detail.checked;
+    console.log(event.detail);
   }
 
   onTermsChanged(event: Event) {
@@ -63,9 +93,13 @@ export class ItemCreationComponent implements OnInit {
       }
       this.selectedCategories.map((category: CategoryI) => {
         this.selectedCategoryIds.push(category._id);
-        this.selectedCategoriesString =
-          this.selectedCategoriesString + ' , ' + category.name;
+        this.productForm.patchValue({
+          category: this.selectedCategoryIds.join(','),
+        });
       });
+      this.selectedCategoriesString = this.selectedCategories
+        .map((selectedCategory) => selectedCategory.name)
+        .join(',');
     });
     return await modal.present();
   }

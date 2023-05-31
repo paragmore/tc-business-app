@@ -14,9 +14,15 @@ ion-modal .ion-page {
 
 ion-modal {
   --height: 100%;
-  --width: 700px
+  --width: 700px;
 }
 
 ion-modal .ion-page .ion-content {
   flex-grow: 1;
+}
+
+.combined-unit-container {
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid black;
 }
