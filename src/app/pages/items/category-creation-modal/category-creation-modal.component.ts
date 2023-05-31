@@ -38,15 +38,12 @@ import {
   ],
 })
 export class CategoryCreationModalComponent implements OnInit {
-  userStoreInfoState$: Observable<UserStoreInfoModel> | undefined;
-  userStoreInfoState: UserStoreInfoModel | undefined;
   currentStoreInfo: StoreInfoModel | undefined;
   categoryForm: FormGroup;
 
   constructor(
     private modalController: ModalController,
     private productsService: ProductsService,
-    private store: Store<AppState>,
     private currentStoreInfoService: CurrentStoreInfoService,
     private formBuilder: FormBuilder,
     private toastController: ToastController
@@ -58,12 +55,6 @@ export class CategoryCreationModalComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.userStoreInfoState$ = this.store.select(
-      (store) => store.userStoreInfo
-    );
-    this.userStoreInfoState$?.subscribe(
-      (userStoreInfo) => (this.userStoreInfoState = userStoreInfo)
-    );
     this.currentStoreInfoService.getCurrentStoreInfo().subscribe((reponse) => {
       this.currentStoreInfo = reponse;
     });

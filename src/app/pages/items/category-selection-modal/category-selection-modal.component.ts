@@ -3,7 +3,12 @@ import { Component, Input, OnInit } from '@angular/core';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { CategoryCreationModalComponent } from '../category-creation-modal/category-creation-modal.component';
 import { DialogHeaderComponent } from 'src/app/core/components/dialog-header/dialog-header.component';
-import { CategoryI } from 'src/app/core/services/products/products.service';
+import {
+  CategoryI,
+  ProductsService,
+} from 'src/app/core/services/products/products.service';
+import { CurrentStoreInfoService } from 'src/app/core/services/currentStore/current-store-info.service';
+import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
 
 @Component({
   selector: 'app-category-selection-modal',
@@ -13,45 +18,67 @@ import { CategoryI } from 'src/app/core/services/products/products.service';
   imports: [IonicModule, CommonModule, DialogHeaderComponent],
 })
 export class CategorySelectionModalComponent implements OnInit {
-  categories: CategoryI[] | undefined = [
-    {
-      name: 'Copsaassdn',
-      description: 'asdasda sdfsafda asd',
-      storeId: 'asdasdasdas  ',
-      slug: 'asdasd',
-      _id: 'akjshfdiasfbkda',
-    },
-    {
-      name: 'Copssdsdadn',
-      description: 'asdasda sdfsafda asd',
-      storeId: 'asdasdasdas  ',
-      slug: 'asdasd',
-      _id: 'akjshfdiasfbkda',
-    },
-    {
-      name: 'asdasfCopsadn',
-      description: 'asdasda sdfsafda asd',
-      storeId: 'asdasdasdas  ',
-      slug: 'asdasd',
-      _id: 'akjshfdiasfbkda',
-    },
-    {
-      name: 'ffdsfgcbvCopsadn',
-      description: 'asdasda sdfsafda asd',
-      storeId: 'asdasdasdas  ',
-      slug: 'asdasd',
-      _id: 'akjshfdiasfbkda',
-    },
-  ];
+  categories: CategoryI[] = [];
+  currentPage = 1;
+  pageSize = 10;
+  hasMoreCategories = true;
+  currentStoreInfo: StoreInfoModel | undefined;
 
   @Input() selectedCategories!: CategoryI[];
   canDismiss = false;
 
   presentingElement: Element | null = null;
 
-  constructor(private modalController: ModalController) {}
+  constructor(
+    private modalController: ModalController,
+    private productsService: ProductsService,
+    private currentStoreInfoService: CurrentStoreInfoService
+  ) {}
   ngOnInit() {
     this.presentingElement = document.querySelector('.ion-page');
+    this.currentStoreInfoService.getCurrentStoreInfo().subscribe((response) => {
+      this.currentStoreInfo = response;
+    });
+    this.loadCategories();
+  }
+
+  loadCategories() {
+    console.log('cat');
+    if (!this.currentStoreInfo?._id) {
+      return;
+    }
+    console.log('caddt');
+
+    this.productsService
+      .getAllStoreCategories(this.currentStoreInfo?._id, {
+        page: this.currentPage.toString(),
+        pageSize: this.pageSize.toString(),
+      })
+      .subscribe((response) => {
+        console.log(response);
+        //@ts-ignore
+        if (response.message === 'Success') {
+          //@ts-ignore
+          console.log(response.body.categories);
+          //@ts-ignore
+          this.categories = [...this.categories, ...response.body.categories];
+        }
+      });
+    // Make API request to fetch categories using the currentPage and pageSize variables
+    // Update the 'categories' array with the response from the API
+    // Set 'hasMoreCategories' to true or false depending on whether there are more categories
+  }
+
+  loadMoreCategories(event: any) {
+    console.log('Hiii');
+    if (this.hasMoreCategories) {
+      this.currentPage++;
+      this.loadCategories(); // Make API request to fetch the next page of categories
+
+      event.target.complete(); // Call this to signal that the asynchronous operation has completed
+    } else {
+      event.target.disabled = true; // Disable the infinite scroll when there are no more categories
+    }
   }
 
   onCategoryChange(category: CategoryI, event: any) {

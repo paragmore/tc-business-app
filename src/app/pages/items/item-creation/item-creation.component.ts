@@ -6,6 +6,8 @@ import {
 } from '@ionic/angular';
 import { CategorySelectionModalComponent } from '../category-selection-modal/category-selection-modal.component';
 import { CategoryI } from 'src/app/core/services/products/products.service';
+import { DiscountsModalComponent } from '../discounts-modal/discounts-modal.component';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-item-creation',
@@ -21,15 +23,26 @@ export class ItemCreationComponent implements OnInit {
   selectedCategoryIds: string[] = [];
   selectedCategories: CategoryI[] = [];
   selectedCategoriesString: string = '';
-  constructor(private modalController: ModalController) {}
+  constructor(
+    private modalController: ModalController,
+    private formBuilder: FormBuilder
+  ) {}
   ngOnInit() {
     this.presentingElement = document.querySelector('.ion-page');
-    this.openCreateCategoryModal();
   }
 
   onTermsChanged(event: Event) {
     const ev = event as CheckboxCustomEvent;
     this.canDismiss = ev.detail.checked;
+  }
+
+  async openDiscountsMoadal() {
+    const modal = await this.modalController.create({
+      component: DiscountsModalComponent,
+      componentProps: { selectedCategories: this.selectedCategories },
+      backdropDismiss: true,
+      cssClass: 'login-modal',
+    });
   }
 
   async openCreateCategoryModal() {
