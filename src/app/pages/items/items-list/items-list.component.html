@@ -19,7 +19,11 @@
     <ion-label position="stacked">Sort by</ion-label>
     <ion-list>
       <ion-item>
-        <ion-select aria-label="Fruit" interface="popover" placeholder="Most recent">
+        <ion-select
+          aria-label="Fruit"
+          interface="popover"
+          placeholder="Most recent"
+        >
           <ion-select-option value="apples">Apples</ion-select-option>
           <ion-select-option value="oranges">Oranges</ion-select-option>
           <ion-select-option value="bananas">Bananas</ion-select-option>
@@ -28,6 +32,12 @@
     </ion-list>
   </div>
 </ion-row>
+<app-pagination-component
+  [currentPage]="currentPage"
+  [totalPages]="totalPages"
+  (pageChange)="goToPage($event)"
+  (pageSizeChange)="changePageSize($event)"
+></app-pagination-component>
 <ion-row>
   <ion-grid>
     <ion-row class="header-row">
@@ -45,65 +55,45 @@
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-text>
-          CUp
-        </ion-text>
+        <ion-text> CUp </ion-text>
       </ion-col>
 
       <ion-col>
-        <ion-text>
-          ₹1,000
-        </ion-text>
+        <ion-text> ₹1,000 </ion-text>
       </ion-col>
 
       <ion-col>
-        <ion-text>
-          200
-        </ion-text>
+        <ion-text> 200 </ion-text>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-text>
-          CUp
-        </ion-text>
+        <ion-text> CUp </ion-text>
       </ion-col>
 
       <ion-col>
-        <ion-text>
-          ₹1,000
-        </ion-text>
+        <ion-text> ₹1,000 </ion-text>
       </ion-col>
 
       <ion-col>
-        <ion-text>
-          200
-        </ion-text>
+        <ion-text> 200 </ion-text>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-text>
-          CUp
-        </ion-text>
+        <ion-text> CUp </ion-text>
       </ion-col>
 
       <ion-col>
-        <ion-text>
-          ₹1,000
-        </ion-text>
+        <ion-text> ₹1,000 </ion-text>
       </ion-col>
 
       <ion-col>
-        <ion-text>
-          200
-        </ion-text>
+        <ion-text> 200 </ion-text>
       </ion-col>
     </ion-row>
-
   </ion-grid>
 </ion-row>
 <ion-row>
-  <app-item-creation>
-  </app-item-creation>
+  <app-item-creation> </app-item-creation>
 </ion-row>
