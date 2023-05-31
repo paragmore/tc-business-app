@@ -21,7 +21,7 @@ export class PaginationComponentComponent implements OnInit {
 
   get previousPages(): number[] {
     const pages = [];
-    for (let i = Math.max(1, this.currentPage - 3); i < this.currentPage; i++) {
+    for (let i = Math.max(1, this.currentPage - 2); i < this.currentPage; i++) {
       pages.push(i);
     }
     return pages;
@@ -31,7 +31,7 @@ export class PaginationComponentComponent implements OnInit {
     const pages = [];
     for (
       let i = this.currentPage + 1;
-      i <= Math.min(this.currentPage + 3, this.totalPages);
+      i <= Math.min(this.currentPage + 2, this.totalPages);
       i++
     ) {
       pages.push(i);
