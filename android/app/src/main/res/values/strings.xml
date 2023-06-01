@@ -2,6 +2,6 @@
 <resources>
     <string name="app_name">business-app</string>
     <string name="title_activity_main">business-app</string>
-    <string name="package_name">io.ionic.starter</string>
-    <string name="custom_url_scheme">io.ionic.starter</string>
+    <string name="package_name">io.taxpayercorner.business</string>
+    <string name="custom_url_scheme">io.taxpayercorner.business</string>
 </resources>
