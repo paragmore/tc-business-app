@@ -62,6 +62,7 @@
                 label="Unit"
                 label-placement="floating"
                 fill="outline"
+                formControlName="unit"
               ></ion-input>
             </ion-col>
           </ion-row>
@@ -71,6 +72,7 @@
                 label="Purchase Unit"
                 label-placement="floating"
                 fill="outline"
+                formControlName="purchaseUnitName"
               ></ion-input>
             </ion-col>
             <ion-col size-md="6" size-xs="12">
@@ -78,6 +80,7 @@
                 label="Conversion factor"
                 label-placement="floating"
                 fill="outline"
+                formControlName="purchaseUnitConversion"
               ></ion-input>
             </ion-col>
           </ion-row>
@@ -87,9 +90,10 @@
           <ion-row>
             <ion-col size-xs="6" size-md="4">
               <ion-input
-                label="Sales price"
+                label="Sells price"
                 label-placement="floating"
                 fill="outline"
+                formControlName="sellsPrice"
               ></ion-input>
             </ion-col>
             <ion-col size-xs="6" size-md="4">
@@ -97,6 +101,7 @@
                 label="Purchase price"
                 label-placement="floating"
                 fill="outline"
+                formControlName="purchasePrice"
               ></ion-input>
             </ion-col>
             <ion-col size-xs="12" size-md="4">
@@ -111,7 +116,9 @@
         <h5>Tax and inventory</h5>
         <ion-grid>
           <ion-row>
-            <ion-toggle [checked]="true">Tax included</ion-toggle><br /><br />
+            <ion-toggle formControlName="taxIncluded" [checked]="true"
+              >Tax included</ion-toggle
+            ><br /><br />
           </ion-row>
           <ion-row>
             <ion-col size-md="6" size-xs="12">
@@ -134,30 +141,20 @@
           <ion-row>
             <ion-col size-md="6" size-xs="12">
               <ion-input
-                label="HSN code"
+                label="Tax %"
                 label-placement="floating"
                 fill="outline"
+                (click)="showTaxPopover($event)"
+                [value]="gstPercentage"
               ></ion-input>
             </ion-col>
             <ion-col size-md="6" size-xs="12">
-              <ion-list>
-                <ion-item>
-                  <ion-select
-                    aria-label="Fruit"
-                    interface="popover"
-                    placeholder="Select GST %"
-                    fill="outline"
-                  >
-                    <ion-select-option value="apples">Apples</ion-select-option>
-                    <ion-select-option value="oranges"
-                      >Oranges</ion-select-option
-                    >
-                    <ion-select-option value="bananas"
-                      >Bananas</ion-select-option
-                    >
-                  </ion-select>
-                </ion-item>
-              </ion-list>
+              <ion-input
+                label="HSN code"
+                label-placement="floating"
+                fill="outline"
+                formControlName="hsnCode"
+              ></ion-input>
             </ion-col>
           </ion-row>
         </ion-grid>
