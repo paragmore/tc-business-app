@@ -32,6 +32,7 @@ export class ItemsListComponent implements OnInit {
   currentStoreInfo: StoreInfoModel | undefined;
   sortBy: string = 'name';
   sortOrder: SortOrder = 'asc';
+  isProductsLoading = false;
 
   constructor(
     private productsService: ProductsService,
@@ -48,6 +49,7 @@ export class ItemsListComponent implements OnInit {
   toggleSort(sortBy: string, order: SortOrder) {
     this.sortBy = sortBy;
     this.sortOrder = order;
+    this.loadProducts();
   }
 
   goToPage(page: number) {
@@ -66,16 +68,25 @@ export class ItemsListComponent implements OnInit {
   }
 
   loadProducts(page?: number) {
+    if (this.isProductsLoading) {
+      return;
+    }
     if (!this.currentStoreInfo?._id) {
       return;
     }
+    this.isProductsLoading = true;
+    console.log(1);
     this.productsService
       .getAllStoreProducts(this.currentStoreInfo?._id, {
         page: this.currentPage.toString(),
         pageSize: this.pageSize.toString(),
+        sortBy: this.sortBy,
+        sortOrder: this.sortOrder,
       })
       .subscribe(
         (response) => {
+          console.log(2);
+
           //@ts-ignore
           if (response.message === 'Success') {
             //@ts-ignore
@@ -89,7 +100,11 @@ export class ItemsListComponent implements OnInit {
             this.totalPages = pagination.totalPages;
           }
         },
-        (error) => {}
+        (error) => {},
+        () => {
+          this.isProductsLoading = false;
+        }
       );
+    console.log(3);
   }
 }
