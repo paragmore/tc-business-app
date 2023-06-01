@@ -1,6 +1,109 @@
-<app-dialog-header
-  style="width: 100%"
-  headerTitle="Create Discounts"
-  [onClose]="onCloseDiscountsModal"
->
-</app-dialog-header>
+<ion-grid>
+  <ion-row>
+    <app-dialog-header
+      style="width: 100%"
+      headerTitle="Create Discounts"
+      [onClose]="onCloseDiscountsModal"
+    >
+    </app-dialog-header>
+  </ion-row>
+  <ion-row>
+    <ion-grid style="min-width: 400px">
+      <form [formGroup]="discountForm">
+        <ion-row>
+          <ion-input
+            label-placement="floating"
+            fill="outline"
+            label="Discount Code"
+            formControlName="code"
+            placeholder="Enter discount code"
+          ></ion-input>
+        </ion-row>
+        <ion-radio-group formControlName="selection">
+          <ion-row>
+            <ion-col>
+              <ion-radio labelPlacement="end" value="orderValue"
+                >Order value</ion-radio
+              >
+            </ion-col>
+            <ion-col>
+              <ion-radio labelPlacement="end" value="orderQuantity"
+                >Order quantity</ion-radio
+              >
+            </ion-col>
+          </ion-row>
+        </ion-radio-group>
+
+        <ion-row>
+          <ion-col
+            *ngIf="discountForm.get('selection')?.value === 'orderValue'"
+          >
+            <ion-input
+              type="number"
+              label-placement="floating"
+              fill="outline"
+              label="Minimum order value"
+              formControlName="minValue"
+              placeholder="Minimum order value"
+            ></ion-input>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col
+            *ngIf="discountForm.get('selection')?.value === 'orderQuantity'"
+          >
+            <ion-input
+              type="number"
+              label-placement="floating"
+              fill="outline"
+              label="Minimum order quantity"
+              formControlName="minQuantity"
+              placeholder="Minimum order quantity"
+            ></ion-input>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-input
+            type="number"
+            label-placement="floating"
+            fill="outline"
+            label="Discount percent"
+            formControlName="name"
+            placeholder="Enter % discount"
+          ></ion-input>
+        </ion-row>
+        <ion-row>
+          <ion-input
+            type="number"
+            label-placement="floating"
+            fill="outline"
+            label="Discount amount"
+            formControlName="name"
+            placeholder="Enter amount"
+          ></ion-input>
+        </ion-row>
+        <ion-row>
+          <ion-input
+            type="number"
+            label-placement="floating"
+            fill="outline"
+            label="Maximum discount"
+            formControlName="maxDiscount"
+            placeholder="Enter maximum discount value"
+          ></ion-input>
+        </ion-row>
+      </form>
+    </ion-grid>
+  </ion-row>
+  <ion-row>
+    <ion-button
+      [disabled]="discountForm.invalid"
+      (click)="onCreateDiscount()"
+      style="width: 100%"
+    >
+      Create Discount
+    </ion-button>
+  </ion-row>
+</ion-grid>
