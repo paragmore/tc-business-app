@@ -33,6 +33,7 @@ import { Store } from '@ngrx/store';
     ReactiveFormsModule,
     FormsModule,
     CommonModule,
+    DiscountsModalComponent,
   ],
 })
 export class ItemCreationComponent implements OnInit {
@@ -124,13 +125,19 @@ export class ItemCreationComponent implements OnInit {
     this.canDismiss = ev.detail.checked;
   }
 
-  async openDiscountsMoadal() {
+  async openDiscountsModal() {
+    console.log('idhar');
     const modal = await this.modalController.create({
       component: DiscountsModalComponent,
-      componentProps: { selectedCategories: this.selectedCategories },
       backdropDismiss: true,
       cssClass: 'login-modal',
+      breakpoints: this.isMobile ? [0, 0.8, 1] : undefined,
+      initialBreakpoint: this.isMobile ? 0.8 : 1,
     });
+    console.log(modal);
+
+    modal.onDidDismiss().then((modalData) => {});
+    return await modal.present();
   }
 
   async openCreateCategoryModal() {
