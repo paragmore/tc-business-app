@@ -323,3 +323,7 @@ ion-menu::part(container) {
   line-height: 12px;
   letter-spacing: 0;
 }
+
+.searchbar-input.sc-ion-searchbar-md {
+  background-color: var(--ion-color-primary-contrast) !important;
+}

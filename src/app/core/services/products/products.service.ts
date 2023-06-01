@@ -149,11 +149,13 @@ export interface InventoryProductI {
   amountConsumed: number;
 }
 
+export type SortOrder = 'asc' | 'desc' | '1' | '-1' | 'ascending' | 'decending';
+
 export interface PaginationQueryParamsI {
   pageSize?: string;
   page?: string;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc' | '1' | '-1' | 'ascending' | 'decending';
+  sortOrder?: SortOrder;
 }
 
 export interface ProductsFilterByQueryI {

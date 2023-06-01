@@ -4,6 +4,7 @@ import { ItemCreationComponent } from '../item-creation/item-creation.component'
 import {
   ProductI,
   ProductsService,
+  SortOrder,
 } from 'src/app/core/services/products/products.service';
 import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
 import { CurrentStoreInfoService } from 'src/app/core/services/currentStore/current-store-info.service';
@@ -29,6 +30,8 @@ export class ItemsListComponent implements OnInit {
   pageSize = 10;
   hasMoreProducts = true;
   currentStoreInfo: StoreInfoModel | undefined;
+  sortBy: string = 'name';
+  sortOrder: SortOrder = 'asc';
 
   constructor(
     private productsService: ProductsService,
@@ -40,6 +43,11 @@ export class ItemsListComponent implements OnInit {
       this.currentStoreInfo = response;
     });
     this.loadProducts();
+  }
+
+  toggleSort(sortBy: string, order: SortOrder) {
+    this.sortBy = sortBy;
+    this.sortOrder = order;
   }
 
   goToPage(page: number) {

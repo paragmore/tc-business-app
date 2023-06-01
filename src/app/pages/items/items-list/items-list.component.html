@@ -1,78 +1,166 @@
-<div
-  style="
-    border-radius: 10px;
-    padding: 10px;
-    background-color: white;
-    margin: 10px;
-    height: 98%;
-    display: flex;
-    flex-direction: column;
-  "
->
+<div class="list-outer-container">
   <ion-row>
     <div>
-      <ion-label position="stacked">Search for products</ion-label>
-      <ion-searchbar placeholder="Search by Product name"></ion-searchbar>
+      <ion-searchbar
+        style="background-color: var(--ion-color-primary-contrast)"
+        placeholder="Search by Product name"
+      ></ion-searchbar>
     </div>
     <div>
-      <ion-label position="stacked">Filter by</ion-label>
       <ion-list>
-        <ion-item>
-          <ion-select aria-label="Fruit" interface="popover" placeholder="All">
-            <ion-select-option value="apples">Apples</ion-select-option>
-            <ion-select-option value="oranges">Oranges</ion-select-option>
-            <ion-select-option value="bananas">Bananas</ion-select-option>
-          </ion-select>
-        </ion-item>
+        <ion-select aria-label="Fruit" interface="popover" placeholder="All">
+          <ion-select-option value="apples">Apples</ion-select-option>
+          <ion-select-option value="oranges">Oranges</ion-select-option>
+          <ion-select-option value="bananas">Bananas</ion-select-option>
+        </ion-select>
       </ion-list>
     </div>
     <div>
-      <ion-label position="stacked">Sort by</ion-label>
       <ion-list>
-        <ion-item>
-          <ion-select
-            aria-label="Fruit"
-            interface="popover"
-            placeholder="Most recent"
-          >
-            <ion-select-option value="apples">Apples</ion-select-option>
-            <ion-select-option value="oranges">Oranges</ion-select-option>
-            <ion-select-option value="bananas">Bananas</ion-select-option>
-          </ion-select>
-        </ion-item>
+        <ion-select
+          aria-label="Fruit"
+          interface="popover"
+          placeholder="Most recent"
+        >
+          <ion-select-option value="apples">Apples</ion-select-option>
+          <ion-select-option value="oranges">Oranges</ion-select-option>
+          <ion-select-option value="bananas">Bananas</ion-select-option>
+        </ion-select>
       </ion-list>
     </div>
   </ion-row>
 
-  <ion-row style="flex: 1">
-    <ion-grid>
+  <ion-row class="list-row-container">
+    <ion-grid style="height: 95%">
       <ion-row class="header-row">
-        <ion-col>
-          <ion-text color="primary">Product</ion-text>
+        <ion-col style="display: flex; align-items: center" size="7">
+          <ion-text
+            (click)="toggleSort('name', sortOrder === 'asc' ? 'desc' : 'asc')"
+            color="primary"
+            >Product</ion-text
+          >
+          <ng-container *ngIf="sortBy !== 'name'">
+            <button ion-button icon-only (click)="toggleSort('name', 'asc')">
+              <ion-icon name="swap-vertical-outline"></ion-icon>
+            </button>
+          </ng-container>
+          <ng-container *ngIf="sortBy === 'name'">
+            <button
+              ion-button
+              icon-only
+              (click)="toggleSort('name', sortOrder === 'asc' ? 'desc' : 'asc')"
+            >
+              <ion-icon
+                [name]="sortOrder === 'asc' ? 'arrow-up' : 'arrow-down'"
+              ></ion-icon>
+            </button>
+          </ng-container>
         </ion-col>
 
-        <ion-col>
-          <ion-text color="primary">Sells Price</ion-text>
+        <ion-col size="3">
+          <ion-text
+            color="primary"
+            (click)="
+              toggleSort('sellsPrice', sortOrder === 'asc' ? 'desc' : 'asc')
+            "
+            >Sells Price</ion-text
+          >
+          <ng-container *ngIf="sortBy !== 'sellsPrice'">
+            <button
+              ion-button
+              icon-only
+              (click)="toggleSort('sellsPrice', 'asc')"
+            >
+              <ion-icon name="swap-vertical-outline"></ion-icon>
+            </button>
+          </ng-container>
+          <ng-container *ngIf="sortBy === 'sellsPrice'">
+            <button
+              ion-button
+              icon-only
+              (click)="
+                toggleSort('sellsPrice', sortOrder === 'asc' ? 'desc' : 'asc')
+              "
+            >
+              <ion-icon
+                [name]="sortOrder === 'asc' ? 'arrow-up' : 'arrow-down'"
+              ></ion-icon>
+            </button>
+          </ng-container>
         </ion-col>
-
-        <ion-col>
-          <ion-text color="primary">Stock</ion-text>
+        <ion-col size="2 ">
+          <ion-text
+            color="primary"
+            (click)="toggleSort('stock', sortOrder === 'asc' ? 'desc' : 'asc')"
+            >Stock</ion-text
+          >
+          <ng-container *ngIf="sortBy !== 'stock'">
+            <button ion-button icon-only (click)="toggleSort('stock', 'asc')">
+              <ion-icon name="swap-vertical-outline"></ion-icon>
+            </button>
+          </ng-container>
+          <ng-container *ngIf="sortBy === 'stock'">
+            <button
+              ion-button
+              icon-only
+              (click)="
+                toggleSort('stock', sortOrder === 'asc' ? 'desc' : 'asc')
+              "
+            >
+              <ion-icon
+                [name]="sortOrder === 'asc' ? 'arrow-up' : 'arrow-down'"
+              ></ion-icon>
+            </button>
+          </ng-container>
         </ion-col>
       </ion-row>
-      <ion-list style="background-color: white; overflow-y: scroll">
+
+      <ion-list
+        style="
+          /* background-color: var(--ion-color-primary-contrast); */
+          overflow-y: scroll;
+          height: 95%;
+        "
+      >
         <div *ngFor="let product of products; let i = index">
-          <ion-row>
-            <ion-col>
-              <ion-text style="overflow-wrap: anywhere">
-                {{ product.name }}
-              </ion-text>
+          <ion-row
+            style="
+              background-color: var(--ion-color-primary-contrast);
+              border-radius: 5px;
+              padding: 10px;
+              margin: 5px;
+            "
+          >
+            <ion-col size="7">
+              <ion-row>
+                <ion-col>
+                  <div style="width: 40px; height: 40px">
+                    <ion-avatar
+                      style="
+                        --border-radius: 5px;
+                        width: fit-content;
+                        height: fit-content;
+                      "
+                    >
+                      <ion-img
+                        src="https://ionicframework.com/docs/img/demos/avatar.svg"
+                      ></ion-img>
+                    </ion-avatar>
+                  </div>
+                </ion-col>
+                <ion-col>
+                  <ion-text style="overflow-wrap: anywhere">
+                    {{ product.name }}
+                  </ion-text>
+                </ion-col>
+              </ion-row>
             </ion-col>
 
-            <ion-col>
+            <ion-col size="3">
               <ion-text> ₹{{ product.sellsPrice }} </ion-text>
             </ion-col>
 
-            <ion-col>
+            <ion-col size="2">
               <ion-text> {{ product.quantity }} </ion-text>
             </ion-col>
           </ion-row>
@@ -80,7 +168,7 @@
       </ion-list>
     </ion-grid>
   </ion-row>
-  <ion-row style="width: 100%">
+  <ion-row style="width: 100%; bottom: 10px">
     <app-pagination-component
       style="width: 100%"
       [currentPage]="currentPage"
@@ -89,7 +177,5 @@
       (pageSizeChange)="changePageSize($event)"
     ></app-pagination-component>
   </ion-row>
-  <ion-row>
-    <app-item-creation> </app-item-creation>
-  </ion-row>
+  <app-item-creation> </app-item-creation>
 </div>
