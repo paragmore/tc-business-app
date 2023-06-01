@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import {
   CheckboxCustomEvent,
   IonicModule,
@@ -6,7 +6,10 @@ import {
   PopoverController,
 } from '@ionic/angular';
 import { CategorySelectionModalComponent } from '../category-selection-modal/category-selection-modal.component';
-import { CategoryI } from 'src/app/core/services/products/products.service';
+import {
+  CategoryI,
+  ProductI,
+} from 'src/app/core/services/products/products.service';
 import { DiscountsModalComponent } from '../discounts-modal/discounts-modal.component';
 import {
   FormBuilder,
@@ -21,6 +24,7 @@ import { ScreenModel } from 'src/app/store/models/screen.models';
 import { Observable } from 'rxjs';
 import { AppState } from 'src/app/store/models/state.model';
 import { Store } from '@ngrx/store';
+import { DialogHeaderComponent } from 'src/app/core/components/dialog-header/dialog-header.component';
 
 @Component({
   selector: 'app-item-creation',
@@ -34,11 +38,12 @@ import { Store } from '@ngrx/store';
     FormsModule,
     CommonModule,
     DiscountsModalComponent,
+    DialogHeaderComponent,
   ],
 })
 export class ItemCreationComponent implements OnInit {
+  @Input() editProduct: ProductI | undefined;
   canDismiss = false;
-
   presentingElement: Element | null = null;
   selectedCategoryIds: string[] = [];
   selectedCategories: CategoryI[] = [];
@@ -72,7 +77,12 @@ export class ItemCreationComponent implements OnInit {
     console.log('inits');
     this.screenState$ = this.store.select((store) => store.screen);
     this.screenState$.subscribe((screen) => (this.isMobile = screen.isMobile));
+    this.productForm.patchValue({ name: this.editProduct?.name });
   }
+
+  onCloseProductCreationModal = () => {
+    this.modalController.dismiss();
+  };
 
   onSameUnitsToggled(event: any) {
     this.sameUnits = event.detail.checked;

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ModalController } from '@ionic/angular';
 import { ItemCreationComponent } from '../item-creation/item-creation.component';
 import {
   ProductI,
@@ -36,7 +36,8 @@ export class ItemsListComponent implements OnInit {
 
   constructor(
     private productsService: ProductsService,
-    private currentStoreInfoService: CurrentStoreInfoService
+    private currentStoreInfoService: CurrentStoreInfoService,
+    private modalController: ModalController
   ) {}
 
   ngOnInit() {
@@ -44,6 +45,17 @@ export class ItemsListComponent implements OnInit {
       this.currentStoreInfo = response;
     });
     this.loadProducts();
+  }
+
+  async openAddProductModal() {
+    const modal = await this.modalController.create({
+      component: ItemCreationComponent,
+      backdropDismiss: true,
+      cssClass: 'side-modal',
+    });
+
+    modal.onDidDismiss().then((modalData) => {});
+    return await modal.present();
   }
 
   toggleSort(sortBy: string, order: SortOrder) {

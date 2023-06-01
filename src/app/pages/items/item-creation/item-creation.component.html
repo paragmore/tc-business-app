@@ -1,180 +1,166 @@
-<ion-button id="open-modal" expand="block">Add product</ion-button>
-<ion-modal
-  class="modal-fullscreen"
-  #modal
-  trigger="open-modal"
-  [canDismiss]="true"
-  [presentingElement]="presentingElement"
-  [isOpen]="false"
->
-  <ng-template>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Add product</ion-title>
-        <ion-buttons slot="end">
-          <ion-button (click)="modal.dismiss()">Close</ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content>
-      <form [formGroup]="productForm">
-        <h5>Product Details</h5>
-        <div style="padding: 10px; margin: 10px">
-          <div>
-            <ion-icon name="add-outline"></ion-icon>
-            <ion-icon size="large" name="images-outline"></ion-icon>
-          </div>
-
-          <ion-label position="stacked">Add Photo</ion-label>
-        </div>
-        <ion-grid>
-          <ion-row>
-            <ion-col size-md="6" size-xs="12">
-              <ion-input
-                label="Product Name"
-                label-placement="floating"
-                fill="outline"
-                formControlName="name"
-              ></ion-input>
-            </ion-col>
-            <ion-col size-md="6" size-xs="12">
-              <ion-input
-                (click)="openCreateCategoryModal()"
-                label="Product Category"
-                label-placement="floating"
-                fill="outline"
-                [value]="selectedCategoriesString"
-              ></ion-input>
-            </ion-col>
-          </ion-row>
-          <br /><br />
-          <ion-row>
-            <ion-toggle
-              (ionChange)="onSameUnitsToggled($event)"
-              [checked]="sameUnits"
-              >Sales Unit same as Purchase Unit</ion-toggle
-            >
-          </ion-row>
-
-          <ion-row>
-            <ion-col size-md="12" size-xs="12">
-              <ion-input
-                label="Unit"
-                label-placement="floating"
-                fill="outline"
-                formControlName="unit"
-              ></ion-input>
-            </ion-col>
-          </ion-row>
-          <ion-row *ngIf="!sameUnits">
-            <ion-col size-md="6" size-xs="12">
-              <ion-input
-                label="Purchase Unit"
-                label-placement="floating"
-                fill="outline"
-                formControlName="purchaseUnitName"
-              ></ion-input>
-            </ion-col>
-            <ion-col size-md="6" size-xs="12">
-              <ion-input
-                label="Conversion factor"
-                label-placement="floating"
-                fill="outline"
-                formControlName="purchaseUnitConversion"
-              ></ion-input>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-
-        <ion-grid>
-          <ion-row>
-            <ion-col size-xs="6" size-md="4">
-              <ion-input
-                label="Sells price"
-                label-placement="floating"
-                fill="outline"
-                formControlName="sellsPrice"
-              ></ion-input>
-            </ion-col>
-            <ion-col size-xs="6" size-md="4">
-              <ion-input
-                label="Purchase price"
-                label-placement="floating"
-                fill="outline"
-                formControlName="purchasePrice"
-              ></ion-input>
-            </ion-col>
-            <ion-col size-xs="12" size-md="4">
-              <ion-input
-                label="Discounts"
-                label-placement="floating"
-                fill="outline"
-                (click)="openDiscountsModal()"
-              ></ion-input>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-        <h5>Tax and inventory</h5>
-        <ion-grid>
-          <ion-row>
-            <ion-toggle formControlName="taxIncluded" [checked]="true"
-              >Tax included</ion-toggle
-            ><br /><br />
-          </ion-row>
-          <ion-row>
-            <ion-col size-md="6" size-xs="12">
-              <ion-input
-                label="Opening stock"
-                label-placement="floating"
-                fill="outline"
-              ></ion-input>
-            </ion-col>
-            <ion-col size-md="6" size-xs="12">
-              <ion-input
-                label="Low stock"
-                label-placement="floating"
-                fill="outline"
-              ></ion-input>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-        <ion-grid>
-          <ion-row>
-            <ion-col size-md="6" size-xs="12">
-              <ion-input
-                label="Tax %"
-                label-placement="floating"
-                fill="outline"
-                (click)="showTaxPopover($event)"
-                [value]="gstPercentage"
-              ></ion-input>
-            </ion-col>
-            <ion-col size-md="6" size-xs="12">
-              <ion-input
-                label="HSN code"
-                label-placement="floating"
-                fill="outline"
-                formControlName="hsnCode"
-              ></ion-input>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-        <h5>Variants</h5>
-      </form>
-    </ion-content>
-    <ion-button
-      style="
-        display: flex;
-        position: sticky;
-        height: 60px;
-        align-items: center;
-        bottom: 0px;
-        justify-content: flex-end;
-        padding: 10px;
-      "
-      type="submit"
-      class="btn btn-primary"
-      >Add Product</ion-button
+<ion-header>
+  <ion-toolbar>
+    <app-dialog-header
+      style="width: 100%"
+      headerTitle="Add product"
+      [onClose]="onCloseProductCreationModal"
     >
-  </ng-template>
-</ion-modal>
+    </app-dialog-header>
+  </ion-toolbar>
+</ion-header>
+<form [formGroup]="productForm">
+  <h5>Product Details</h5>
+  <div style="padding: 10px; margin: 10px">
+    <div>
+      <ion-icon name="add-outline"></ion-icon>
+      <ion-icon size="large" name="images-outline"></ion-icon>
+    </div>
+
+    <ion-label position="stacked">Add Photo</ion-label>
+  </div>
+  <ion-grid>
+    <ion-row>
+      <ion-col size-md="6" size-xs="12">
+        <ion-input
+          label="Product Name"
+          label-placement="floating"
+          fill="outline"
+          formControlName="name"
+        ></ion-input>
+      </ion-col>
+      <ion-col size-md="6" size-xs="12">
+        <ion-input
+          (click)="openCreateCategoryModal()"
+          label="Product Category"
+          label-placement="floating"
+          fill="outline"
+          [value]="selectedCategoriesString"
+        ></ion-input>
+      </ion-col>
+    </ion-row>
+    <br /><br />
+    <ion-row>
+      <ion-toggle (ionChange)="onSameUnitsToggled($event)" [checked]="sameUnits"
+        >Sales Unit same as Purchase Unit</ion-toggle
+      >
+    </ion-row>
+
+    <ion-row>
+      <ion-col size-md="12" size-xs="12">
+        <ion-input
+          label="Unit"
+          label-placement="floating"
+          fill="outline"
+          formControlName="unit"
+        ></ion-input>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="!sameUnits">
+      <ion-col size-md="6" size-xs="12">
+        <ion-input
+          label="Purchase Unit"
+          label-placement="floating"
+          fill="outline"
+          formControlName="purchaseUnitName"
+        ></ion-input>
+      </ion-col>
+      <ion-col size-md="6" size-xs="12">
+        <ion-input
+          label="Conversion factor"
+          label-placement="floating"
+          fill="outline"
+          formControlName="purchaseUnitConversion"
+        ></ion-input>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-grid>
+    <ion-row>
+      <ion-col size-xs="6" size-md="4">
+        <ion-input
+          label="Sells price"
+          label-placement="floating"
+          fill="outline"
+          formControlName="sellsPrice"
+        ></ion-input>
+      </ion-col>
+      <ion-col size-xs="6" size-md="4">
+        <ion-input
+          label="Purchase price"
+          label-placement="floating"
+          fill="outline"
+          formControlName="purchasePrice"
+        ></ion-input>
+      </ion-col>
+      <ion-col size-xs="12" size-md="4">
+        <ion-input
+          label="Discounts"
+          label-placement="floating"
+          fill="outline"
+          (click)="openDiscountsModal()"
+        ></ion-input>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <h5>Tax and inventory</h5>
+  <ion-grid>
+    <ion-row>
+      <ion-toggle formControlName="taxIncluded" [checked]="true"
+        >Tax included</ion-toggle
+      ><br /><br />
+    </ion-row>
+    <ion-row>
+      <ion-col size-md="6" size-xs="12">
+        <ion-input
+          label="Opening stock"
+          label-placement="floating"
+          fill="outline"
+        ></ion-input>
+      </ion-col>
+      <ion-col size-md="6" size-xs="12">
+        <ion-input
+          label="Low stock"
+          label-placement="floating"
+          fill="outline"
+        ></ion-input>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-grid>
+    <ion-row>
+      <ion-col size-md="6" size-xs="12">
+        <ion-input
+          label="Tax %"
+          label-placement="floating"
+          fill="outline"
+          (click)="showTaxPopover($event)"
+          [value]="gstPercentage"
+        ></ion-input>
+      </ion-col>
+      <ion-col size-md="6" size-xs="12">
+        <ion-input
+          label="HSN code"
+          label-placement="floating"
+          fill="outline"
+          formControlName="hsnCode"
+        ></ion-input>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <h5>Variants</h5>
+</form>
+<ion-button
+  style="
+    display: flex;
+    position: sticky;
+    height: 60px;
+    align-items: center;
+    bottom: 0px;
+    justify-content: flex-end;
+    padding: 10px;
+  "
+  type="submit"
+  class="btn btn-primary"
+  >Add Product</ion-button
+>
