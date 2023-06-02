@@ -25,6 +25,7 @@ import { Observable } from 'rxjs';
 import { AppState } from 'src/app/store/models/state.model';
 import { Store } from '@ngrx/store';
 import { DialogHeaderComponent } from 'src/app/core/components/dialog-header/dialog-header.component';
+import { VariantCreationModalComponent } from '../variant-creation-modal/variant-creation-modal.component';
 
 @Component({
   selector: 'app-item-creation',
@@ -70,6 +71,8 @@ export class ItemCreationComponent implements OnInit {
       purchasePrice: [''],
       taxIncluded: [true, Validators.required],
       hsnCode: [''],
+      quantity: ['', Validators.required],
+      lowStock: [''],
     });
   }
   ngOnInit() {
@@ -135,6 +138,19 @@ export class ItemCreationComponent implements OnInit {
     this.canDismiss = ev.detail.checked;
   }
 
+  async openVariantCreationModal() {
+    const modal = await this.modalController.create({
+      component: VariantCreationModalComponent,
+      backdropDismiss: true,
+      cssClass: 'login-modal',
+      breakpoints: this.isMobile ? [0, 0.8, 1] : undefined,
+      initialBreakpoint: this.isMobile ? 0.8 : 1,
+    });
+    console.log(modal);
+
+    modal.onDidDismiss().then((modalData) => {});
+    return await modal.present();
+  }
   async openDiscountsModal() {
     console.log('idhar');
     const modal = await this.modalController.create({

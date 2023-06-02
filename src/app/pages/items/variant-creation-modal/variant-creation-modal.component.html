@@ -1,0 +1,58 @@
+<div style="padding: 10px">
+  <app-dialog-header
+    style="width: 100%"
+    headerTitle="Create Variant"
+    [onClose]="onCloseVariantModal"
+  >
+  </app-dialog-header>
+  <form [formGroup]="variantForm">
+    <ion-grid formArrayName="variantOptions">
+      <ion-row
+        *ngFor="let item of variantOptions.controls; let i = index"
+        [formGroupName]="i"
+      >
+        <ion-col size="4">
+          <ion-input
+            class="form-group col"
+            type="text"
+            class="form-control"
+            required
+            fill="outline"
+            placeholder="E.g Material, Size"
+            formControlName="name"
+          ></ion-input>
+        </ion-col>
+        <ion-col size="7">
+          <ion-input
+            class="form-group col"
+            type="text"
+            class="form-control"
+            required
+            fill="outline"
+            placeholder="Seperate values with commas or press enter"
+            formControlName="options"
+          ></ion-input>
+        </ion-col>
+        <ion-col size="1">
+          <ion-icon
+            *ngIf="i !== 0"
+            style="cursor: pointer"
+            (click)="removeItem(i)"
+            size="large"
+            name="trash-outline"
+          ></ion-icon>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-button (click)="addOption()" fill="outline">
+          <ion-icon name="add"></ion-icon> Add another option
+        </ion-button>
+      </ion-row>
+      <ion-row>
+        <ion-button (click)="createVariants()" fill="outline">
+          <ion-icon name="add"></ion-icon> Create Variants
+        </ion-button>
+      </ion-row>
+    </ion-grid>
+  </form>
+</div>

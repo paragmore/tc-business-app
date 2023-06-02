@@ -116,6 +116,7 @@
           label="Opening stock"
           label-placement="floating"
           fill="outline"
+          formControlName="quantity"
         ></ion-input>
       </ion-col>
       <ion-col size-md="6" size-xs="12">
@@ -123,6 +124,7 @@
           label="Low stock"
           label-placement="floating"
           fill="outline"
+          formControlName="lowStock"
         ></ion-input>
       </ion-col>
     </ion-row>
@@ -149,6 +151,9 @@
     </ion-row>
   </ion-grid>
   <h5>Variants</h5>
+  <ion-button (click)="openVariantCreationModal()">
+    Add new Variant
+  </ion-button>
 </form>
 <ion-button
   style="
