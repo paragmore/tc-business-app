@@ -12,6 +12,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { userStoreInfoReducer } from './app/store/reducers/userStoreInfo.reducer';
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
+import { selectedProductReducer } from './app/store/reducers/selectedProduct.reducer';
 
 if (environment.production) {
   enableProdMode();
@@ -22,9 +23,15 @@ bootstrapApplication(AppComponent, {
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     importProvidersFrom(IonicModule.forRoot({})),
     provideRouter(routes),
-    importProvidersFrom(StoreModule.forRoot({ screen: screenReducer, userStoreInfo: userStoreInfoReducer })),
+    importProvidersFrom(
+      StoreModule.forRoot({
+        screen: screenReducer,
+        userStoreInfo: userStoreInfoReducer,
+        selectedProduct: selectedProductReducer,
+      })
+    ),
     importProvidersFrom(HttpClientModule),
-    provideStoreDevtools()
+    provideStoreDevtools(),
   ],
 });
 
