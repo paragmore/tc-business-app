@@ -10,6 +10,9 @@ import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
 import { CurrentStoreInfoService } from 'src/app/core/services/currentStore/current-store-info.service';
 import { PaginationComponentComponent } from 'src/app/core/components/pagination-component/pagination-component.component';
 import { CommonModule } from '@angular/common';
+import { AppState } from 'src/app/store/models/state.model';
+import { Store } from '@ngrx/store';
+import { setSelectedProduct } from 'src/app/store/actions/selectedProduct.action';
 
 @Component({
   selector: 'app-items-list',
@@ -37,14 +40,15 @@ export class ItemsListComponent implements OnInit {
   constructor(
     private productsService: ProductsService,
     private currentStoreInfoService: CurrentStoreInfoService,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private store: Store<AppState>
   ) {}
 
   ngOnInit() {
     this.currentStoreInfoService.getCurrentStoreInfo().subscribe((response) => {
       this.currentStoreInfo = response;
+      this.loadProducts();
     });
-    this.loadProducts();
   }
 
   async openAddProductModal() {
@@ -77,6 +81,14 @@ export class ItemsListComponent implements OnInit {
     this.pageSize = pageSize;
     this.loadProducts();
     // Fetch the data for the new page size or update the list accordingly
+  }
+
+  openProductDetails(product: ProductI) {
+    this.store.dispatch(
+      setSelectedProduct({
+        selectedProduct: { selectedProductId: product._id },
+      })
+    );
   }
 
   loadProducts(page?: number) {

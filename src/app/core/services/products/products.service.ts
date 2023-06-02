@@ -47,6 +47,11 @@ export class ProductsService {
     return this.httpClient.get(url, { headers: headers });
   }
 
+  getStoreProductById(storeId: string, productId: string) {
+    const url = this.baseUrl + `products/${storeId}/${productId}`;
+    const headers = getAuthHeaders();
+    return this.httpClient.get(url, { headers: headers });
+  }
   getAllStoreProducts(storeId: string, options?: GetProductsQueryParamsI) {
     const queryParams = new URLSearchParams();
     if (options?.pageSize) {
@@ -146,6 +151,7 @@ export interface ProductI {
   deliveryTime?: string;
   isInventory?: boolean;
   inventoryProducts?: InventoryProductI[];
+  _id: string;
 }
 
 export interface InventoryProductI {
