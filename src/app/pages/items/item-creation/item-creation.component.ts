@@ -9,6 +9,7 @@ import { CategorySelectionModalComponent } from '../category-selection-modal/cat
 import {
   CategoryI,
   ProductI,
+  VariantI,
 } from 'src/app/core/services/products/products.service';
 import { DiscountsModalComponent } from '../discounts-modal/discounts-modal.component';
 import {
@@ -26,6 +27,7 @@ import { AppState } from 'src/app/store/models/state.model';
 import { Store } from '@ngrx/store';
 import { DialogHeaderComponent } from 'src/app/core/components/dialog-header/dialog-header.component';
 import { VariantCreationModalComponent } from '../variant-creation-modal/variant-creation-modal.component';
+import { VariantSeperatorPipe } from 'src/app/core/pipes/variant-seperator.pipe';
 
 @Component({
   selector: 'app-item-creation',
@@ -40,6 +42,7 @@ import { VariantCreationModalComponent } from '../variant-creation-modal/variant
     CommonModule,
     DiscountsModalComponent,
     DialogHeaderComponent,
+    VariantSeperatorPipe,
   ],
 })
 export class ItemCreationComponent implements OnInit {
@@ -55,7 +58,7 @@ export class ItemCreationComponent implements OnInit {
   gstPercentage!: string;
   taxPopover: any;
   public screenState$: Observable<ScreenModel> | undefined;
-
+  variants: VariantI[] = [];
   constructor(
     private modalController: ModalController,
     private formBuilder: FormBuilder,
@@ -138,6 +141,36 @@ export class ItemCreationComponent implements OnInit {
     this.canDismiss = ev.detail.checked;
   }
 
+  generateVariantCombinations(
+    variantOptions: VariantOption[],
+    currentCombination: VariantCombination[] = [],
+    index: number = 0
+  ): VariantCombination[][] {
+    if (index === variantOptions.length) {
+      // Base case: reached the end of variantOptions array, return the current combination
+      return [currentCombination];
+    }
+
+    const variantOption = variantOptions[index];
+    const combinations = [];
+    const options = variantOption.options.split(',');
+    // Generate combinations by combining each option with the remaining options
+    for (const option of options) {
+      const newCombination = [
+        ...currentCombination,
+        { name: variantOption.name, value: option },
+      ];
+      const remainingCombinations = this.generateVariantCombinations(
+        variantOptions,
+        newCombination,
+        index + 1
+      );
+      combinations.push(...remainingCombinations);
+    }
+
+    return combinations;
+  }
+
   async openVariantCreationModal() {
     const modal = await this.modalController.create({
       component: VariantCreationModalComponent,
@@ -148,7 +181,28 @@ export class ItemCreationComponent implements OnInit {
     });
     console.log(modal);
 
-    modal.onDidDismiss().then((modalData) => {});
+    modal.onDidDismiss().then((modalData) => {
+      if (modalData && modalData?.data?.variantOptions) {
+        const variantCombinations = this.generateVariantCombinations(
+          modalData?.data?.variantOptions
+        );
+        console.log(variantCombinations);
+        variantCombinations.map((combination) => {
+          const newVariant: VariantI = {
+            properties: {},
+            stockQuantity: 0,
+          };
+          combination.map(
+            (option) =>
+              (newVariant.properties = {
+                ...newVariant.properties,
+                [option.name]: option.value,
+              })
+          );
+          this.variants.push(newVariant);
+        });
+      }
+    });
     return await modal.present();
   }
   async openDiscountsModal() {
@@ -194,4 +248,14 @@ export class ItemCreationComponent implements OnInit {
     });
     return await modal.present();
   }
+}
+
+interface VariantOption {
+  name: string;
+  options: string;
+}
+
+interface VariantCombination {
+  name: string;
+  value: string;
 }

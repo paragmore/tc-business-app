@@ -108,6 +108,10 @@ export interface VariantPropertiesI {
 export interface VariantI {
   properties: VariantPropertiesI;
   stockQuantity: number;
+  sellsPrice?: number;
+  skuId?: number;
+  discount?: DiscountI;
+  imageUrls?: string[];
 }
 
 export interface UnitI {

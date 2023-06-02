@@ -62,6 +62,7 @@ export class VariantCreationModalComponent implements OnInit {
 
   createVariants() {
     console.log(this.variantForm);
+    this.modalContoller.dismiss(this.variantForm.value);
   }
 
   addOption(): void {
