@@ -19,7 +19,7 @@ export class ProductsService {
   }
 
   createStoreProduct(createProductRequest: CreateProductRequestI) {
-    const url = this.baseUrl + `products/category/create`;
+    const url = this.baseUrl + `products/create`;
     const headers = getAuthHeaders();
     const body = {
       ...createProductRequest,
@@ -115,7 +115,7 @@ export interface VariantI {
   stockQuantity: number;
   sellsPrice?: number;
   skuId?: number;
-  discount?: DiscountI;
+  discounts?: DiscountI[];
   imageUrls?: string[];
 }
 
@@ -178,7 +178,28 @@ export interface ProductsFilterByQueryI {
   maxQuantity?: string;
 }
 
-export interface CreateProductRequestI extends ProductI {}
+export interface CreateProductRequestI {
+  storeId: string;
+  name: string;
+  description?: string;
+  sellsPrice: number;
+  purchasePrice?: number;
+  category: string[];
+  variants?: VariantI[];
+  heroImage?: string;
+  images?: string[];
+  quantity: number;
+  discounts?: DiscountI[];
+  hsnCode?: string;
+  taxIncluded?: boolean;
+  unit: string;
+  purchaseUnitName?: string;
+  purchaseUnitConversion?: string;
+  gstPercentage?: number;
+  deliveryTime?: string;
+  isInventory?: boolean;
+  inventoryProducts?: InventoryProductI[];
+}
 
 export interface GetProductsQueryParamsI
   extends ProductsFilterByQueryI,

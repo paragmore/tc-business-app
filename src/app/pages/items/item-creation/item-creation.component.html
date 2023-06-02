@@ -141,6 +141,7 @@
             fill="outline"
             (click)="showTaxPopover($event)"
             [value]="gstPercentage"
+            formControlName="gstPercentage"
           ></ion-input>
         </ion-col>
         <ion-col size-md="6" size-xs="12">
@@ -221,5 +222,7 @@
   "
   type="submit"
   class="btn btn-primary"
+  (click)="createProduct()"
+  [disabled]="productForm.invalid"
   >Add Product</ion-button
 >

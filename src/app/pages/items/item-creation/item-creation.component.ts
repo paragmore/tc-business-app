@@ -4,11 +4,14 @@ import {
   IonicModule,
   ModalController,
   PopoverController,
+  ToastController,
 } from '@ionic/angular';
 import { CategorySelectionModalComponent } from '../category-selection-modal/category-selection-modal.component';
 import {
   CategoryI,
+  CreateProductRequestI,
   ProductI,
+  ProductsService,
   VariantI,
 } from 'src/app/core/services/products/products.service';
 import { DiscountsModalComponent } from '../discounts-modal/discounts-modal.component';
@@ -28,6 +31,9 @@ import { Store } from '@ngrx/store';
 import { DialogHeaderComponent } from 'src/app/core/components/dialog-header/dialog-header.component';
 import { VariantCreationModalComponent } from '../variant-creation-modal/variant-creation-modal.component';
 import { VariantSeperatorPipe } from 'src/app/core/pipes/variant-seperator.pipe';
+import { CurrentStoreInfoService } from 'src/app/core/services/currentStore/current-store-info.service';
+import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
+import { toastAlert } from 'src/app/core/utils/toastAlert';
 
 @Component({
   selector: 'app-item-creation',
@@ -56,6 +62,7 @@ export class ItemCreationComponent implements OnInit {
   sameUnits: boolean = true;
   isMobile: boolean = false;
   gstPercentage!: string;
+  currentStoreInfo: StoreInfoModel | undefined;
   taxPopover: any;
   public screenState$: Observable<ScreenModel> | undefined;
   variants: VariantI[] = [];
@@ -63,7 +70,10 @@ export class ItemCreationComponent implements OnInit {
     private modalController: ModalController,
     private formBuilder: FormBuilder,
     public popoverController: PopoverController,
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    private currentStoreInfoService: CurrentStoreInfoService,
+    private productsService: ProductsService,
+    private toastController: ToastController
   ) {
     this.productForm = this.formBuilder.group({
       name: ['', Validators.required],
@@ -76,14 +86,21 @@ export class ItemCreationComponent implements OnInit {
       hsnCode: [''],
       quantity: ['', Validators.required],
       lowStock: [''],
+      gstPercentage: [''],
     });
   }
   ngOnInit() {
+    this.currentStoreInfoService.getCurrentStoreInfo().subscribe((response) => {
+      this.currentStoreInfo = response;
+    });
     this.presentingElement = document.querySelector('.ion-page');
     console.log('inits');
     this.screenState$ = this.store.select((store) => store.screen);
     this.screenState$.subscribe((screen) => (this.isMobile = screen.isMobile));
-    this.productForm.patchValue({ name: this.editProduct?.name });
+    this.productForm.patchValue({
+      ...this.editProduct,
+      unit: this.editProduct?.unit.name,
+    });
   }
 
   onCloseProductCreationModal = () => {
@@ -128,6 +145,7 @@ export class ItemCreationComponent implements OnInit {
     const { data } = await this.taxPopover.onDidDismiss();
     if (data && data.selectedValue) {
       this.gstPercentage = data.selectedValue;
+      this.productForm.patchValue({ gstPercentage: this.gstPercentage });
     }
   }
 
@@ -205,6 +223,33 @@ export class ItemCreationComponent implements OnInit {
     });
     return await modal.present();
   }
+
+  async createProduct() {
+    console.log(this.productForm.value);
+    if (!this.currentStoreInfo || !this.currentStoreInfo._id) {
+      return;
+    }
+    const productFormValue = this.productForm.value as ProductFormValueI;
+    console.log(productFormValue?.category);
+    const category = productFormValue?.category
+      ? typeof productFormValue?.category === 'string'
+        ? productFormValue?.category?.split(',')
+        : productFormValue?.category
+      : [];
+    const createProductPayload: CreateProductRequestI = {
+      storeId: this.currentStoreInfo._id,
+      ...productFormValue,
+      category,
+    };
+    this.productsService.createStoreProduct(createProductPayload).subscribe(
+      (response) => {
+        console.log(response);
+      },
+      (error) => {
+        toastAlert(this.toastController, error.error.message);
+      }
+    );
+  }
   async openDiscountsModal() {
     console.log('idhar');
     const modal = await this.modalController.create({
@@ -258,4 +303,18 @@ interface VariantOption {
 interface VariantCombination {
   name: string;
   value: string;
+}
+
+interface ProductFormValueI {
+  name: string;
+  description: string;
+  category: string;
+  unit: string;
+  sellsPrice: number;
+  purchasePrice: number;
+  taxIncluded: boolean;
+  hsnCode: string;
+  quantity: number;
+  lowStock: number;
+  gstPercentage: number;
 }
