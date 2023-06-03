@@ -10,54 +10,70 @@
   <ion-grid style="background-color: white; border-radius: 5px; padding: 10px">
     <ion-row>
       <ion-col>
-        <ion-col>
-          <ion-label> {{ productDetails?.sellsPrice }} </ion-label>
+        <ion-row>
           <ion-label> Sales Price </ion-label>
-        </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-label> {{ productDetails?.sellsPrice }} </ion-label>
+        </ion-row>
       </ion-col>
       <ion-col>
-        <ion-col>
-          <ion-label> {{ productDetails?.purchasePrice | hyphen }}</ion-label>
+        <ion-row>
           <ion-label> Purchase Price </ion-label>
-        </ion-col>
-      </ion-col>
-      <ion-col>
-        <ion-col>
-          <ion-label> {{ productDetails?.quantity }}</ion-label>
-          <ion-label> Stock Quantity </ion-label>
-        </ion-col>
-      </ion-col>
-      <ion-col>
-        <ion-col>
+        </ion-row>
+        <ion-row>
           <ion-label> {{ productDetails?.purchasePrice | hyphen }}</ion-label>
+        </ion-row>
+      </ion-col>
+      <ion-col>
+        <ion-row>
+          <ion-label> Stock Quantity </ion-label>
+        </ion-row>
+        <ion-row>
+          <ion-label> {{ productDetails?.quantity }}</ion-label>
+        </ion-row>
+      </ion-col>
+      <ion-col>
+        <ion-row>
           <ion-label> Stock Value </ion-label>
-        </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-label> {{ productDetails?.purchasePrice | hyphen }}</ion-label>
+        </ion-row>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-col>
-          <ion-label> 1000 </ion-label>
-          <ion-label> Units </ion-label>
-        </ion-col>
+        <ion-row>
+          <ion-label> Unit </ion-label>
+        </ion-row>
+        <ion-row>
+          <ion-label> {{ productDetails?.unit?.name | hyphen }} </ion-label>
+        </ion-row>
       </ion-col>
       <ion-col>
-        <ion-col>
-          <ion-label> 10 </ion-label>
+        <ion-row>
           <ion-label> Low Stock </ion-label>
-        </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-label> {{ productDetails?.lowStock | hyphen }} </ion-label>
+        </ion-row>
       </ion-col>
       <ion-col>
-        <ion-col>
-          <ion-label> ASHdbBJHB </ion-label>
+        <ion-row>
           <ion-label> HSN Code </ion-label>
-        </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-label> {{ productDetails?.hsnCode | hyphen }} </ion-label>
+        </ion-row>
       </ion-col>
       <ion-col>
-        <ion-col>
-          <ion-label> 10 </ion-label>
+        <ion-row>
           <ion-label> GST % </ion-label>
-        </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-label> {{ productDetails?.gstPercentage | hyphen }} </ion-label>
+        </ion-row>
       </ion-col>
     </ion-row>
   </ion-grid>

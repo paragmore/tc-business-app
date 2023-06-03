@@ -66,13 +66,15 @@
         </ion-col>
 
         <ion-col size="3">
-          <ion-text
-            color="primary"
+          <ion-button
+            fill="tertiary"
+            [disabled]="isProductsLoading"
             (click)="
               toggleSort('sellsPrice', sortOrder === 'asc' ? 'desc' : 'asc')
             "
-            >Sells Price</ion-text
           >
+            <ion-text color="primary">Sells Price</ion-text>
+          </ion-button>
           <ng-container *ngIf="sortBy !== 'sellsPrice'">
             <button
               ion-button
@@ -99,13 +101,15 @@
           </ng-container>
         </ion-col>
         <ion-col size="2 ">
-          <ion-text
-            color="primary"
+          <ion-button
+            [disabled]="isProductsLoading"
+            fill="tertiary"
             (click)="
               toggleSort('quantity', sortOrder === 'asc' ? 'desc' : 'asc')
             "
-            >Stock</ion-text
           >
+            <ion-text color="primary">Stock</ion-text>
+          </ion-button>
           <ng-container *ngIf="sortBy !== 'quantity'">
             <button
               [disabled]="isProductsLoading"
