@@ -12,13 +12,14 @@ import {
 } from 'src/app/core/services/products/products.service';
 import { CurrentStoreInfoService } from 'src/app/core/services/currentStore/current-store-info.service';
 import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
+import { HyphenPipe } from 'src/app/core/pipes/hyphen.pipe';
 
 @Component({
   selector: 'app-item-details',
   templateUrl: './item-details.component.html',
   styleUrls: ['./item-details.component.scss'],
   standalone: true,
-  imports: [IonicModule, ItemCreationComponent, CommonModule],
+  imports: [IonicModule, ItemCreationComponent, CommonModule, HyphenPipe],
 })
 export class ItemDetailsComponent implements OnInit {
   public selectedProductState$: Observable<SelectedProductModel> | undefined;

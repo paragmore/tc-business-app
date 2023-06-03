@@ -101,26 +101,28 @@
         <ion-col size="2 ">
           <ion-text
             color="primary"
-            (click)="toggleSort('stock', sortOrder === 'asc' ? 'desc' : 'asc')"
+            (click)="
+              toggleSort('quantity', sortOrder === 'asc' ? 'desc' : 'asc')
+            "
             >Stock</ion-text
           >
-          <ng-container *ngIf="sortBy !== 'stock'">
+          <ng-container *ngIf="sortBy !== 'quantity'">
             <button
               [disabled]="isProductsLoading"
               ion-button
               icon-only
-              (click)="toggleSort('stock', 'asc')"
+              (click)="toggleSort('quantity', 'asc')"
             >
               <ion-icon name="swap-vertical-outline"></ion-icon>
             </button>
           </ng-container>
-          <ng-container *ngIf="sortBy === 'stock'">
+          <ng-container *ngIf="sortBy === 'quantity'">
             <button
               [disabled]="isProductsLoading"
               ion-button
               icon-only
               (click)="
-                toggleSort('stock', sortOrder === 'asc' ? 'desc' : 'asc')
+                toggleSort('quantity', sortOrder === 'asc' ? 'desc' : 'asc')
               "
             >
               <ion-icon
