@@ -27,6 +27,15 @@ export class ProductsService {
     return this.httpClient.post(url, body, { headers: headers });
   }
 
+  updateStoreProduct(createProductRequest: UpdateProductRequestI) {
+    const url = this.baseUrl + `products/update`;
+    const headers = getAuthHeaders();
+    const body = {
+      ...createProductRequest,
+    };
+    return this.httpClient.put(url, body, { headers: headers });
+  }
+
   getAllStoreCategories(storeId: string, options?: PaginationQueryParamsI) {
     const queryParams = new URLSearchParams();
     if (options?.pageSize) {
@@ -155,6 +164,7 @@ export interface ProductI {
   deliveryTime?: string;
   isInventory?: boolean;
   inventoryProducts?: InventoryProductI[];
+  lowStock?: number;
   _id: string;
 }
 
@@ -180,6 +190,29 @@ export interface ProductsFilterByQueryI {
   maxPurchasePrice?: string;
   minQuantity?: string;
   maxQuantity?: string;
+}
+
+export interface UpdateProductRequestI {
+  productId: string;
+  name: string;
+  description?: string;
+  sellsPrice: number;
+  purchasePrice?: number;
+  category: string[];
+  variants?: VariantI[];
+  heroImage?: string;
+  images?: string[];
+  quantity: number;
+  discounts?: DiscountI[];
+  hsnCode?: string;
+  taxIncluded?: boolean;
+  unit: string;
+  purchaseUnitName?: string;
+  purchaseUnitConversion?: number;
+  gstPercentage?: number;
+  deliveryTime?: string;
+  isInventory?: boolean;
+  inventoryProducts?: InventoryProductI[];
 }
 
 export interface CreateProductRequestI {

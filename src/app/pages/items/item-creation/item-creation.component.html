@@ -2,7 +2,7 @@
   <ion-toolbar>
     <app-dialog-header
       style="width: 100%"
-      headerTitle="Add product"
+      [headerTitle]="this.editProduct?._id ? 'Update product' : 'Add product'"
       [onClose]="onCloseProductCreationModal"
     >
     </app-dialog-header>
@@ -265,7 +265,7 @@
   "
   type="submit"
   class="btn btn-primary"
-  (click)="createProduct()"
+  (click)="createOrUpdateProduct()"
   [disabled]="productForm.invalid"
-  >Add Product</ion-button
+  >{{ this.editProduct?._id ? "Update product" : "Add product" }}</ion-button
 >

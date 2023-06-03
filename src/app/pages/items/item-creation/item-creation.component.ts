@@ -13,6 +13,7 @@ import {
   DiscountI,
   ProductI,
   ProductsService,
+  UpdateProductRequestI,
   VariantI,
 } from 'src/app/core/services/products/products.service';
 import { DiscountsModalComponent } from '../discounts-modal/discounts-modal.component';
@@ -245,7 +246,7 @@ export class ItemCreationComponent implements OnInit {
     return await modal.present();
   }
 
-  async createProduct() {
+  async createOrUpdateProduct() {
     console.log(this.productForm.value);
     if (!this.currentStoreInfo || !this.currentStoreInfo._id) {
       return;
@@ -257,17 +258,47 @@ export class ItemCreationComponent implements OnInit {
         ? productFormValue?.category?.split(',')
         : productFormValue?.category
       : [];
-    const match = productFormValue.gstPercentage.match(/(\d+\.\d+)/);
+    const match =
+      typeof productFormValue.gstPercentage === 'string'
+        ? productFormValue.gstPercentage.match(/(\d+(\.\d+)?)/g)
+        : undefined;
     const gstPercent = match ? parseFloat(match[0]) : undefined;
-    const createProductPayload: CreateProductRequestI = {
-      storeId: this.currentStoreInfo._id,
-      ...productFormValue,
-      category,
-      variants: this.variants,
-      discounts: this.discounts,
-      gstPercentage: gstPercent,
-    };
+    if (this.editProduct?._id) {
+      const updateProductPayload: UpdateProductRequestI = {
+        productId: this.editProduct?._id,
+        ...productFormValue,
+        category,
+        variants: this.variants,
+        discounts: this.discounts,
+        gstPercentage: gstPercent,
+      };
+      this.updateProduct(updateProductPayload);
+    } else {
+      const createProductPayload: CreateProductRequestI = {
+        storeId: this.currentStoreInfo._id,
+        ...productFormValue,
+        category,
+        variants: this.variants,
+        discounts: this.discounts,
+        gstPercentage: gstPercent,
+      };
+      this.createProduct(createProductPayload);
+    }
+  }
+
+  async createProduct(createProductPayload: CreateProductRequestI) {
     this.productsService.createStoreProduct(createProductPayload).subscribe(
+      (response) => {
+        console.log(response);
+      },
+      (error) => {
+        toastAlert(this.toastController, error.error.message);
+      }
+    );
+  }
+
+  async updateProduct(updateProductPayload: UpdateProductRequestI) {
+    this.productsService.updateStoreProduct(updateProductPayload).subscribe(
       (response) => {
         console.log(response);
       },
