@@ -25,16 +25,28 @@ import { DialogHeaderComponent } from 'src/app/core/components/dialog-header/dia
 })
 export class DiscountsModalComponent implements OnInit {
   discountForm: FormGroup;
-
+  showTypeSelection = true;
   constructor(
     private modalController: ModalController,
     private formBuilder: FormBuilder
   ) {
     this.discountForm = this.formBuilder.group({
-      name: ['', Validators.required],
-      description: [''],
-      selection: ['orderQuantity'],
+      type: ['percentage', Validators.required],
+      code: ['', Validators.required],
+      minType: ['orderQuantity', Validators.required],
+      minimum: [''],
+      value: ['', Validators.required],
+      maxDiscount: [''],
     });
+  }
+
+  setDiscountType(type: 'percentage' | 'amount') {
+    this.discountForm.patchValue({ type: type });
+    this.showTypeSelection = false;
+  }
+
+  openTypeSelectionMenu() {
+    this.showTypeSelection = true;
   }
 
   ngOnInit() {}
@@ -42,5 +54,7 @@ export class DiscountsModalComponent implements OnInit {
     this.modalController.dismiss();
   };
 
-  onCreateDiscount() {}
+  onCreateDiscount() {
+    this.modalController.dismiss({ discount: this.discountForm.value });
+  }
 }

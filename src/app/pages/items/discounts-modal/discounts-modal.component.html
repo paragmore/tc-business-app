@@ -8,6 +8,23 @@
     </app-dialog-header>
   </ion-row>
   <ion-row>
+    <ion-button (click)="openTypeSelectionMenu()" fill="tertiary">
+      <p>Discount Type</p>
+    </ion-button>
+  </ion-row>
+  <ion-row *ngIf="showTypeSelection">
+    <ion-col>
+      <ion-card (click)="setDiscountType('percentage')">
+        <div class="discount-type-button-div">Percentage Discount</div>
+      </ion-card>
+    </ion-col>
+    <ion-col>
+      <ion-card (click)="setDiscountType('amount')"
+        ><div class="discount-type-button-div">Flat Amount Discount</div>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+  <ion-row *ngIf="!showTypeSelection">
     <ion-grid style="min-width: 400px">
       <form [formGroup]="discountForm">
         <ion-row>
@@ -19,7 +36,7 @@
             placeholder="Enter discount code"
           ></ion-input>
         </ion-row>
-        <ion-radio-group formControlName="selection">
+        <ion-radio-group formControlName="minType">
           <ion-row>
             <ion-col>
               <ion-radio labelPlacement="end" value="orderValue"
@@ -35,15 +52,13 @@
         </ion-radio-group>
 
         <ion-row>
-          <ion-col
-            *ngIf="discountForm.get('selection')?.value === 'orderValue'"
-          >
+          <ion-col *ngIf="discountForm.get('minType')?.value === 'orderValue'">
             <ion-input
               type="number"
               label-placement="floating"
               fill="outline"
               label="Minimum order value"
-              formControlName="minValue"
+              formControlName="minimum"
               placeholder="Minimum order value"
             ></ion-input>
           </ion-col>
@@ -51,47 +66,48 @@
 
         <ion-row>
           <ion-col
-            *ngIf="discountForm.get('selection')?.value === 'orderQuantity'"
+            *ngIf="discountForm.get('minType')?.value === 'orderQuantity'"
           >
             <ion-input
               type="number"
               label-placement="floating"
               fill="outline"
               label="Minimum order quantity"
-              formControlName="minQuantity"
+              formControlName="minimum"
               placeholder="Minimum order quantity"
             ></ion-input>
           </ion-col>
         </ion-row>
-
-        <ion-row>
-          <ion-input
-            type="number"
-            label-placement="floating"
-            fill="outline"
-            label="Discount percent"
-            formControlName="name"
-            placeholder="Enter % discount"
-          ></ion-input>
-        </ion-row>
-        <ion-row>
+        <div *ngIf="discountForm.value.type === 'percentage'">
+          <ion-row>
+            <ion-input
+              type="number"
+              label-placement="floating"
+              fill="outline"
+              label="Discount percent"
+              formControlName="value"
+              placeholder="Enter % discount"
+            ></ion-input>
+          </ion-row>
+          <ion-row>
+            <ion-input
+              type="number"
+              label-placement="floating"
+              fill="outline"
+              label="Maximum discount"
+              formControlName="maxDiscount"
+              placeholder="Enter maximum discount value"
+            ></ion-input>
+          </ion-row>
+        </div>
+        <ion-row *ngIf="discountForm.value.type === 'amount'">
           <ion-input
             type="number"
             label-placement="floating"
             fill="outline"
             label="Discount amount"
-            formControlName="name"
+            formControlName="value"
             placeholder="Enter amount"
-          ></ion-input>
-        </ion-row>
-        <ion-row>
-          <ion-input
-            type="number"
-            label-placement="floating"
-            fill="outline"
-            label="Maximum discount"
-            formControlName="maxDiscount"
-            placeholder="Enter maximum discount value"
           ></ion-input>
         </ion-row>
       </form>

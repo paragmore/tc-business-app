@@ -10,6 +10,7 @@ import { CategorySelectionModalComponent } from '../category-selection-modal/cat
 import {
   CategoryI,
   CreateProductRequestI,
+  DiscountI,
   ProductI,
   ProductsService,
   VariantI,
@@ -66,6 +67,7 @@ export class ItemCreationComponent implements OnInit {
   taxPopover: any;
   public screenState$: Observable<ScreenModel> | undefined;
   variants: VariantI[] = [];
+  discounts: DiscountI[] = [];
   constructor(
     private modalController: ModalController,
     private formBuilder: FormBuilder,
@@ -101,6 +103,25 @@ export class ItemCreationComponent implements OnInit {
       ...this.editProduct,
       unit: this.editProduct?.unit.name,
     });
+    if (this.editProduct?.variants) {
+      this.variants = this.editProduct?.variants;
+    }
+    if (this.editProduct?.discounts) {
+      this.discounts = this.editProduct?.discounts;
+    }
+  }
+
+  formatDiscountValue(discount: any) {
+    if (discount.type === 'amount') {
+      // Prefix with '$'
+      discount.value = '$' + discount.value;
+    } else if (discount.type === 'percentage') {
+      // Suffix with '%' and limit to 100
+      const parsedValue = parseFloat(discount.value);
+      if (!isNaN(parsedValue)) {
+        discount.value = Math.min(parsedValue, 100) + '%';
+      }
+    }
   }
 
   onCloseProductCreationModal = () => {
@@ -236,10 +257,15 @@ export class ItemCreationComponent implements OnInit {
         ? productFormValue?.category?.split(',')
         : productFormValue?.category
       : [];
+    const match = productFormValue.gstPercentage.match(/(\d+\.\d+)/);
+    const gstPercent = match ? parseFloat(match[0]) : undefined;
     const createProductPayload: CreateProductRequestI = {
       storeId: this.currentStoreInfo._id,
       ...productFormValue,
       category,
+      variants: this.variants,
+      discounts: this.discounts,
+      gstPercentage: gstPercent,
     };
     this.productsService.createStoreProduct(createProductPayload).subscribe(
       (response) => {
@@ -261,7 +287,11 @@ export class ItemCreationComponent implements OnInit {
     });
     console.log(modal);
 
-    modal.onDidDismiss().then((modalData) => {});
+    modal.onDidDismiss().then((modalData) => {
+      if (modalData?.data?.discount) {
+        this.discounts = [...this.discounts, modalData.data.discount];
+      }
+    });
     return await modal.present();
   }
 
@@ -316,5 +346,5 @@ interface ProductFormValueI {
   hsnCode: string;
   quantity: number;
   lowStock: number;
-  gstPercentage: number;
+  gstPercentage: string;
 }

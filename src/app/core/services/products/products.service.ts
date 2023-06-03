@@ -126,8 +126,12 @@ export interface UnitI {
 }
 
 export interface DiscountI {
-  volumeThreshold: number;
-  discountPercentage: number;
+  type: 'percentage' | 'amount';
+  code: string;
+  minType: 'orderQuantity' | 'orderValue';
+  value: number;
+  minimum?: number;
+  maxDiscount?: number;
 }
 
 export interface ProductI {
