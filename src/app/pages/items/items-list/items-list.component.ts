@@ -13,6 +13,9 @@ import { CommonModule } from '@angular/common';
 import { AppState } from 'src/app/store/models/state.model';
 import { Store } from '@ngrx/store';
 import { setSelectedProduct } from 'src/app/store/actions/selectedProduct.action';
+import { ScreenModel } from 'src/app/store/models/screen.models';
+import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-items-list',
@@ -36,15 +39,20 @@ export class ItemsListComponent implements OnInit {
   sortBy: string = 'name';
   sortOrder: SortOrder = 'asc';
   isProductsLoading = false;
+  public screenState$: Observable<ScreenModel> | undefined;
+  isMobile = false;
 
   constructor(
     private productsService: ProductsService,
     private currentStoreInfoService: CurrentStoreInfoService,
     private modalController: ModalController,
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    private router: Router
   ) {}
 
   ngOnInit() {
+    this.screenState$ = this.store.select((store) => store.screen);
+    this.screenState$.subscribe((screen) => (this.isMobile = screen.isMobile));
     this.currentStoreInfoService.getCurrentStoreInfo().subscribe((response) => {
       this.currentStoreInfo = response;
       this.loadProducts();
@@ -60,6 +68,10 @@ export class ItemsListComponent implements OnInit {
 
     modal.onDidDismiss().then((modalData) => {});
     return await modal.present();
+  }
+
+  async openItemDetailsPage(product: ProductI) {
+    this.router.navigate([`items/${product._id}`]);
   }
 
   toggleSort(sortBy: string, order: SortOrder) {
@@ -89,6 +101,7 @@ export class ItemsListComponent implements OnInit {
         selectedProduct: { selectedProductId: product._id },
       })
     );
+    this.isMobile ? this.openItemDetailsPage(product) : null;
   }
 
   loadProducts(page?: number) {
@@ -117,7 +130,7 @@ export class ItemsListComponent implements OnInit {
             console.log(response.body.products);
             //@ts-ignore
             this.products = [...response.body.products];
-            this.openProductDetails(this.products[0]);
+            !this.isMobile && this.openProductDetails(this.products[0]);
             //@ts-ignore
             const pagination = response.body.pagination;
             this.currentPage = pagination.page;

@@ -153,7 +153,7 @@
             margin: 5px;
           "
         >
-          <ion-col size="7">
+          <ion-col>
             <ion-row>
               <ion-col>
                 <div style="width: 40px; height: 40px">
@@ -208,7 +208,7 @@
             "
             (click)="openProductDetails(product)"
           >
-            <ion-col size="7">
+            <ion-col [size]="(screenState$ | async)?.isMobile ? 7 : 6">
               <ion-row>
                 <ion-col>
                   <div style="width: 40px; height: 40px">
@@ -239,6 +239,11 @@
 
             <ion-col size="2">
               <ion-text> {{ product.quantity }} </ion-text>
+            </ion-col>
+            <ion-col size="1" *ngIf="!(screenState$ | async)?.isMobile">
+              <ion-button (click)="openItemDetailsPage(product)">
+                <ion-icon name="open-outline"></ion-icon>
+              </ion-button>
             </ion-col>
           </ion-row>
         </div>
