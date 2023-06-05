@@ -218,7 +218,7 @@
             <ion-col [size]="(screenState$ | async)?.isMobile ? 7 : 6">
               <ion-row>
                 <ion-col>
-                  <div style="width: 40px; height: 40px">
+                  <ion-card style="width: 60px; height: 60px">
                     <ion-avatar
                       style="
                         --border-radius: 5px;
@@ -227,10 +227,14 @@
                       "
                     >
                       <ion-img
-                        src="https://ionicframework.com/docs/img/demos/avatar.svg"
+                        [src]="
+                          product.heroImage
+                            ? product.heroImage
+                            : 'https://www.chanchao.com.tw/images/default.jpg'
+                        "
                       ></ion-img>
                     </ion-avatar>
-                  </div>
+                  </ion-card>
                 </ion-col>
                 <ion-col>
                   <ion-text style="overflow-wrap: anywhere">

@@ -16,6 +16,8 @@ import { setSelectedProduct } from 'src/app/store/actions/selectedProduct.action
 import { ScreenModel } from 'src/app/store/models/screen.models';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
+import { Location } from '@angular/common';
+import { SelectedProductModel } from 'src/app/store/models/selectedProduct.models';
 
 @Component({
   selector: 'app-items-list',
@@ -41,13 +43,15 @@ export class ItemsListComponent implements OnInit {
   isProductsLoading = false;
   public screenState$: Observable<ScreenModel> | undefined;
   isMobile = false;
-
+  public selectedProductState$: Observable<SelectedProductModel> | undefined;
+  public selectedProductState: SelectedProductModel | undefined;
   constructor(
     private productsService: ProductsService,
     private currentStoreInfoService: CurrentStoreInfoService,
     private modalController: ModalController,
     private store: Store<AppState>,
-    private router: Router
+    private router: Router,
+    private _location: Location
   ) {}
 
   ngOnInit() {
@@ -56,6 +60,12 @@ export class ItemsListComponent implements OnInit {
     this.currentStoreInfoService.getCurrentStoreInfo().subscribe((response) => {
       this.currentStoreInfo = response;
       this.loadProducts();
+    });
+    this.selectedProductState$ = this.store.select(
+      (store) => store.selectedProduct
+    );
+    this.selectedProductState$.subscribe((productState) => {
+      this.selectedProductState = productState;
     });
   }
 
@@ -71,7 +81,7 @@ export class ItemsListComponent implements OnInit {
   }
 
   async openItemDetailsPage(product: ProductI) {
-    this.router.navigate([`items/${product._id}`]);
+    this.router.navigate([`item/${product._id}`]);
   }
 
   toggleSort(sortBy: string, order: SortOrder) {
@@ -101,6 +111,7 @@ export class ItemsListComponent implements OnInit {
         selectedProduct: { selectedProductId: product._id },
       })
     );
+    this._location.replaceState(`items/${product._id}`);
     this.isMobile ? this.openItemDetailsPage(product) : null;
   }
 
@@ -130,7 +141,9 @@ export class ItemsListComponent implements OnInit {
             console.log(response.body.products);
             //@ts-ignore
             this.products = [...response.body.products];
-            !this.isMobile && this.openProductDetails(this.products[0]);
+            !this.isMobile &&
+              !this.selectedProductState?.selectedProductId &&
+              this.openProductDetails(this.products[0]);
             //@ts-ignore
             const pagination = response.body.pagination;
             this.currentPage = pagination.page;

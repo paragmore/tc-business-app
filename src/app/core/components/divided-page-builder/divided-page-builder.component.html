@@ -8,6 +8,7 @@
         style="display: flex; position: absolute; top: 0px; right: 0px"
         (click)="toggleDetailsView()"
         *ngIf="!(screenState$ | async)?.isMobile"
+        fill="secondary"
       >
         <ion-icon
           [name]="
