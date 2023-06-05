@@ -7,101 +7,146 @@
       </ion-row>
     </ion-toolbar>
   </ion-header>
-  <ion-grid style="background-color: white; border-radius: 5px; padding: 10px">
+  <ion-grid
+    style="
+      background-color: white;
+      border-radius: 5px;
+      padding: 10px;
+      margin: 10px;
+    "
+  >
     <ion-row>
-      <ion-col>
+      <ion-col size-lg="4" size-sm="12">
         <ion-row>
-          <ion-label> Sales Price </ion-label>
+          <div>
+            <ion-card style="width: 170px; height: 170px; border-radius: 5px">
+              <ion-img [src]="productDetails?.heroImage"> </ion-img>
+            </ion-card>
+          </div>
         </ion-row>
-        <ion-row>
-          <ion-label> {{ productDetails?.sellsPrice }} </ion-label>
-        </ion-row>
-      </ion-col>
-      <ion-col>
-        <ion-row>
-          <ion-label> Purchase Price </ion-label>
-        </ion-row>
-        <ion-row>
-          <ion-label> {{ productDetails?.purchasePrice | hyphen }}</ion-label>
-        </ion-row>
-      </ion-col>
-      <ion-col>
-        <ion-row>
-          <ion-label> Stock Quantity </ion-label>
-        </ion-row>
-        <ion-row>
-          <ion-label> {{ productDetails?.quantity }}</ion-label>
+        <ion-row
+          style="display: flex; overflow-x: scroll; height: 100px; gap: 10px"
+        >
+          <div
+            *ngFor="let image of productDetails?.images; let i = index"
+            style="width: 50px; height: 50px"
+          >
+            <ion-card style="width: 50px; height: 50px">
+              <ion-img style="width: 50px; height: 50px" [src]="image">
+              </ion-img>
+            </ion-card>
+          </div>
         </ion-row>
       </ion-col>
       <ion-col>
         <ion-row>
-          <ion-label> Stock Value </ion-label>
+          <ion-col>
+            <ion-row>
+              <ion-label> Sales Price </ion-label>
+            </ion-row>
+            <ion-row>
+              <ion-label> {{ productDetails?.sellsPrice }} </ion-label>
+            </ion-row>
+          </ion-col>
+          <ion-col>
+            <ion-row>
+              <ion-label> Purchase Price </ion-label>
+            </ion-row>
+            <ion-row>
+              <ion-label>
+                {{ productDetails?.purchasePrice | hyphen }}</ion-label
+              >
+            </ion-row>
+          </ion-col>
+          <ion-col>
+            <ion-row>
+              <ion-label> Stock Quantity </ion-label>
+            </ion-row>
+            <ion-row>
+              <ion-label> {{ productDetails?.quantity }}</ion-label>
+            </ion-row>
+          </ion-col>
+          <ion-col>
+            <ion-row>
+              <ion-label> Stock Value </ion-label>
+            </ion-row>
+            <ion-row>
+              <ion-label>
+                {{ productDetails?.purchasePrice | hyphen }}</ion-label
+              >
+            </ion-row>
+          </ion-col>
         </ion-row>
         <ion-row>
-          <ion-label> {{ productDetails?.purchasePrice | hyphen }}</ion-label>
-        </ion-row>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col>
-        <ion-row>
-          <ion-label> Unit </ion-label>
-        </ion-row>
-        <ion-row>
-          <ion-label> {{ productDetails?.unit?.name | hyphen }} </ion-label>
-        </ion-row>
-      </ion-col>
-      <ion-col>
-        <ion-row>
-          <ion-label> Low Stock </ion-label>
-        </ion-row>
-        <ion-row>
-          <ion-label> {{ productDetails?.lowStock | hyphen }} </ion-label>
-        </ion-row>
-      </ion-col>
-      <ion-col>
-        <ion-row>
-          <ion-label> HSN Code </ion-label>
-        </ion-row>
-        <ion-row>
-          <ion-label> {{ productDetails?.hsnCode | hyphen }} </ion-label>
-        </ion-row>
-      </ion-col>
-      <ion-col>
-        <ion-row>
-          <ion-label> GST % </ion-label>
-        </ion-row>
-        <ion-row>
-          <ion-label> {{ productDetails?.gstPercentage | hyphen }} </ion-label>
+          <ion-col>
+            <ion-row>
+              <ion-label> Unit </ion-label>
+            </ion-row>
+            <ion-row>
+              <ion-label> {{ productDetails?.unit?.name | hyphen }} </ion-label>
+            </ion-row>
+          </ion-col>
+          <ion-col>
+            <ion-row>
+              <ion-label> Low Stock </ion-label>
+            </ion-row>
+            <ion-row>
+              <ion-label> {{ productDetails?.lowStock | hyphen }} </ion-label>
+            </ion-row>
+          </ion-col>
+          <ion-col>
+            <ion-row>
+              <ion-label> HSN Code </ion-label>
+            </ion-row>
+            <ion-row>
+              <ion-label> {{ productDetails?.hsnCode | hyphen }} </ion-label>
+            </ion-row>
+          </ion-col>
+          <ion-col>
+            <ion-row>
+              <ion-label> GST % </ion-label>
+            </ion-row>
+            <ion-row>
+              <ion-label>
+                {{ productDetails?.gstPercentage | hyphen }}
+              </ion-label>
+            </ion-row>
+          </ion-col>
         </ion-row>
       </ion-col>
     </ion-row>
   </ion-grid>
-  <ion-grid>
+  <ion-grid
+    style="
+      background-color: white;
+      border-radius: 5px;
+      padding: 10px;
+      margin: 10px;
+    "
+  >
     <ion-row>
-      <ion-grid>
-        <ion-row>
-          <ion-title> ITEM ANALYTICS TRACKER </ion-title>
-        </ion-row>
-        <ion-row>
-          <ion-chip [outline]="true">Today</ion-chip>
-          <ion-chip [outline]="true">Yesterday</ion-chip>
-          <ion-chip [outline]="true">This week</ion-chip>
-          <ion-chip [outline]="true">This month</ion-chip>
-          <ion-chip [outline]="true">Custom dates</ion-chip>
-        </ion-row>
-        <ion-row>
-          <ion-card color="success">
-            <ion-item>
-              <ion-text color="success"> ₹90,000 Total Profit made </ion-text>
-            </ion-item>
-          </ion-card>
-          <ion-card>
-            <ion-item> 100.00 Total Stock qty sold </ion-item>
-          </ion-card>
-        </ion-row>
-      </ion-grid>
+      <ion-title> ITEM ANALYTICS TRACKER </ion-title>
     </ion-row>
+    <ion-row>
+      <ion-chip [outline]="true">Today</ion-chip>
+      <ion-chip [outline]="true">Yesterday</ion-chip>
+      <ion-chip [outline]="true">This week</ion-chip>
+      <ion-chip [outline]="true">This month</ion-chip>
+      <ion-chip [outline]="true">Custom dates</ion-chip>
+    </ion-row>
+    <ion-row>
+      <ion-card color="success">
+        <ion-item>
+          <ion-text color="success"> ₹90,000 Total Profit made </ion-text>
+        </ion-item>
+      </ion-card>
+      <ion-card>
+        <ion-item> 100.00 Total Stock qty sold </ion-item>
+      </ion-card>
+    </ion-row>
+  </ion-grid>
+  <ion-grid>
+    <ion-row> </ion-row>
     <ion-row>
       <ion-grid>
         <ion-row class="header-row">
