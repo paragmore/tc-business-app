@@ -216,7 +216,14 @@
             (click)="openProductDetails(product)"
           >
             <ion-col [size]="(screenState$ | async)?.isMobile ? 7 : 6">
-              <ion-row>
+              <ion-row
+                style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  text-align: center;
+                "
+              >
                 <ion-col>
                   <ion-card style="width: 60px; height: 60px">
                     <ion-avatar
