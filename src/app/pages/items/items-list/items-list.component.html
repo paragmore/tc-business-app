@@ -33,7 +33,10 @@
   <ion-row class="list-row-container">
     <ion-grid style="height: 95%">
       <ion-row class="header-row">
-        <ion-col style="display: flex; align-items: center" size="7">
+        <ion-col
+          style="display: flex; align-items: center"
+          [size]="(screenState$ | async)?.isMobile ? 7 : 6"
+        >
           <ion-button
             (click)="toggleSort('name', sortOrder === 'asc' ? 'desc' : 'asc')"
             fill="tertiary"
@@ -205,6 +208,10 @@
               padding: 10px;
               margin: 5px;
               cursor: pointer;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              text-align: center;
             "
             (click)="openProductDetails(product)"
           >
@@ -241,7 +248,10 @@
               <ion-text> {{ product.quantity }} </ion-text>
             </ion-col>
             <ion-col size="1" *ngIf="!(screenState$ | async)?.isMobile">
-              <ion-button (click)="openItemDetailsPage(product)">
+              <ion-button
+                fill="tertiary"
+                (click)="openItemDetailsPage(product)"
+              >
                 <ion-icon name="open-outline"></ion-icon>
               </ion-button>
             </ion-col>

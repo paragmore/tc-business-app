@@ -13,13 +13,24 @@ import {
 import { CurrentStoreInfoService } from 'src/app/core/services/currentStore/current-store-info.service';
 import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
 import { HyphenPipe } from 'src/app/core/pipes/hyphen.pipe';
+import { VariantSeperatorPipe } from 'src/app/core/pipes/variant-seperator.pipe';
+import { VariantsListComponent } from '../variants-list/variants-list.component';
+import { DiscountsListComponent } from '../discounts-list/discounts-list.component';
 
 @Component({
   selector: 'app-item-details',
   templateUrl: './item-details.component.html',
   styleUrls: ['./item-details.component.scss'],
   standalone: true,
-  imports: [IonicModule, ItemCreationComponent, CommonModule, HyphenPipe],
+  imports: [
+    IonicModule,
+    ItemCreationComponent,
+    CommonModule,
+    HyphenPipe,
+    VariantSeperatorPipe,
+    VariantsListComponent,
+    DiscountsListComponent,
+  ],
 })
 export class ItemDetailsComponent implements OnInit {
   public selectedProductState$: Observable<SelectedProductModel> | undefined;

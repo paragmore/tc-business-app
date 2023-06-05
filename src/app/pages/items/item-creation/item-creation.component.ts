@@ -36,6 +36,8 @@ import { VariantSeperatorPipe } from 'src/app/core/pipes/variant-seperator.pipe'
 import { CurrentStoreInfoService } from 'src/app/core/services/currentStore/current-store-info.service';
 import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
 import { toastAlert } from 'src/app/core/utils/toastAlert';
+import { DiscountsListComponent } from '../discounts-list/discounts-list.component';
+import { VariantsListComponent } from '../variants-list/variants-list.component';
 
 @Component({
   selector: 'app-item-creation',
@@ -51,6 +53,8 @@ import { toastAlert } from 'src/app/core/utils/toastAlert';
     DiscountsModalComponent,
     DialogHeaderComponent,
     VariantSeperatorPipe,
+    DiscountsListComponent,
+    VariantsListComponent,
   ],
 })
 export class ItemCreationComponent implements OnInit {

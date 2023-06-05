@@ -1,0 +1,37 @@
+.product-hero-image-container {
+  @media only screen and (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.main-scrollable-page {
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  height: 90vh;
+  @media only screen and (max-width: 768px) {
+    height: 85vh;
+  }
+}
+
+.details-card {
+  background-color: white;
+}
+
+.details-card ion-col {
+  padding: 10px;
+  border: 1px solid rgba(128, 128, 128, 0.651);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin: 10px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.details-card ion-label {
+  font-weight: 600;
+}

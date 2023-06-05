@@ -151,106 +151,12 @@
   <ion-button fill="outline" (click)="openDiscountsModal()">
     <ion-icon name="add"></ion-icon> Add Discount
   </ion-button>
-  <ion-grid>
-    <ion-row
-      style="background-color: var(--ion-color-medium); border-radius: 5px"
-    >
-      <ion-col size="3"> Type </ion-col>
-      <ion-col size="3"> Code </ion-col>
-      <ion-col size="2"> Value </ion-col>
-      <ion-col size="2"> Minimum Order </ion-col>
-      <ion-col size="2"> Max Discount </ion-col>
-    </ion-row>
-    <div *ngFor="let discount of discounts; let i = index">
-      <ion-row>
-        <ion-col size="3">
-          {{ discount.type }}
-        </ion-col>
-        <ion-col size="3">
-          <ion-input
-            label-placement="floating"
-            fill="outline"
-            [(ngModel)]="discount.code"
-          ></ion-input>
-        </ion-col>
-        <ion-col size="2">
-          <ion-input
-            type="number"
-            label-placement="floating"
-            fill="outline"
-            [(ngModel)]="discount.value"
-          ></ion-input>
-        </ion-col>
-        <ion-col size="2">
-          <ion-input
-            label-placement="floating"
-            fill="outline"
-            [(ngModel)]="discount.minimum"
-          ></ion-input>
-        </ion-col>
-        <ion-col size="2">
-          <ion-input
-            label-placement="floating"
-            fill="outline"
-            [(ngModel)]="discount.maxDiscount"
-          ></ion-input>
-        </ion-col>
-      </ion-row>
-    </div>
-  </ion-grid>
+  <app-discounts-list [discounts]="discounts"> </app-discounts-list>
   <h5>Variants</h5>
   <ion-button fill="outline" (click)="openVariantCreationModal()">
     <ion-icon name="add"></ion-icon> Add new Variant
   </ion-button>
-  <ion-grid>
-    <ion-row
-      style="background-color: var(--ion-color-medium); border-radius: 5px"
-    >
-      <ion-col size="8"> Variant </ion-col>
-      <ion-col size="2"> Price </ion-col>
-      <ion-col size="2"> SKU Id </ion-col>
-    </ion-row>
-    <div *ngFor="let variant of variants; let i = index">
-      <ion-row>
-        <ion-col size="6">
-          <ion-row>
-            <ion-col>
-              <div style="width: 40px; height: 40px">
-                <ion-avatar
-                  style="
-                    --border-radius: 5px;
-                    width: fit-content;
-                    height: fit-content;
-                  "
-                >
-                  <ion-img
-                    src="https://ionicframework.com/docs/img/demos/avatar.svg"
-                  ></ion-img>
-                </ion-avatar>
-              </div>
-            </ion-col>
-            <ion-col>
-              {{ variant.properties | seperate }}
-            </ion-col>
-          </ion-row>
-        </ion-col>
-        <ion-col size="3">
-          <ion-input
-            label-placement="floating"
-            fill="outline"
-            [(ngModel)]="variant.sellsPrice"
-          ></ion-input>
-        </ion-col>
-        <ion-col size="3">
-          <ion-input
-            label-placement="floating"
-            fill="outline"
-            [(ngModel)]="variant.skuId"
-          ></ion-input>
-        </ion-col>
-      </ion-row>
-    </div>
-  </ion-grid>
+  <app-variants-list [variants]="variants"></app-variants-list>
 </div>
 
 <ion-button
