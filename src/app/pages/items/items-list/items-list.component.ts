@@ -117,6 +117,7 @@ export class ItemsListComponent implements OnInit {
             console.log(response.body.products);
             //@ts-ignore
             this.products = [...response.body.products];
+            this.openProductDetails(this.products[0]);
             //@ts-ignore
             const pagination = response.body.pagination;
             this.currentPage = pagination.page;
