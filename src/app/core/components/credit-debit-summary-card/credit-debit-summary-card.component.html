@@ -1,0 +1,63 @@
+<ion-card class="reports-card">
+  <ion-grid>
+    <ion-row *ngIf="creditDebitInput.title">
+      <p class="title3">
+        {{ creditDebitInput.title }}
+      </p>
+    </ion-row>
+    <ion-row>
+      <ion-col size-xs="6" size-lg="4">
+        <ion-row class="credit-debit-col-row">
+          <ion-col>
+            <p class="bodyRegular">
+              {{ creditDebitInput.debit.title }}
+            </p>
+          </ion-col>
+          <ion-col>
+            <p class="titleMedium">
+              {{ creditDebitInput.debit.amount }}
+            </p>
+          </ion-col>
+          <ion-col>
+            <ion-icon
+              class="cred-deb-icon"
+              color="success"
+              name="arrow-up-outline"
+            ></ion-icon>
+          </ion-col>
+        </ion-row>
+      </ion-col>
+      <ion-col size-xs="6" size-lg="4">
+        <ion-row class="credit-debit-col-row">
+          <ion-col>
+            <p class="bodyRegular">
+              {{ creditDebitInput.credit.title }}
+            </p>
+          </ion-col>
+          <ion-col>
+            <p class="titleMedium">
+              {{ creditDebitInput.credit.amount }}
+            </p>
+          </ion-col>
+          <ion-col>
+            <ion-icon
+              class="cred-deb-icon"
+              color="danger"
+              name="arrow-down-outline"
+            ></ion-icon>
+          </ion-col>
+        </ion-row>
+      </ion-col>
+      <ion-col size-xs="12" size-lg="4" *ngIf="creditDebitInput.ctaButton">
+        <ion-row class="credit-debit-col-row">
+          <ion-button
+            fill="outline"
+            (click)="creditDebitInput.ctaButton.onClick()"
+          >
+            {{ creditDebitInput.ctaButton.title }}
+          </ion-button>
+        </ion-row>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-card>

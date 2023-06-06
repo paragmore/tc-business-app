@@ -1,3 +1,12 @@
-<p>
-  customers-list works!
-</p>
+<app-credit-debit-summary-card
+  [creditDebitInput]="{
+    debit: { title: 'You\'ll give', amount: 0, color: 'green' },
+    credit: { title: 'You\'ll get', amount: 100, color: 'red' },
+    ctaButton: {
+      title: 'View Reports',
+      icon: 'sds',
+      onClick: onViewReportsClicked
+    },
+  }"
+>
+</app-credit-debit-summary-card>

@@ -7,4 +7,4 @@
   </ion-segment-button>
 </ion-segment>
 <app-customers-list *ngIf="selectedTab === 'customers'"> </app-customers-list>
-<app-suppliers-list> </app-suppliers-list>
+<app-suppliers-list *ngIf="selectedTab === 'suppliers'"> </app-suppliers-list>

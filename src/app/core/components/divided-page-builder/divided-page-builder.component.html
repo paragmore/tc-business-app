@@ -23,7 +23,11 @@
       </ion-button>
     </ion-col>
 
-    <ion-col *ngIf="isDetailsViewOpen" size-md="6" size-sm="12">
+    <ion-col
+      *ngIf="isDetailsViewOpen && !(screenState$ | async)?.isMobile"
+      size-md="6"
+      size-sm="12"
+    >
       <ng-content *ngComponentOutlet="detailsComponent"></ng-content>
     </ion-col>
   </ion-row>

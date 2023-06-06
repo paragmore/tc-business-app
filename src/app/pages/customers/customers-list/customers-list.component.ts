@@ -1,14 +1,18 @@
 import { Component, OnInit } from '@angular/core';
+import { IonicModule } from '@ionic/angular';
+import { CreditDebitSummaryCardComponent } from 'src/app/core/components/credit-debit-summary-card/credit-debit-summary-card.component';
 
 @Component({
   selector: 'app-customers-list',
   templateUrl: './customers-list.component.html',
   styleUrls: ['./customers-list.component.scss'],
+  standalone: true,
+  imports: [IonicModule, CreditDebitSummaryCardComponent],
 })
-export class CustomersListComponent  implements OnInit {
-
-  constructor() { }
+export class CustomersListComponent implements OnInit {
+  constructor() {}
 
   ngOnInit() {}
 
+  onViewReportsClicked() {}
 }

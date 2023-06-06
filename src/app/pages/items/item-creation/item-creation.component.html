@@ -8,7 +8,13 @@
     </app-dialog-header>
   </ion-toolbar>
 </ion-header>
-<div style="background-color: white; height: 95%; overflow-y: scroll">
+<div
+  style="
+    background-color: var(--ion-color-primary-contrast);
+    height: 95%;
+    overflow-y: scroll;
+  "
+>
   <form [formGroup]="productForm">
     <h5>Product Details</h5>
     <div style="padding: 10px; margin: 10px">
