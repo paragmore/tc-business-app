@@ -3,7 +3,10 @@
     <ion-col
       [size]="isDetailsViewOpen && !(screenState$ | async)?.isMobile ? 6 : 12"
     >
-      <ng-content *ngComponentOutlet="listComponent"> </ng-content>
+      <ng-content
+        *ngComponentOutlet="listComponent; injector: dividedPagesInjector"
+      >
+      </ng-content>
       <ion-button
         style="display: flex; position: absolute; top: 0px; right: 0px"
         (click)="toggleDetailsView()"
@@ -20,7 +23,7 @@
       </ion-button>
     </ion-col>
 
-    <ion-col size-md="6" size-sm="12">
+    <ion-col *ngIf="isDetailsViewOpen" size-md="6" size-sm="12">
       <ng-content *ngComponentOutlet="detailsComponent"></ng-content>
     </ion-col>
   </ion-row>

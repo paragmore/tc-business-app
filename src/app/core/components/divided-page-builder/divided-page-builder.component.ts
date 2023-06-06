@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Injector, Input, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
@@ -26,7 +26,7 @@ export class DividedPageBuilderComponent implements OnInit {
   @Input() listComponent: any;
   @Input() detailsComponent: any;
   public screenState$: Observable<ScreenModel> | undefined;
-
+  @Input() dividedPagesInjector?: Injector;
   isDetailsViewOpen = true;
   constructor(
     private store: Store<AppState>,
