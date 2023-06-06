@@ -18,6 +18,7 @@ import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { SelectedProductModel } from 'src/app/store/models/selectedProduct.models';
+import { SearchFilterSortComponent } from 'src/app/core/components/search-filter-sort/search-filter-sort.component';
 
 @Component({
   selector: 'app-items-list',
@@ -29,6 +30,7 @@ import { SelectedProductModel } from 'src/app/store/models/selectedProduct.model
     ItemCreationComponent,
     PaginationComponentComponent,
     CommonModule,
+    SearchFilterSortComponent,
   ],
 })
 export class ItemsListComponent implements OnInit {

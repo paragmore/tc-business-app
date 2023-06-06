@@ -1,33 +1,6 @@
 <div class="list-outer-container">
   <ion-row>
-    <div>
-      <ion-searchbar
-        style="background-color: var(--ion-color-primary-contrast)"
-        placeholder="Search by Product name"
-      ></ion-searchbar>
-    </div>
-    <div>
-      <ion-list>
-        <ion-select aria-label="Fruit" interface="popover" placeholder="All">
-          <ion-select-option value="apples">Apples</ion-select-option>
-          <ion-select-option value="oranges">Oranges</ion-select-option>
-          <ion-select-option value="bananas">Bananas</ion-select-option>
-        </ion-select>
-      </ion-list>
-    </div>
-    <div>
-      <ion-list>
-        <ion-select
-          aria-label="Fruit"
-          interface="popover"
-          placeholder="Most recent"
-        >
-          <ion-select-option value="apples">Apples</ion-select-option>
-          <ion-select-option value="oranges">Oranges</ion-select-option>
-          <ion-select-option value="bananas">Bananas</ion-select-option>
-        </ion-select>
-      </ion-list>
-    </div>
+    <app-search-filter-sort></app-search-filter-sort>
   </ion-row>
 
   <ion-row class="list-row-container">
