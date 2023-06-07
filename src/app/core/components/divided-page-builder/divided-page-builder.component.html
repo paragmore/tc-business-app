@@ -28,7 +28,9 @@
       size-md="6"
       size-sm="12"
     >
-      <ng-content *ngComponentOutlet="detailsComponent"></ng-content>
+      <ng-content
+        *ngComponentOutlet="detailsComponent; injector: dividedPagesInjector"
+      ></ng-content>
     </ion-col>
   </ion-row>
 </ion-grid>
