@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ModalController } from '@ionic/angular';
 import {
   CreditDebitLedgerListComponent,
   LedgerDataI,
@@ -7,6 +7,8 @@ import {
 } from 'src/app/core/components/credit-debit-ledger-list/credit-debit-ledger-list.component';
 import { CreditDebitSummaryCardComponent } from 'src/app/core/components/credit-debit-summary-card/credit-debit-summary-card.component';
 import { SearchFilterSortComponent } from 'src/app/core/components/search-filter-sort/search-filter-sort.component';
+import { PartyCreationModalComponent } from '../../parties/party-creation-modal/party-creation-modal.component';
+import { PartiesTabType } from '../../parties/parties.component';
 
 @Component({
   selector: 'app-customers-list',
@@ -21,12 +23,22 @@ import { SearchFilterSortComponent } from 'src/app/core/components/search-filter
   ],
 })
 export class CustomersListComponent implements OnInit {
-  constructor() {}
-
+  constructor(private modalController: ModalController) {}
+  party: PartiesTabType = 'customers';
   ngOnInit() {}
 
   onViewReportsClicked() {}
+  async openAddCustomerModal() {
+    const modal = await this.modalController.create({
+      component: PartyCreationModalComponent,
+      componentProps: { partyType: this.party },
+      backdropDismiss: true,
+      cssClass: 'side-modal',
+    });
 
+    modal.onDidDismiss().then((modalData) => {});
+    return await modal.present();
+  }
   dummyLedgerData: LedgerDataI = {
     ledgerItems: [
       {

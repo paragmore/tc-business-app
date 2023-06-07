@@ -1,0 +1,230 @@
+<ion-header>
+  <ion-toolbar>
+    <app-dialog-header
+      style="width: 100%"
+      [headerTitle]="
+        this.editParty?._id ? 'Update ' + partyText : 'Add ' + partyText
+      "
+      [onClose]="onClosePartyCreationModal"
+    >
+    </app-dialog-header>
+  </ion-toolbar>
+</ion-header>
+<div
+  style="
+    background-color: var(--ion-color-primary-contrast);
+    height: 95%;
+    overflow-y: scroll;
+  "
+>
+  <form [formGroup]="partyForm">
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-input
+            [label]="partyText + ' Name'"
+            label-placement="floating"
+            fill="outline"
+            [placeholder]="'Enter ' + partyText + ' Name'"
+            formControlName="name"
+          ></ion-input>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-input
+            label="Phone Number"
+            label-placement="floating"
+            fill="outline"
+            placeholder="Enter Phone Number"
+            formControlName="phoneNumber"
+          ></ion-input>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-input
+            label="Email"
+            label-placement="floating"
+            fill="outline"
+            placeholder="Enter Email"
+            formControlName="email"
+          ></ion-input>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="9">
+          <ion-input
+            label="Opening Balance"
+            label-placement="floating"
+            fill="outline"
+            placeholder="Enter amount"
+            formControlName="balance"
+          ></ion-input>
+        </ion-col>
+        <ion-col>
+          <ion-list>
+            <ion-item>
+              <ion-select interface="popover">
+                <ion-select-option value="gave">You Gave</ion-select-option>
+                <ion-select-option value="got">You Got</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-list>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <br />
+    <ion-accordion-group>
+      <ion-accordion value="first">
+        <ion-button slot="header" color="light">
+          <ion-label>Add GSTIN & Address (Optional)</ion-label>
+        </ion-button>
+        <div class="ion-padding" slot="content">
+          <ion-grid>
+            <ion-row>
+              <ion-col>
+                <ion-input
+                  label="GSTIN"
+                  label-placement="floating"
+                  fill="outline"
+                  placeholder="Add GSTIN"
+                  formControlName="gstin"
+                ></ion-input>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+
+          <ion-grid>
+            <div formGroupName="address">
+              <ion-row formGroupName="shipping">
+                <ion-grid>
+                  <ion-row>
+                    <h5>Shipping Address</h5>
+                  </ion-row>
+                  <ion-row>
+                    <ion-input
+                      label="Flat, House no., Building, Company, Apartment"
+                      label-placement="floating"
+                      fill="outline"
+                      formControlName="line1"
+                    ></ion-input>
+                  </ion-row>
+                  <ion-row>
+                    <ion-input
+                      label="Area, Street, Sector, Village"
+                      label-placement="floating"
+                      fill="outline"
+                      formControlName="line2"
+                    ></ion-input
+                  ></ion-row>
+                  <ion-row>
+                    <ion-input
+                      label="PIN Code"
+                      label-placement="floating"
+                      fill="outline"
+                      formControlName="pinCode"
+                    ></ion-input
+                  ></ion-row>
+                  <ion-row>
+                    <ion-input
+                      label="City"
+                      label-placement="floating"
+                      fill="outline"
+                      formControlName="city"
+                    ></ion-input>
+                  </ion-row>
+                  <ion-row>
+                    <ion-input
+                      label="State"
+                      label-placement="floating"
+                      fill="outline"
+                      formControlName="state"
+                    ></ion-input
+                  ></ion-row>
+                </ion-grid>
+              </ion-row>
+              <ion-row>
+                <ion-checkbox
+                  labelPlacement="end"
+                  [checked]="partyForm.value.address.billingSameAsShipping"
+                  formControlName="billingSameAsShipping"
+                  >Shipping address same as billing address
+                </ion-checkbox>
+              </ion-row>
+              <ion-row
+                *ngIf="!partyForm.value.address.billingSameAsShipping"
+                formGroupName="billing"
+              >
+                <ion-grid>
+                  <ion-row>
+                    <h5>Billing Address</h5>
+                  </ion-row>
+                  <ion-row>
+                    <ion-input
+                      label="Flat, House no., Building, Company, Apartment"
+                      label-placement="floating"
+                      fill="outline"
+                      formControlName="line1"
+                    ></ion-input>
+                  </ion-row>
+                  <ion-row>
+                    <ion-input
+                      label="Area, Street, Sector, Village"
+                      label-placement="floating"
+                      fill="outline"
+                      formControlName="line2"
+                    ></ion-input
+                  ></ion-row>
+                  <ion-row>
+                    <ion-input
+                      label="PIN Code"
+                      label-placement="floating"
+                      fill="outline"
+                      formControlName="pinCode"
+                    ></ion-input
+                  ></ion-row>
+                  <ion-row>
+                    <ion-input
+                      label="City"
+                      label-placement="floating"
+                      fill="outline"
+                      formControlName="city"
+                    ></ion-input>
+                  </ion-row>
+                  <ion-row>
+                    <ion-input
+                      label="State"
+                      label-placement="floating"
+                      fill="outline"
+                      formControlName="state"
+                    ></ion-input
+                  ></ion-row>
+                </ion-grid>
+              </ion-row>
+            </div>
+          </ion-grid>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+  </form>
+</div>
+
+<ion-button
+  style="
+    display: flex;
+    position: sticky;
+    height: 60px;
+    align-items: center;
+    bottom: 0px;
+    justify-content: flex-end;
+    padding: 10px;
+  "
+  type="submit"
+  class="btn btn-primary"
+  (click)="createOrUpdateParty()"
+  [disabled]="partyForm.invalid"
+  >{{
+    this.editParty?._id ? "Update " + partyText : "Add " + partyText
+  }}</ion-button
+>

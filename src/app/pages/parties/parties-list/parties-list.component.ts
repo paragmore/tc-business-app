@@ -6,12 +6,13 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ModalController } from '@ionic/angular';
 import { PartiesTabType } from '../parties.component';
 import { CustomersListComponent } from '../../customers/customers-list/customers-list.component';
 import { CustomerDetailsComponent } from '../../customers/customer-details/customer-details.component';
 import { SuppliersListComponent } from '../../suppliers/suppliers-list/suppliers-list.component';
 import { CommonModule } from '@angular/common';
+import { PartyCreationModalComponent } from '../party-creation-modal/party-creation-modal.component';
 
 @Component({
   selector: 'app-parties-list',
@@ -29,6 +30,7 @@ export class PartiesListComponent implements OnInit {
   selectedTab!: PartiesTabType;
   updateSelectedTab: (newTab: PartiesTabType) => void;
   constructor(
+    private modalController: ModalController,
     @Inject('selectedTab') selectedTab: PartiesTabType,
     @Inject('updateSelectedTab')
     updateSelectedTab: (newTab: PartiesTabType) => void
