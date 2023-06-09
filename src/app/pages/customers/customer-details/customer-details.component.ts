@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import {
   BasicPartyDetailsComponent,
@@ -24,6 +25,8 @@ import {
   ],
 })
 export class CustomerDetailsComponent implements OnInit {
+  currentCustomerId: string | undefined;
+  private activatedRoute = inject(ActivatedRoute);
   dummyPartyDetails: BasicPartyDetailsInputI = {
     // avatarUrl: 'https://example.com/avatar.jpg',
     name: 'John Doe',
@@ -88,5 +91,9 @@ export class CustomerDetailsComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.currentCustomerId = this.activatedRoute.snapshot.paramMap.get(
+      'id'
+    ) as string;
+  }
 }
