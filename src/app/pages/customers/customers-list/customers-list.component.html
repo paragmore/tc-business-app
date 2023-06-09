@@ -1,19 +1,22 @@
-<app-credit-debit-summary-card
-  [creditDebitInput]="{
-    debit: { title: 'You\'ll give', amount: 0, color: 'green' },
-    credit: { title: 'You\'ll get', amount: 100, color: 'red' },
-    ctaButton: {
-      title: 'View Reports',
-      icon: 'sds',
-      onClick: onViewReportsClicked
-    },
-  }"
->
-</app-credit-debit-summary-card>
-<app-search-filter-sort></app-search-filter-sort>
-<app-credit-debit-ledger-list
-  [ledgerData]="ledgerData"
-></app-credit-debit-ledger-list>
-<ion-button (click)="openAddCustomerModal()" fill="outline"
-  >Add Customer</ion-button
->
+<div style="display: flex; flex-direction: column; overflow: hidden">
+  <app-credit-debit-summary-card
+    [creditDebitInput]="{
+      debit: { title: 'You\'ll give', amount: 0, color: 'green' },
+      credit: { title: 'You\'ll get', amount: 100, color: 'red' },
+      ctaButton: {
+        title: 'View Reports',
+        icon: 'sds',
+        onClick: onViewReportsClicked
+      },
+    }"
+  >
+  </app-credit-debit-summary-card>
+  <app-search-filter-sort></app-search-filter-sort>
+  <app-credit-debit-ledger-list
+    style="height: 60vh"
+    [ledgerData]="ledgerData"
+  ></app-credit-debit-ledger-list>
+  <ion-button (click)="openAddCustomerModal()" fill="outline"
+    >Add Customer</ion-button
+  >
+</div>
