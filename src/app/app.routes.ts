@@ -13,6 +13,24 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
+    path: 'parties/customer/:id',
+    loadComponent: () =>
+      import(
+        './pages/customers/customer-details/customer-details.component'
+      ).then((m) => m.CustomerDetailsComponent),
+    pathMatch: 'full',
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'parties/customers/:id',
+    loadComponent: () =>
+      import('./pages/parties/parties.component').then(
+        (m) => m.PartiesComponent
+      ),
+    pathMatch: 'full',
+    canActivate: [AuthGuard],
+  },
+  {
     path: 'transactions/create',
     loadComponent: () =>
       import(
