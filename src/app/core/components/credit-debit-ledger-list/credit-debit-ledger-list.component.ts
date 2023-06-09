@@ -16,7 +16,6 @@ import { PaginationComponentComponent } from '../pagination-component/pagination
 })
 export class CreditDebitLedgerListComponent implements OnInit {
   @Input() ledgerData!: LedgerDataI;
-  isLoading = false;
   public screenState$: Observable<ScreenModel> | undefined;
   isMobile = false;
   constructor(private store: Store<AppState>) {}
@@ -28,14 +27,14 @@ export class CreditDebitLedgerListComponent implements OnInit {
 }
 
 export interface LedgerItemI {
-  title: string;
-  subTitle: string;
+  title?: string;
+  subTitle?: string;
   chipText?: string;
-  amount: string;
-  amountSubtitle: string;
-  imageUrl: string;
+  amount?: string;
+  amountSubtitle?: string;
+  imageUrl?: string;
   onClick: (ledger: LedgerItemI) => void;
-  openItemDetailsPage: (ledger: LedgerItemI) => void;
+  openDetailsPage: (ledger: LedgerItemI) => void;
 }
 
 export interface LedgerDataI {

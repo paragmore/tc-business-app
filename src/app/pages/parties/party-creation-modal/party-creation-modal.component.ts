@@ -46,12 +46,6 @@ export class PartyCreationModalComponent implements OnInit {
       balance: [''],
       gstin: [''],
       address: this.createAddressesFormGroup(),
-      purchasePrice: [''],
-      taxIncluded: [true, Validators.required],
-      hsnCode: [''],
-      quantity: ['', Validators.required],
-      lowStock: [''],
-      gstPercentage: [''],
     });
   }
 
@@ -59,7 +53,9 @@ export class PartyCreationModalComponent implements OnInit {
     this.modalController.dismiss();
   };
 
-  createOrUpdateParty() {}
+  createOrUpdateParty() {
+    console.log(this.partyForm.value);
+  }
 
   createAddressFormGroup() {
     return this.formBuilder.group({
