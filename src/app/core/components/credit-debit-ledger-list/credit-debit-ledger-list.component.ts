@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { ScreenModel } from 'src/app/store/models/screen.models';
 import { AppState } from 'src/app/store/models/state.model';
 import { PaginationComponentComponent } from '../pagination-component/pagination-component.component';
+import { SortOrder } from '../../services/products/products.service';
 
 @Component({
   selector: 'app-credit-debit-ledger-list',
@@ -27,6 +28,7 @@ export class CreditDebitLedgerListComponent implements OnInit {
 }
 
 export interface LedgerItemI {
+  id: string;
   title?: string;
   subTitle?: string;
   chipText?: string;
@@ -39,7 +41,7 @@ export interface LedgerItemI {
 
 export interface LedgerDataI {
   ledgerItems: LedgerItemI[];
-  onAmountSort: () => void;
+  onSort: (sortBy: string, order: SortOrder) => void;
   isLoading: boolean;
   currentPage: number;
   totalPages: number;
