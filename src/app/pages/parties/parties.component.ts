@@ -3,6 +3,7 @@ import { IonicModule } from '@ionic/angular';
 import { DividedPageBuilderComponent } from 'src/app/core/components/divided-page-builder/divided-page-builder.component';
 import { PartiesListComponent } from './parties-list/parties-list.component';
 import { PartiesDetailsComponent } from './parties-details/parties-details.component';
+import { PartyTypeEnum } from 'src/app/core/services/parties/parties.service';
 
 @Component({
   selector: 'app-parties',
@@ -19,7 +20,7 @@ import { PartiesDetailsComponent } from './parties-details/parties-details.compo
 export class PartiesComponent implements OnInit {
   partiesListComponent = PartiesListComponent;
   partiesDetailsComponent = PartiesDetailsComponent;
-  selectedTab: PartiesTabType = 'customers';
+  selectedTab: PartyTypeEnum = PartyTypeEnum.CUSTOMER;
   partiesInjector!: Injector;
   constructor(private injector: Injector) {
     this.createInjector();
@@ -38,12 +39,10 @@ export class PartiesComponent implements OnInit {
   ngOnInit() {
     this.createInjector();
   }
-  updateSelectedTab = (newTab: PartiesTabType) => {
+  updateSelectedTab = (newTab: PartyTypeEnum) => {
     console.log('idhar aye', newTab);
     this.selectedTab = newTab;
     console.log('change hua', this.selectedTab);
     this.createInjector();
   };
 }
-
-export type PartiesTabType = 'customers' | 'suppliers';
