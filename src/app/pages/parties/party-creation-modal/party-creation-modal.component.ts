@@ -7,12 +7,22 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { IonicModule, ModalController } from '@ionic/angular';
+import { IonicModule, ModalController, ToastController } from '@ionic/angular';
 import { Store } from '@ngrx/store';
 import { DialogHeaderComponent } from 'src/app/core/components/dialog-header/dialog-header.component';
 import { CurrentStoreInfoService } from 'src/app/core/services/currentStore/current-store-info.service';
 import { AppState } from 'src/app/store/models/state.model';
-import { PartiesTabType } from '../parties.component';
+import {
+  AdrressesI,
+  CreatePartyRequestI,
+  GetAllCustomersResponseI,
+  PartiesService,
+  PartyTypeEnum,
+  SupplierI,
+  UpdatePartyRequestI,
+} from 'src/app/core/services/parties/parties.service';
+import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
+import { toastAlert } from 'src/app/core/utils/toastAlert';
 
 @Component({
   selector: 'app-party-creation-modal',
@@ -29,15 +39,18 @@ import { PartiesTabType } from '../parties.component';
 })
 export class PartyCreationModalComponent implements OnInit {
   partyForm: FormGroup;
-  @Input() editParty: { _id: string } | undefined;
-  @Input() partyType!: PartiesTabType;
-
+  @Input() editParty: GetAllCustomersResponseI | SupplierI | undefined;
+  @Input() partyType!: PartyTypeEnum;
+  currentStoreInfo: StoreInfoModel | undefined;
+  partyId = '';
   partyText = '';
   constructor(
     private modalController: ModalController,
     private formBuilder: FormBuilder,
     private store: Store<AppState>,
-    private currentStoreInfoService: CurrentStoreInfoService
+    private currentStoreInfoService: CurrentStoreInfoService,
+    private partiesService: PartiesService,
+    private toastController: ToastController
   ) {
     this.partyForm = this.formBuilder.group({
       name: ['', Validators.required],
@@ -49,13 +62,77 @@ export class PartyCreationModalComponent implements OnInit {
     });
   }
 
+  ngOnInit() {
+    this.currentStoreInfoService.getCurrentStoreInfo().subscribe((response) => {
+      this.currentStoreInfo = response;
+    });
+    this.partyText =
+      this.partyType === PartyTypeEnum.CUSTOMER
+        ? 'Customer'
+        : this.partyType === PartyTypeEnum.SUPPLIER
+        ? 'Supplier'
+        : '';
+    this.partyId =
+      this.partyType === PartyTypeEnum.CUSTOMER
+        ? //@ts-ignore
+          this.editParty?.customer?._id
+        : this.partyType === PartyTypeEnum.SUPPLIER
+        ? //@ts-ignore
+          this.editParty?._id
+        : '';
+  }
+
+  async createOrUpdateParty() {
+    console.log(this.partyForm.value);
+    //@ts-ignore
+    console.log(this.partyForm.value, this.currentStoreInfo?._id);
+    if (!this.currentStoreInfo || !this.currentStoreInfo._id) {
+      return;
+    }
+    const partyFormValue = this.partyForm.value as PartyFormValueI;
+    if (this.editParty) {
+      const updatePartyPayload: UpdatePartyRequestI = {
+        ...partyFormValue,
+        storeId: this.currentStoreInfo._id,
+        type: this.partyType,
+        partyId: this.partyId,
+      };
+      this.updateProduct(updatePartyPayload);
+    } else {
+      const createProductPayload: CreatePartyRequestI = {
+        ...partyFormValue,
+        storeId: this.currentStoreInfo._id,
+        type: this.partyType,
+      };
+      this.createProduct(createProductPayload);
+    }
+  }
+
+  async createProduct(createProductPayload: CreatePartyRequestI) {
+    this.partiesService.createParty(createProductPayload).subscribe(
+      (response) => {
+        console.log(response);
+      },
+      (error) => {
+        toastAlert(this.toastController, error.error.message);
+      }
+    );
+  }
+
+  async updateProduct(updatePartyPayload: UpdatePartyRequestI) {
+    this.partiesService.updateParty(updatePartyPayload).subscribe(
+      (response) => {
+        console.log(response);
+      },
+      (error) => {
+        toastAlert(this.toastController, error.error.message);
+      }
+    );
+  }
+
   onClosePartyCreationModal = () => {
     this.modalController.dismiss();
   };
-
-  createOrUpdateParty() {
-    console.log(this.partyForm.value);
-  }
 
   createAddressFormGroup() {
     return this.formBuilder.group({
@@ -73,13 +150,13 @@ export class PartyCreationModalComponent implements OnInit {
       billing: this.createAddressFormGroup(),
     });
   }
+}
 
-  ngOnInit() {
-    this.partyText =
-      this.partyType === 'customers'
-        ? 'Customer'
-        : this.partyType === 'suppliers'
-        ? 'Supplier'
-        : '';
-  }
+export interface PartyFormValueI {
+  name: string;
+  phoneNumber: string;
+  email?: string;
+  balance?: number;
+  gstin?: string;
+  address: AdrressesI;
 }

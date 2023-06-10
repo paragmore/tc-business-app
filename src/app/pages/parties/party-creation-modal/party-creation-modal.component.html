@@ -2,9 +2,7 @@
   <ion-toolbar>
     <app-dialog-header
       style="width: 100%"
-      [headerTitle]="
-        this.editParty?._id ? 'Update ' + partyText : 'Add ' + partyText
-      "
+      [headerTitle]="this.partyId ? 'Update ' + partyText : 'Add ' + partyText"
       [onClose]="onClosePartyCreationModal"
     >
     </app-dialog-header>
@@ -224,7 +222,5 @@
   class="btn btn-primary"
   (click)="createOrUpdateParty()"
   [disabled]="partyForm.invalid"
-  >{{
-    this.editParty?._id ? "Update " + partyText : "Add " + partyText
-  }}</ion-button
+  >{{ this.partyId ? "Update " + partyText : "Add " + partyText }}</ion-button
 >
