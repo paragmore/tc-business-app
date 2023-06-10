@@ -15,7 +15,6 @@ import {
 import { CreditDebitSummaryCardComponent } from 'src/app/core/components/credit-debit-summary-card/credit-debit-summary-card.component';
 import { SearchFilterSortComponent } from 'src/app/core/components/search-filter-sort/search-filter-sort.component';
 import { PartyCreationModalComponent } from '../../parties/party-creation-modal/party-creation-modal.component';
-import { PartiesTabType } from '../../parties/parties.component';
 import {
   GetAllCustomersResponseI,
   PartiesService,
@@ -52,7 +51,7 @@ export class CustomersListComponent implements OnInit, DoCheck {
     private router: Router,
     private _location: Location
   ) {}
-  party: PartiesTabType = 'customers';
+  party: PartyTypeEnum = PartyTypeEnum.CUSTOMER;
   currentCustomerId: string | undefined;
   private activatedRoute = inject(ActivatedRoute);
   customers: GetAllCustomersResponseI[] = [];
@@ -66,20 +65,35 @@ export class CustomersListComponent implements OnInit, DoCheck {
   isCustomersLoading = false;
   public screenState$: Observable<ScreenModel> | undefined;
   isMobile = false;
+
+  toggleSort = (sortBy: string, order: SortOrder) => {
+    this.sortBy = sortBy;
+    this.sortOrder = order;
+    this.loadCustomers();
+  };
+
+  goToPage = (page: number) => {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      // Fetch the data for the selected page or update the list accordingly
+      this.loadCustomers(page);
+    }
+  };
+
+  changePageSize = (pageSize: number) => {
+    console.log(pageSize);
+    this.pageSize = pageSize;
+    this.loadCustomers();
+    // Fetch the data for the new page size or update the list accordingly
+  };
   ledgerData: LedgerDataI = {
     ledgerItems: [],
-    onAmountSort: () => {
-      // Handle amount sorting
-    },
+    onSort: this.toggleSort,
     isLoading: this.isCustomersLoading,
     currentPage: this.currentPage,
     totalPages: this.totalPages,
-    goToPage: (event: any) => {
-      // Handle going to a specific page
-    },
-    changePageSize: (event: any) => {
-      // Handle changing page size
-    },
+    goToPage: this.goToPage,
+    changePageSize: this.changePageSize,
     col1Title: 'Name',
     col2Title: 'Amount',
   };
@@ -96,37 +110,37 @@ export class CustomersListComponent implements OnInit, DoCheck {
   }
 
   ngDoCheck() {
-    this.ledgerData.isLoading = this.isCustomersLoading;
-    this.ledgerData.ledgerItems = this.customers.map((customer) => {
-      const customerData = customer.customer;
-      const customerInfoData = customer.customerStoreInfo;
-      const ledgerItem: LedgerItemI = {
-        title: customerInfoData.name,
-        amount: customerInfoData.balance?.toString(),
-        subTitle: customerData.phoneNumber,
-        imageUrl: customerData.photoUrl,
-        onClick: this.onCustomerLedgerCardClicked,
-        openDetailsPage: this.onOpenDetailsPage,
-      };
-      return ledgerItem;
-    });
+    console.log('hhheer');
+    this.ledgerData = {
+      ledgerItems: this.ledgerData.ledgerItems,
+      onSort: this.toggleSort,
+      isLoading: this.isCustomersLoading,
+      currentPage: this.currentPage,
+      totalPages: this.totalPages,
+      goToPage: this.goToPage,
+      changePageSize: this.changePageSize,
+      col1Title: 'Name',
+      col2Title: 'Amount',
+    };
   }
   onViewReportsClicked() {}
 
-  async openCustomerDetailsPage(customerResponse: GetAllCustomersResponseI) {
-    this.router.navigate([`parties/customer/${customerResponse.customer._id}`]);
-  }
+  openCustomerDetailsPage = (customerId: string) => {
+    this.router.navigate([`parties/customer/${customerId}`]);
+  };
 
-  openCustomerDetails(customerResponse: GetAllCustomersResponseI) {
-    this._location.replaceState(
-      `parties/customers/${customerResponse.customer._id}`
-    );
-    this.isMobile ? this.openCustomerDetailsPage(customerResponse) : null;
-  }
+  openCustomerDetails = (customerId: string) => {
+    this._location.replaceState(`parties/customers/${customerId}`);
+    this.isMobile ? this.openCustomerDetailsPage(customerId) : null;
+  };
 
-  onCustomerLedgerCardClicked(ledger: LedgerItemI) {}
+  onCustomerLedgerCardClicked = (ledger: LedgerItemI) => {
+    this.openCustomerDetails(ledger.id);
+  };
 
-  onOpenDetailsPage(ledger: LedgerItemI) {}
+  onOpenDetailsPage = (ledger: LedgerItemI) => {
+    this.openCustomerDetailsPage(ledger.id);
+  };
 
   loadCustomers(page?: number) {
     if (this.isCustomersLoading) {
@@ -154,9 +168,23 @@ export class CustomersListComponent implements OnInit, DoCheck {
             console.log(response.body.parties);
             //@ts-ignore
             this.customers = [...response.body.parties];
+            this.ledgerData.ledgerItems = this.customers.map((customer) => {
+              const customerData = customer.customer;
+              const customerInfoData = customer.customerStoreInfo;
+              const ledgerItem: LedgerItemI = {
+                id: customerInfoData.customerId,
+                title: customerInfoData.name,
+                amount: customerInfoData.balance?.toString(),
+                subTitle: customerData.phoneNumber,
+                imageUrl: customerData.photoUrl,
+                onClick: this.onCustomerLedgerCardClicked,
+                openDetailsPage: this.onOpenDetailsPage,
+              };
+              return ledgerItem;
+            });
             !this.isMobile &&
               !this.currentCustomerId &&
-              this.openCustomerDetails(this.customers[0]);
+              this.openCustomerDetails(this.customers[0].customer._id);
             //@ts-ignore
             const pagination = response.body.pagination;
             this.currentPage = pagination.page;
