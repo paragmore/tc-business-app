@@ -11,6 +11,7 @@ import { Store } from '@ngrx/store';
 import { AppState } from '../../../app/store/models/state.model';
 import { ScreenModel } from '../../../app/store/models/screen.models';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -58,9 +59,10 @@ export class LoginComponent implements OnInit {
     return await modal.present();
   }
   ngOnInit() {
+    const baseUrl = environment.production ?'https://login-api.taxpayercorner.com' : 'http://localhost:8000'
     this.http
       .get(
-        'http://localhost:8000/auth?userType=BUSINESS_ADMIN',
+        `${baseUrl}/auth?userType=BUSINESS_ADMIN`,
         {
           responseType: 'text',
         }
