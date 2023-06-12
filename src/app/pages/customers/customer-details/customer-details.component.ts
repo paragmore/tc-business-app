@@ -1,7 +1,12 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
+import { CommonModule, Location } from '@angular/common';
+import { Component, DoCheck, OnInit, inject } from '@angular/core';
+import {
+  ActivatedRoute,
+  ActivatedRouteSnapshot,
+  Router,
+} from '@angular/router';
+import { IonicModule, ModalController } from '@ionic/angular';
+import { combineLatest } from 'rxjs';
 import {
   BasicPartyDetailsComponent,
   BasicPartyDetailsInputI,
@@ -11,6 +16,14 @@ import {
   EntriesLedgerItemI,
   EntriesLedgerListComponent,
 } from 'src/app/core/components/entries-ledger-list/entries-ledger-list.component';
+import { CurrentStoreInfoService } from 'src/app/core/services/currentStore/current-store-info.service';
+import {
+  GetAllCustomersResponseI,
+  PartiesService,
+  PartyTypeEnum,
+} from 'src/app/core/services/parties/parties.service';
+import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
+import { PartyCreationModalComponent } from '../../parties/party-creation-modal/party-creation-modal.component';
 
 @Component({
   selector: 'app-customer-details',
@@ -26,18 +39,11 @@ import {
 })
 export class CustomerDetailsComponent implements OnInit {
   currentCustomerId: string | undefined;
-  private activatedRoute = inject(ActivatedRoute);
-  dummyPartyDetails: BasicPartyDetailsInputI = {
-    // avatarUrl: 'https://example.com/avatar.jpg',
-    name: 'John Doe',
-    subtitle: 'Party Subtitle',
-    amount: {
-      title: 'Total Amount',
-      value: 1000,
-      color: '#FF0000',
-      prefix: "You'll get",
-    },
-  };
+  previousParams: any;
+  currentStoreInfo: StoreInfoModel | undefined;
+  customerDetails: GetAllCustomersResponseI | undefined;
+  basicPartyDetails: BasicPartyDetailsInputI | undefined;
+  partyType = PartyTypeEnum.CUSTOMER;
 
   // Define dummy data
   dummyData: EntriesLedgerDataI = {
@@ -89,11 +95,112 @@ export class CustomerDetailsComponent implements OnInit {
     col3Title: 'Column 3',
   };
 
-  constructor() {}
-
+  constructor(
+    private _location: Location,
+    private partiesService: PartiesService,
+    private currentStoreInfoService: CurrentStoreInfoService,
+    private activatedRoute: ActivatedRoute,
+    private modalController: ModalController
+  ) {}
   ngOnInit() {
-    this.currentCustomerId = this.activatedRoute.snapshot.paramMap.get(
-      'id'
-    ) as string;
+    combineLatest([
+      this.currentStoreInfoService.getCurrentStoreInfo(),
+    ]).subscribe({
+      next: (v) => {
+        const [currentStoreInfoResponse] = v;
+        this.currentStoreInfo = currentStoreInfoResponse;
+        this.getStoreCustomerById();
+      },
+      error: (e) => console.error(e),
+      complete: () => console.info('complete'),
+    });
+    this.getInitialStoreCustomer();
+    this._location.onUrlChange((url, state) => {
+      console.log('kssss', this.currentCustomerId);
+      this.currentCustomerId = url.replace('/parties/customers/', '');
+      this.getStoreCustomerById();
+    });
+    console.log('kss', this.currentCustomerId);
+  }
+
+  openEditCustomerModal = async () => {
+    const modal = await this.modalController.create({
+      component: PartyCreationModalComponent,
+      componentProps: {
+        editParty: {
+          ...this.customerDetails,
+        },
+        partyType: this.partyType,
+      },
+      backdropDismiss: true,
+      cssClass: 'side-modal',
+    });
+
+    modal.onDidDismiss().then((modalData) => {});
+    return await modal.present();
+  };
+
+  getInitialStoreCustomer() {
+    this.currentCustomerId = this.activatedRoute.snapshot.params['id'];
+    this.getStoreCustomerById();
+  }
+
+  getStoreCustomerById() {
+    if (!this.currentStoreInfo?._id || !this.currentCustomerId) {
+      return;
+    }
+    this.partiesService
+      .getStorePartyById(
+        this.currentStoreInfo?._id,
+        this.partyType,
+        this.currentCustomerId
+      )
+      .subscribe((response) => {
+        console.log(response);
+        //@ts-ignore
+        if (response.message === 'Success') {
+          //@ts-ignore
+          this.customerDetails = response.body;
+          let subtitle = '';
+          const email = this.customerDetails?.customerStoreInfo.email;
+          const phNumber = this.customerDetails?.customer.phoneNumber;
+          if (phNumber && email) {
+            subtitle = `${phNumber} | ${email}`;
+          } else if (phNumber) {
+            subtitle = phNumber;
+          } else if (email) {
+            subtitle = email;
+          }
+
+          this.basicPartyDetails = {
+            // avatarUrl: 'https://example.com/avatar.jpg',
+            name: this.customerDetails?.customerStoreInfo.name || '',
+            subtitle: subtitle,
+            amount: {
+              title: 'Total Amount',
+              value: Math.abs(
+                this.customerDetails?.customerStoreInfo.balance || 0
+              ),
+              color:
+                this.customerDetails &&
+                this.customerDetails.customerStoreInfo &&
+                this.customerDetails.customerStoreInfo.balance
+                  ? this.customerDetails.customerStoreInfo.balance < 0
+                    ? 'success'
+                    : 'danger'
+                  : '',
+              prefix:
+                this.customerDetails &&
+                this.customerDetails.customerStoreInfo &&
+                this.customerDetails.customerStoreInfo.balance
+                  ? this.customerDetails.customerStoreInfo.balance < 0
+                    ? "You'll give"
+                    : "You'll get"
+                  : '',
+            },
+            onEditClick: this.openEditCustomerModal,
+          };
+        }
+      });
   }
 }

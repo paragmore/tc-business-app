@@ -1,5 +1,8 @@
 <div style="background-color: white">
-  <app-basic-party-details [partyDetails]="dummyPartyDetails">
+  <app-basic-party-details
+    *ngIf="basicPartyDetails"
+    [partyDetails]="basicPartyDetails"
+  >
   </app-basic-party-details>
   <ion-grid>
     <ion-row>
@@ -19,17 +22,40 @@
   </ion-grid>
   <div style="display: flex; flex-direction: row"></div>
   <ion-accordion-group [multiple]="true">
-    <ion-accordion value="first">
+    <ion-accordion
+      *ngIf="
+        customerDetails &&
+        customerDetails.customerStoreInfo &&
+        customerDetails.customerStoreInfo.addresses &&
+        customerDetails.customerStoreInfo.addresses.length > 0
+      "
+      value="first"
+    >
       <ion-item slot="header" color="light">
-        <ion-label>First Accordion</ion-label>
+        <ion-label>Addresses</ion-label>
       </ion-item>
-      <div class="ion-padding" slot="content">First Content</div>
+      <div
+        *ngFor="let address of customerDetails.customerStoreInfo.addresses"
+        class="ion-padding"
+        slot="content"
+      >
+        {{ address | json }}
+      </div>
     </ion-accordion>
-    <ion-accordion value="second">
+    <ion-accordion
+      *ngIf="
+        customerDetails &&
+        customerDetails.customerStoreInfo &&
+        customerDetails.customerStoreInfo.gstin
+      "
+      value="second"
+    >
       <ion-item slot="header" color="light">
-        <ion-label>Second Accordion</ion-label>
+        <ion-label>GSTIN</ion-label>
       </ion-item>
-      <div class="ion-padding" slot="content">Second Content</div>
+      <div class="ion-padding" slot="content">
+        {{ customerDetails.customerStoreInfo.gstin }}
+      </div>
     </ion-accordion>
     <ion-accordion value="third">
       <ion-item slot="header" color="light">
