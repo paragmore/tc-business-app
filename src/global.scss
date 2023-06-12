@@ -97,4 +97,12 @@ ion-menu::part(container) {
   box-shadow: 4px 0px 16px rgba(255, 0, 255, 0.18);
 }
 
+.success {
+  color: var(--ion-color-success);
+}
+
+.danger {
+  color: var(--ion-color-danger);
+}
+
 // typography.scss

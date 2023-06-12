@@ -80,6 +80,18 @@ export class PartyCreationModalComponent implements OnInit {
         ? //@ts-ignore
           this.editParty?._id
         : '';
+    if (this.editParty && 'customer' in this.editParty) {
+      this.partyForm.patchValue({
+        ...this.editParty.customerStoreInfo,
+        phoneNumber: this.editParty.customer.phoneNumber,
+        address: this.editParty.customerStoreInfo.addresses
+          ? this.editParty.customerStoreInfo.addresses[0]
+          : [],
+      });
+    }
+    if (this.editParty && '_id' in this.editParty) {
+      this.partyForm.patchValue({ ...this.editParty });
+    }
   }
 
   async createOrUpdateParty() {

@@ -4,7 +4,7 @@ import { ItemCreationComponent } from '../item-creation/item-creation.component'
 import { AppState } from 'src/app/store/models/state.model';
 import { Store } from '@ngrx/store';
 import { SelectedProductModel } from 'src/app/store/models/selectedProduct.models';
-import { Observable } from 'rxjs';
+import { Observable, combineLatest, forkJoin, take } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import {
   ProductI,
@@ -45,13 +45,18 @@ export class ItemDetailsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.currentStoreInfoService.getCurrentStoreInfo().subscribe((response) => {
-      this.currentStoreInfo = response;
-      this.selectedProductState$ = this.store.select(
-        (store) => store.selectedProduct
-      );
-      this.selectedProductState$.subscribe((productState) => {
-        this.selectedProductState = productState;
+    this.selectedProductState$ = this.store.select(
+      (store) => store.selectedProduct
+    );
+    console.log('here');
+    combineLatest([
+      this.currentStoreInfoService.getCurrentStoreInfo(),
+      this.selectedProductState$,
+    ]).subscribe({
+      next: (v) => {
+        const [currentStoreInfoResponse, selectedProduct] = v;
+        this.currentStoreInfo = currentStoreInfoResponse;
+        this.selectedProductState = selectedProduct;
         if (
           !this.currentStoreInfo?._id ||
           !this.selectedProductState.selectedProductId
@@ -71,7 +76,9 @@ export class ItemDetailsComponent implements OnInit {
               this.productDetails = response.body;
             }
           });
-      });
+      },
+      error: (e) => console.error(e),
+      complete: () => console.info('complete'),
     });
   }
 
