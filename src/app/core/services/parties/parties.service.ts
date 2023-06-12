@@ -60,6 +60,12 @@ export class PartiesService {
     const headers = getAuthHeaders();
     return this.httpClient.get(url, { headers: headers });
   }
+
+  getStorePartiesTotalBalance(storeId: string, type: PartyTypeEnum) {
+    const url = this.baseUrl + `parties/balance/${storeId}/${type}`;
+    const headers = getAuthHeaders();
+    return this.httpClient.get(url, { headers: headers });
+  }
 }
 
 export interface CreatePartyRequestI {
@@ -145,6 +151,7 @@ export interface SupplierI {
   photoUrl?: string;
   storeId: string;
   supplierStoreId?: string;
+  _id: string;
 }
 
 export interface CustomerStoreInfoI {
@@ -163,4 +170,9 @@ export interface CustomerStoreInfoI {
 export interface GetAllCustomersResponseI {
   customer: CustomerI;
   customerStoreInfo: CustomerStoreInfoI;
+}
+
+export interface StorePartiesTotalBalanceI {
+  totalBalanceLessThanZero: number;
+  totalBalanceGreaterThanZero: number;
 }
