@@ -6,5 +6,7 @@
     <ion-label>Suppliers</ion-label>
   </ion-segment-button>
 </ion-segment>
-<app-customers-list *ngIf="selectedTab === 'customers'"> </app-customers-list>
-<app-suppliers-list *ngIf="selectedTab === 'suppliers'"> </app-suppliers-list>
+<app-customers-list *ngIf="selectedTab === PartyTypeEnum.CUSTOMER">
+</app-customers-list>
+<app-suppliers-list *ngIf="selectedTab === PartyTypeEnum.SUPPLIER">
+</app-suppliers-list>

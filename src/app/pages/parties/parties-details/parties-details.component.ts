@@ -1,9 +1,9 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
-import { PartiesTabType } from '../parties.component';
 import { CustomerDetailsComponent } from '../../customers/customer-details/customer-details.component';
 import { SuppliersDetailsComponent } from '../../suppliers/suppliers-details/suppliers-details.component';
 import { CommonModule } from '@angular/common';
+import { PartyTypeEnum } from 'src/app/core/services/parties/parties.service';
 
 @Component({
   selector: 'app-parties-details',
@@ -18,8 +18,9 @@ import { CommonModule } from '@angular/common';
   ],
 })
 export class PartiesDetailsComponent implements OnInit {
-  selectedTab!: PartiesTabType;
-  constructor(@Inject('selectedTab') selectedTab: PartiesTabType) {
+  selectedTab!: PartyTypeEnum;
+  PartyTypeEnum = PartyTypeEnum;
+  constructor(@Inject('selectedTab') selectedTab: PartyTypeEnum) {
     console.log('deatiks yaha', selectedTab);
     this.selectedTab = selectedTab;
   }
