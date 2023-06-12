@@ -34,6 +34,7 @@ export interface BasicPartyDetailsInputI {
     color: string;
     prefix?: string;
   };
+  onEditClick?: () => void;
 }
 
 export type AmountType = 'credit' | 'debit';

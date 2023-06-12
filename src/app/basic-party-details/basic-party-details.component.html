@@ -1,23 +1,33 @@
 <ion-grid>
-  <ion-row>
-    <div style="width: 50px; height: 50px">
-      <ion-avatar style="width: fit-content; height: fit-content">
-        <ion-img
-          *ngIf="partyDetails.avatarUrl"
-          [src]="partyDetails.avatarUrl"
-        ></ion-img>
-      </ion-avatar>
-      <div *ngIf="!partyDetails.avatarUrl" class="initials-round">
-        {{ getInitials() }}
+  <ion-row style="display: flex">
+    <div style="flex: 1; display: flex">
+      <div style="width: 50px; height: 50px">
+        <ion-avatar style="width: fit-content; height: fit-content">
+          <ion-img
+            *ngIf="partyDetails.avatarUrl"
+            [src]="partyDetails.avatarUrl"
+          ></ion-img>
+        </ion-avatar>
+        <div *ngIf="!partyDetails.avatarUrl" class="initials-round">
+          {{ getInitials() }}
+        </div>
+      </div>
+      <div>
+        <p class="titleMedium">
+          {{ partyDetails.name }}
+        </p>
+        <p class="caption">
+          {{ partyDetails.subtitle }}
+        </p>
       </div>
     </div>
     <div>
-      <p class="titleMedium">
-        {{ partyDetails.name }}
-      </p>
-      <p class="caption">
-        {{ partyDetails.subtitle }}
-      </p>
+      <ion-button
+        (click)="partyDetails.onEditClick()"
+        *ngIf="partyDetails.onEditClick"
+      >
+        Edit
+      </ion-button>
     </div>
   </ion-row>
   <ion-row style="justify-content: end">
@@ -36,7 +46,7 @@
         <p class="bodyPrimary">
           {{ partyDetails.amount.prefix }}
         </p>
-        <p class="titleMedium">
+        <p [class]="partyDetails.amount.color" class="titleMedium">
           {{ partyDetails.amount.value }}
         </p>
       </div>
