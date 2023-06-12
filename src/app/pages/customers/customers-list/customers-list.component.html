@@ -1,14 +1,7 @@
 <div style="display: flex; flex-direction: column; overflow: hidden">
   <app-credit-debit-summary-card
-    [creditDebitInput]="{
-      debit: { title: 'You\'ll give', amount: 0, color: 'green' },
-      credit: { title: 'You\'ll get', amount: 100, color: 'red' },
-      ctaButton: {
-        title: 'View Reports',
-        icon: 'sds',
-        onClick: onViewReportsClicked
-      },
-    }"
+    *ngIf="creditDebitSummaryData"
+    [creditDebitInput]="creditDebitSummaryData"
   >
   </app-credit-debit-summary-card>
   <app-search-filter-sort></app-search-filter-sort>

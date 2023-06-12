@@ -12,13 +12,17 @@ import {
   LedgerDataI,
   LedgerItemI,
 } from 'src/app/core/components/credit-debit-ledger-list/credit-debit-ledger-list.component';
-import { CreditDebitSummaryCardComponent } from 'src/app/core/components/credit-debit-summary-card/credit-debit-summary-card.component';
+import {
+  CreditDebitSummaryCardComponent,
+  CreditDebitSummaryCardInputI,
+} from 'src/app/core/components/credit-debit-summary-card/credit-debit-summary-card.component';
 import { SearchFilterSortComponent } from 'src/app/core/components/search-filter-sort/search-filter-sort.component';
 import { PartyCreationModalComponent } from '../../parties/party-creation-modal/party-creation-modal.component';
 import {
   GetAllCustomersResponseI,
   PartiesService,
   PartyTypeEnum,
+  StorePartiesTotalBalanceI,
 } from 'src/app/core/services/parties/parties.service';
 import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
 import { SortOrder } from 'src/app/core/services/products/products.service';
@@ -28,7 +32,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CurrentStoreInfoService } from 'src/app/core/services/currentStore/current-store-info.service';
 import { AppState } from 'src/app/store/models/state.model';
 import { Store } from '@ngrx/store';
-import { Location } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 
 @Component({
   selector: 'app-customers-list',
@@ -40,6 +44,7 @@ import { Location } from '@angular/common';
     CreditDebitSummaryCardComponent,
     SearchFilterSortComponent,
     CreditDebitLedgerListComponent,
+    CommonModule,
   ],
 })
 export class CustomersListComponent implements OnInit, DoCheck {
@@ -65,7 +70,8 @@ export class CustomersListComponent implements OnInit, DoCheck {
   isCustomersLoading = false;
   public screenState$: Observable<ScreenModel> | undefined;
   isMobile = false;
-
+  totalBalance: StorePartiesTotalBalanceI | undefined;
+  creditDebitSummaryData: CreditDebitSummaryCardInputI | undefined;
   toggleSort = (sortBy: string, order: SortOrder) => {
     this.sortBy = sortBy;
     this.sortOrder = order;
@@ -106,6 +112,7 @@ export class CustomersListComponent implements OnInit, DoCheck {
     this.currentStoreInfoService.getCurrentStoreInfo().subscribe((response) => {
       this.currentStoreInfo = response;
       this.loadCustomers();
+      this.loadStorePartiesTotalBalance();
     });
   }
 
@@ -123,7 +130,7 @@ export class CustomersListComponent implements OnInit, DoCheck {
       col2Title: 'Amount',
     };
   }
-  onViewReportsClicked() {}
+  onViewReportsClicked = () => {};
 
   openCustomerDetailsPage = (customerId: string) => {
     this.router.navigate([`parties/customer/${customerId}`]);
@@ -141,6 +148,45 @@ export class CustomersListComponent implements OnInit, DoCheck {
   onOpenDetailsPage = (ledger: LedgerItemI) => {
     this.openCustomerDetailsPage(ledger.id);
   };
+
+  loadStorePartiesTotalBalance() {
+    if (!this.currentStoreInfo?._id) {
+      return;
+    }
+
+    this.partiesService
+      .getStorePartiesTotalBalance(
+        this.currentStoreInfo?._id,
+        PartyTypeEnum.CUSTOMER
+      )
+      .subscribe({
+        next: (v) => {
+          //@ts-ignore
+          this.totalBalance = v.body;
+          this.creditDebitSummaryData = {
+            debit: {
+              title: "You'll give",
+              amount: Math.abs(
+                this.totalBalance?.totalBalanceLessThanZero || 0
+              ),
+              color: 'green',
+            },
+            credit: {
+              title: "You'll get",
+              amount: this.totalBalance?.totalBalanceGreaterThanZero || 0,
+              color: 'red',
+            },
+            ctaButton: {
+              title: 'View Reports',
+              icon: 'sds',
+              onClick: this.onViewReportsClicked,
+            },
+          };
+        },
+        error: (e) => console.error(e),
+        complete: () => console.info('complete'),
+      });
+  }
 
   loadCustomers(page?: number) {
     if (this.isCustomersLoading) {
@@ -173,8 +219,20 @@ export class CustomersListComponent implements OnInit, DoCheck {
               const customerInfoData = customer.customerStoreInfo;
               const ledgerItem: LedgerItemI = {
                 id: customerInfoData.customerId,
-                title: customerInfoData.name,
-                amount: customerInfoData.balance?.toString(),
+                title: customerInfoData.name || '',
+                amount: {
+                  text: Math.abs(customerInfoData.balance || 0)?.toString(),
+                  color:
+                    customerInfoData &&
+                    customerInfoData.balance &&
+                    customerInfoData.balance > 0
+                      ? 'danger'
+                      : customerInfoData &&
+                        customerInfoData.balance &&
+                        customerInfoData.balance < 0
+                      ? 'success'
+                      : '',
+                },
                 subTitle: customerData.phoneNumber,
                 imageUrl: customerData.photoUrl,
                 onClick: this.onCustomerLedgerCardClicked,
