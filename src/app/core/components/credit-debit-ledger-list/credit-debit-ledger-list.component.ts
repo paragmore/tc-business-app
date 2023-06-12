@@ -29,14 +29,19 @@ export class CreditDebitLedgerListComponent implements OnInit {
 
 export interface LedgerItemI {
   id: string;
-  title?: string;
+  title: string;
   subTitle?: string;
   chipText?: string;
-  amount?: string;
-  amountSubtitle?: string;
+  amount: LedgerTextI;
+  amountSubtitle?: LedgerTextI;
   imageUrl?: string;
   onClick: (ledger: LedgerItemI) => void;
   openDetailsPage: (ledger: LedgerItemI) => void;
+}
+
+export interface LedgerTextI {
+  text: string;
+  color?: string;
 }
 
 export interface LedgerDataI {
