@@ -2,16 +2,19 @@ import { Injectable } from '@angular/core';
 import { getAuthHeaders } from '../../utils/authHeaders';
 import { HttpClient } from '@angular/common/http';
 import { PaginationQueryParamsI } from '../products/products.service';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PartiesService {
   constructor(private httpClient: HttpClient) {}
-  baseUrl = 'http://localhost:8020/';
+  baseUrl = environment.production
+    ? 'https://parties-api.taxpayercorner.com'
+    : 'http://localhost:8020';
 
   createParty(createPartyRequest: CreatePartyRequestI) {
-    const url = this.baseUrl + `parties/create`;
+    const url = `${this.baseUrl}/parties/create`;
     const headers = getAuthHeaders();
     const body = {
       ...createPartyRequest,
@@ -20,7 +23,7 @@ export class PartiesService {
   }
 
   updateParty(updateParty: UpdatePartyRequestI) {
-    const url = this.baseUrl + `parties/update`;
+    const url = `${this.baseUrl}/parties/update`;
     const headers = getAuthHeaders();
     const body = {
       ...updateParty,
@@ -49,20 +52,21 @@ export class PartiesService {
     if (options?.sortOrder) {
       queryParams.append('sortOrder', options.sortOrder);
     }
-    const url =
-      this.baseUrl + `parties/${storeId}/${type}?${queryParams.toString()}`;
+    const url = `${
+      this.baseUrl
+    }/parties/${storeId}/${type}?${queryParams.toString()}`;
     const headers = getAuthHeaders();
     return this.httpClient.get(url, { headers: headers });
   }
 
   getStorePartyById(storeId: string, type: PartyTypeEnum, partyId: string) {
-    const url = this.baseUrl + `parties/${storeId}/${type}/${partyId}`;
+    const url = `${this.baseUrl}/parties/${storeId}/${type}/${partyId}`;
     const headers = getAuthHeaders();
     return this.httpClient.get(url, { headers: headers });
   }
 
   getStorePartiesTotalBalance(storeId: string, type: PartyTypeEnum) {
-    const url = this.baseUrl + `parties/balance/${storeId}/${type}`;
+    const url = `${this.baseUrl}/parties/balance/${storeId}/${type}`;
     const headers = getAuthHeaders();
     return this.httpClient.get(url, { headers: headers });
   }

@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { getAuthHeaders } from '../../utils/authHeaders';
 import { VerifyGSTINResponseI } from '../../components/onboarding-modal/onboarding-modal.component';
+import { environment } from 'src/environments/environment';
 
 export interface OnboardStoreRequestI {
   storeId: string;
@@ -20,22 +21,24 @@ export interface OnboardStoreRequestI {
 })
 export class OnboardingService {
   constructor(private httpClient: HttpClient) {}
-  baseUrl = 'http://localhost:8005/';
+  baseUrl = environment.production
+    ? 'https://storeinfo-api.taxpayercorner.com'
+    : 'http://localhost:8005';
 
   getUserAndStoreInfo() {
-    const url = this.baseUrl + 'storeInfo';
+    const url = `${this.baseUrl}/storeInfo`;
     const headers = getAuthHeaders();
     return this.httpClient.get(url, { headers: headers });
   }
 
   verifyGSTIN(storeId: string, gstin: string) {
-    const url = this.baseUrl + `storeInfo/verifyGSTIN/${storeId}/${gstin}`;
+    const url = `${this.baseUrl}/storeInfo/verifyGSTIN/${storeId}/${gstin}`;
     const headers = getAuthHeaders();
     return this.httpClient.get(url, { headers: headers });
   }
 
   onboardStore(onboardStoreRequest: OnboardStoreRequestI) {
-    const url = this.baseUrl + `storeInfo/onboardStore`;
+    const url = `${this.baseUrl}/storeInfo/onboardStore`;
     const headers = getAuthHeaders();
     const body = {
       ...onboardStoreRequest,
@@ -44,7 +47,7 @@ export class OnboardingService {
   }
 
   onboardNonGSTStore(storeId: string, gstInfo: VerifyGSTINResponseI) {
-    const url = this.baseUrl + `storeInfo/onboardStore`;
+    const url = `${this.baseUrl}/storeInfo/onboardStore`;
     const headers = getAuthHeaders();
     const body = {
       gstInfo,

@@ -1,16 +1,19 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { getAuthHeaders } from '../../utils/authHeaders';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductsService {
   constructor(private httpClient: HttpClient) {}
-  baseUrl = 'http://localhost:8015/';
+  baseUrl = environment.production
+    ? 'https://products-api.taxpayercorner.com'
+    : 'http://localhost:80015';
 
   createStoreCategory(createCategoryRequest: CreateCategoryRequestI) {
-    const url = this.baseUrl + `products/category/create`;
+    const url = `${this.baseUrl}/products/category/create`;
     const headers = getAuthHeaders();
     const body = {
       ...createCategoryRequest,
@@ -19,7 +22,7 @@ export class ProductsService {
   }
 
   createStoreProduct(createProductRequest: CreateProductRequestI) {
-    const url = this.baseUrl + `products/create`;
+    const url = `${this.baseUrl}/products/create`;
     const headers = getAuthHeaders();
     const body = {
       ...createProductRequest,
@@ -28,7 +31,7 @@ export class ProductsService {
   }
 
   updateStoreProduct(createProductRequest: UpdateProductRequestI) {
-    const url = this.baseUrl + `products/update`;
+    const url = `${this.baseUrl}/products/update`;
     const headers = getAuthHeaders();
     const body = {
       ...createProductRequest,
@@ -50,14 +53,15 @@ export class ProductsService {
     if (options?.sortOrder) {
       queryParams.append('sortOrder', options.sortOrder);
     }
-    const url =
-      this.baseUrl + `products/category/${storeId}?${queryParams.toString()}`;
+    const url = `${
+      this.baseUrl
+    }/products/category/${storeId}?${queryParams.toString()}`;
     const headers = getAuthHeaders();
     return this.httpClient.get(url, { headers: headers });
   }
 
   getStoreProductById(storeId: string, productId: string) {
-    const url = this.baseUrl + `products/${storeId}/${productId}`;
+    const url = `${this.baseUrl}/products/${storeId}/${productId}`;
     const headers = getAuthHeaders();
     return this.httpClient.get(url, { headers: headers });
   }
@@ -96,7 +100,7 @@ export class ProductsService {
     if (options?.minSellsPrice) {
       queryParams.append('minSellsPrice', options.minSellsPrice);
     }
-    const url = this.baseUrl + `products/${storeId}?${queryParams.toString()}`;
+    const url = `${this.baseUrl}/products/${storeId}?${queryParams.toString()}`;
     const headers = getAuthHeaders();
     return this.httpClient.get(url, { headers: headers });
   }

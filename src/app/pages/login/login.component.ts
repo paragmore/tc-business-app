@@ -12,6 +12,7 @@ import { AppState } from '../../../app/store/models/state.model';
 import { ScreenModel } from '../../../app/store/models/screen.models';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { LoginService } from 'src/app/core/services/login/login.service';
 
 @Component({
   selector: 'app-login',
@@ -31,7 +32,8 @@ export class LoginComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     public modalController: ModalController,
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    private loginService: LoginService
   ) {}
 
   isModalOpen = false;
@@ -59,38 +61,30 @@ export class LoginComponent implements OnInit {
     return await modal.present();
   }
   ngOnInit() {
-    const baseUrl = environment.production ?'https://login-api.taxpayercorner.com' : 'http://localhost:8000'
-    this.http
-      .get(
-        `${baseUrl}/auth?userType=BUSINESS_ADMIN`,
-        {
-          responseType: 'text',
+    this.loginService.getAuthHtml().subscribe((html: string) => {
+      this.loginHtml = this.sanitizer.bypassSecurityTrustHtml(html);
+      const div = document.createElement('div');
+      div.innerHTML = html;
+      // const mainDiv = document.getElementById('login-ionic-container');
+      // console.log(mainDiv);
+      // mainDiv?.appendChild(div);
+      // console.log(mainDiv);
+      const script = document.createElement('script');
+      if (div.querySelector('script') != null) {
+        console.log(div.querySelector('script') != null);
+        const scriptH = div.querySelector('script')?.innerHTML;
+        const scriptSrc = div.querySelector('script')?.src;
+        if (scriptSrc) {
+          script.src = scriptSrc;
         }
-      )
-      .subscribe((html: string) => {
-        this.loginHtml = this.sanitizer.bypassSecurityTrustHtml(html);
-        const div = document.createElement('div');
-        div.innerHTML = html;
-        // const mainDiv = document.getElementById('login-ionic-container');
-        // console.log(mainDiv);
-        // mainDiv?.appendChild(div);
-        // console.log(mainDiv);
-        const script = document.createElement('script');
-        if (div.querySelector('script') != null) {
-          console.log(div.querySelector('script') != null);
-          const scriptH = div.querySelector('script')?.innerHTML;
-          const scriptSrc = div.querySelector('script')?.src;
-          if (scriptSrc) {
-            script.src = scriptSrc;
-          }
-          if (scriptH) {
-            script.innerHTML = scriptH;
-          }
+        if (scriptH) {
+          script.innerHTML = scriptH;
         }
-        this.screenState$ = this.store.select((store) => store.screen);
+      }
+      this.screenState$ = this.store.select((store) => store.screen);
 
-        document.body.appendChild(script);
-      });
+      document.body.appendChild(script);
+    });
 
     if (this.authService.isAuthenticated()) {
       this.router.navigate(['/home']);
