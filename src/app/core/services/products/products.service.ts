@@ -8,12 +8,13 @@ import { environment } from 'src/environments/environment';
 })
 export class ProductsService {
   constructor(private httpClient: HttpClient) {}
-  baseUrl = environment.production
+  baseUrl = false
     ? 'https://products-api.taxpayercorner.com'
-    : 'http://localhost:80015';
+    : 'http://localhost:8015';
 
   createStoreCategory(createCategoryRequest: CreateCategoryRequestI) {
     const url = `${this.baseUrl}/products/category/create`;
+    console.log(url)
     const headers = getAuthHeaders();
     const body = {
       ...createCategoryRequest,
