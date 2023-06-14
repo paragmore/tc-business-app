@@ -1,8 +1,10 @@
 ion-select{
   border-radius: 10px; border: 1px solid var(--ion-color-primary)
 }
-ion-select label{
-  text-align: center;
+
+ion-select {
+  --placeholder-color: #971e49;
+  --placeholder-opacity: 1;
+  width: 100%;
   justify-content: center;
-  align-items: center;
 }
