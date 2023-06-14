@@ -5,7 +5,7 @@
 
   <ion-row class="list-row-container">
     <ion-grid style="height: 95%">
-      <ion-row class="header-row">
+      <ion-row class="products-list-header-row">
         <ion-col
           style="display: flex; align-items: center"
           [size]="(screenState$ | async)?.isMobile ? 7 : 6"
@@ -112,93 +112,29 @@
           </ng-container>
         </ion-col>
       </ion-row>
-
-      <ion-list
+      <ion-content
         style="
           /* background-color: var(--ion-color-primary-contrast); */
           overflow-y: scroll;
           height: 95%;
         "
       >
-        <ion-row
-          *ngIf="isProductsLoading"
-          style="
-            background-color: var(--ion-color-primary-contrast);
-            border-radius: 5px;
-            padding: 10px;
-            margin: 5px;
-          "
+        <ion-list
+          style="/* background-color: var(--ion-color-primary-contrast); */"
         >
-          <ion-col>
-            <ion-row>
-              <ion-col>
-                <div style="width: 40px; height: 40px">
-                  <ion-avatar
-                    style="
-                      --border-radius: 5px;
-                      width: fit-content;
-                      height: fit-content;
-                    "
-                  >
-                    <ion-skeleton-text
-                      [animated]="true"
-                      style="width: 80%"
-                    ></ion-skeleton-text>
-                  </ion-avatar>
-                </div>
-              </ion-col>
-              <ion-col>
-                <ion-text style="overflow-wrap: anywhere">
-                  <ion-skeleton-text
-                    [animated]="true"
-                    style="width: 80%"
-                  ></ion-skeleton-text>
-                </ion-text>
-              </ion-col>
-            </ion-row>
-          </ion-col>
-
-          <ion-col size="3">
-            <ion-skeleton-text
-              [animated]="true"
-              style="width: 80%"
-            ></ion-skeleton-text>
-          </ion-col>
-
-          <ion-col size="2">
-            <ion-skeleton-text
-              [animated]="true"
-              style="width: 80%"
-            ></ion-skeleton-text>
-          </ion-col>
-        </ion-row>
-        <div *ngFor="let product of products; let i = index">
           <ion-row
-            *ngIf="!isProductsLoading"
+            *ngIf="!this.isMobile && isProductsLoading"
             style="
               background-color: var(--ion-color-primary-contrast);
               border-radius: 5px;
               padding: 10px;
               margin: 5px;
-              cursor: pointer;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              text-align: center;
             "
-            (click)="openProductDetails(product)"
           >
-            <ion-col [size]="(screenState$ | async)?.isMobile ? 7 : 6">
-              <ion-row
-                style="
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  text-align: center;
-                "
-              >
+            <ion-col>
+              <ion-row>
                 <ion-col>
-                  <ion-card style="width: 60px; height: 60px">
+                  <div style="width: 40px; height: 40px">
                     <ion-avatar
                       style="
                         --border-radius: 5px;
@@ -206,46 +142,119 @@
                         height: fit-content;
                       "
                     >
-                      <ion-img
-                        [src]="
-                          product.heroImage
-                            ? product.heroImage
-                            : 'https://www.chanchao.com.tw/images/default.jpg'
-                        "
-                      ></ion-img>
+                      <ion-skeleton-text
+                        [animated]="true"
+                        style="width: 80%"
+                      ></ion-skeleton-text>
                     </ion-avatar>
-                  </ion-card>
+                  </div>
                 </ion-col>
                 <ion-col>
                   <ion-text style="overflow-wrap: anywhere">
-                    {{ product.name }}
+                    <ion-skeleton-text
+                      [animated]="true"
+                      style="width: 80%"
+                    ></ion-skeleton-text>
                   </ion-text>
                 </ion-col>
               </ion-row>
             </ion-col>
 
             <ion-col size="3">
-              <ion-text> ₹{{ product.sellsPrice }} </ion-text>
+              <ion-skeleton-text
+                [animated]="true"
+                style="width: 80%"
+              ></ion-skeleton-text>
             </ion-col>
 
             <ion-col size="2">
-              <ion-text> {{ product.quantity }} </ion-text>
-            </ion-col>
-            <ion-col size="1" *ngIf="!(screenState$ | async)?.isMobile">
-              <ion-button
-                fill="tertiary"
-                (click)="openItemDetailsPage(product)"
-              >
-                <ion-icon name="open-outline"></ion-icon>
-              </ion-button>
+              <ion-skeleton-text
+                [animated]="true"
+                style="width: 80%"
+              ></ion-skeleton-text>
             </ion-col>
           </ion-row>
-        </div>
-      </ion-list>
+          <div  *ngFor="let product of products; let i = index">
+            <ion-row
+              *ngIf="!isProductsLoading || isMobile"
+              style="
+                background-color: var(--ion-color-primary-contrast);
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+              "
+              (click)="openProductDetails(product)"
+            >
+              <ion-col [size]="(screenState$ | async)?.isMobile ? 7 : 6">
+                <ion-row
+                  style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    text-align: center;
+                  "
+                >
+                  <ion-col size="4">
+                    <div style="width: 60px; height: 60px; padding: 10px">
+                      <ion-avatar
+                        style="
+                          --border-radius: 5px;
+                          width: fit-content;
+                          height: fit-content;
+                        "
+                      >
+                        <ion-img
+                          [src]="
+                            product.heroImage
+                              ? product.heroImage
+                              : 'https://www.chanchao.com.tw/images/default.jpg'
+                          "
+                        ></ion-img>
+                      </ion-avatar>
+                    </div>
+                  </ion-col>
+                  <ion-col style="text-align:start">
+                    <ion-text style="overflow-wrap: anywhere">
+                      {{ product.name }}
+                    </ion-text>
+                  </ion-col>
+                </ion-row>
+              </ion-col>
+
+              <ion-col size="3">
+                <ion-text> ₹{{ product.sellsPrice }} </ion-text>
+              </ion-col>
+
+              <ion-col size="2">
+                <ion-text> {{ product.quantity }} </ion-text>
+              </ion-col>
+              <ion-col size="1" *ngIf="!(screenState$ | async)?.isMobile">
+                <ion-button
+                  fill="tertiary"
+                  (click)="openItemDetailsPage(product)"
+                >
+                  <ion-icon name="open-outline"></ion-icon>
+                </ion-button>
+              </ion-col>
+            </ion-row>
+            <div style="border-bottom: 1px solid lightblue; margin-left:10px; margin: right 20px;"></div>
+          </div>
+        </ion-list>
+        <ion-infinite-scroll
+          *ngIf="isMobile"
+          [disabled]="false"
+          (ionInfinite)="loadMoreData($event)"
+        >
+          <ion-infinite-scroll-content></ion-infinite-scroll-content>
+        </ion-infinite-scroll>
+      </ion-content>
     </ion-grid>
   </ion-row>
   <ion-row style="width: 100%; bottom: 10px">
     <app-pagination-component
+      *ngIf="!isMobile"
       style="width: 100%"
       [currentPage]="currentPage"
       [totalPages]="totalPages"

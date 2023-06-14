@@ -19,6 +19,7 @@ import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { SelectedProductModel } from 'src/app/store/models/selectedProduct.models';
 import { SearchFilterSortComponent } from 'src/app/core/components/search-filter-sort/search-filter-sort.component';
+import { InfiniteScrollDirective } from 'src/app/core/directives/infinite-scroll.directive';
 
 @Component({
   selector: 'app-items-list',
@@ -31,6 +32,7 @@ import { SearchFilterSortComponent } from 'src/app/core/components/search-filter
     PaginationComponentComponent,
     CommonModule,
     SearchFilterSortComponent,
+    InfiniteScrollDirective
   ],
 })
 export class ItemsListComponent implements OnInit {
@@ -86,6 +88,20 @@ export class ItemsListComponent implements OnInit {
     this.router.navigate([`item/${product._id}`]);
   }
 
+  onInfiniteScroll(){
+    console.log('event')
+  }
+
+  loadMoreData(event:any){
+    console.log('daa', event)
+    if(event){
+      this.currentPage = this.currentPage +1;
+      this.loadProducts(()=> event.target.complete())
+    }
+  }
+
+
+
   toggleSort(sortBy: string, order: SortOrder) {
     this.sortBy = sortBy;
     this.sortOrder = order;
@@ -96,7 +112,7 @@ export class ItemsListComponent implements OnInit {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
       // Fetch the data for the selected page or update the list accordingly
-      this.loadProducts(page);
+      this.loadProducts();
     }
   }
 
@@ -117,7 +133,7 @@ export class ItemsListComponent implements OnInit {
     this.isMobile ? this.openItemDetailsPage(product) : null;
   }
 
-  loadProducts(page?: number) {
+  loadProducts(onLoadingFinished?:()=>void) {
     if (this.isProductsLoading) {
       return;
     }
@@ -142,7 +158,7 @@ export class ItemsListComponent implements OnInit {
             //@ts-ignore
             console.log(response.body.products);
             //@ts-ignore
-            this.products = [...response.body.products];
+            this.products = this.isMobile ? [...this.products, ...response.body.products] : [...response.body.products];
             !this.isMobile &&
               !this.selectedProductState?.selectedProductId &&
               this.openProductDetails(this.products[0]);
@@ -156,6 +172,7 @@ export class ItemsListComponent implements OnInit {
         (error) => {},
         () => {
           this.isProductsLoading = false;
+          onLoadingFinished && onLoadingFinished()
         }
       );
     console.log(3);
