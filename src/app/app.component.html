@@ -85,5 +85,5 @@
 
   <!-- </ion-split-pane> -->
 
-  <app-tabs *ngIf="(screenState$ | async)?.isMobile"></app-tabs>
+  <app-tabs *ngIf="(screenState$ | async)?.isMobile && !currentRoute?.includes('login')"></app-tabs>
 </ion-app>
