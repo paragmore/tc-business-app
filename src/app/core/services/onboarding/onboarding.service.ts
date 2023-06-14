@@ -21,7 +21,7 @@ export interface OnboardStoreRequestI {
 })
 export class OnboardingService {
   constructor(private httpClient: HttpClient) {}
-  baseUrl = false
+  baseUrl = environment.production
     ? 'https://storeinfo-api.taxpayercorner.com'
     : 'http://localhost:8005';
 
