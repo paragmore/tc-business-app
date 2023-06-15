@@ -18,7 +18,10 @@ import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { SelectedProductModel } from 'src/app/store/models/selectedProduct.models';
-import { SearchFilterSortComponent } from 'src/app/core/components/search-filter-sort/search-filter-sort.component';
+import {
+  FilterSortListsI,
+  SearchFilterSortComponent,
+} from 'src/app/core/components/search-filter-sort/search-filter-sort.component';
 import { InfiniteScrollDirective } from 'src/app/core/directives/infinite-scroll.directive';
 
 @Component({
@@ -32,7 +35,7 @@ import { InfiniteScrollDirective } from 'src/app/core/directives/infinite-scroll
     PaginationComponentComponent,
     CommonModule,
     SearchFilterSortComponent,
-    InfiniteScrollDirective
+    InfiniteScrollDirective,
   ],
 })
 export class ItemsListComponent implements OnInit {
@@ -49,6 +52,16 @@ export class ItemsListComponent implements OnInit {
   isMobile = false;
   public selectedProductState$: Observable<SelectedProductModel> | undefined;
   public selectedProductState: SelectedProductModel | undefined;
+  filterSortOptions: FilterSortListsI = {
+    filter: [
+      { value: 'quantity', text: 'Low Stock' },
+      { value: 'quantity', text: 'In Stock' },
+    ],
+    sort: [
+      { value: 'sellsPrice', text: 'Sells Price Low to High' },
+      { value: 'sellsPrice', text: 'Sells Price High to Low' },
+    ],
+  };
   constructor(
     private productsService: ProductsService,
     private currentStoreInfoService: CurrentStoreInfoService,
@@ -88,19 +101,17 @@ export class ItemsListComponent implements OnInit {
     this.router.navigate([`item/${product._id}`]);
   }
 
-  onInfiniteScroll(){
-    console.log('event')
+  onInfiniteScroll() {
+    console.log('event');
   }
 
-  loadMoreData(event:any){
-    console.log('daa', event)
-    if(event){
-      this.currentPage = this.currentPage +1;
-      this.loadProducts(()=> event.target.complete())
+  loadMoreData(event: any) {
+    console.log('daa', event);
+    if (event) {
+      this.currentPage = this.currentPage + 1;
+      this.loadProducts(() => event.target.complete());
     }
   }
-
-
 
   toggleSort(sortBy: string, order: SortOrder) {
     this.sortBy = sortBy;
@@ -133,7 +144,7 @@ export class ItemsListComponent implements OnInit {
     this.isMobile ? this.openItemDetailsPage(product) : null;
   }
 
-  loadProducts(onLoadingFinished?:()=>void) {
+  loadProducts(onLoadingFinished?: () => void) {
     if (this.isProductsLoading) {
       return;
     }
@@ -158,7 +169,13 @@ export class ItemsListComponent implements OnInit {
             //@ts-ignore
             console.log(response.body.products);
             //@ts-ignore
-            this.products = this.isMobile ? [...this.products, ...response.body.products] : [...response.body.products];
+            this.products = this.isMobile
+              ? //@ts-ignore
+
+                [...this.products, ...response.body.products]
+              : //@ts-ignore
+
+                [...response.body.products];
             !this.isMobile &&
               !this.selectedProductState?.selectedProductId &&
               this.openProductDetails(this.products[0]);
@@ -172,7 +189,7 @@ export class ItemsListComponent implements OnInit {
         (error) => {},
         () => {
           this.isProductsLoading = false;
-          onLoadingFinished && onLoadingFinished()
+          onLoadingFinished && onLoadingFinished();
         }
       );
     console.log(3);

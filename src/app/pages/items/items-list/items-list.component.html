@@ -1,24 +1,29 @@
 <ion-header [translucent]="true">
-  <ion-toolbar style="background-color: var(--ion-color-primary);">
+  <ion-toolbar style="background-color: var(--ion-color-primary)">
     <ion-row>
-      <app-search-filter-sort></app-search-filter-sort>
+      <ion-buttons>
+        <ion-menu-button></ion-menu-button>
+      </ion-buttons>
+      <app-search-filter-sort
+        [filterSortLists]="filterSortOptions"
+      ></app-search-filter-sort>
     </ion-row>
   </ion-toolbar>
 </ion-header>
 <div class="list-outer-container">
   <ion-row class="list-row-container">
     <ion-grid style="height: 95%">
-      <ion-row class="products-list-header-row">
+      <ion-row *ngIf="!isMobile" class="products-list-header-row">
         <ion-col
           style="display: flex; align-items: center"
-          [size]="(screenState$ | async)?.isMobile ? 7 : 6"
+          [size]="isMobile ? 5 : 6"
         >
           <ion-button
             (click)="toggleSort('name', sortOrder === 'asc' ? 'desc' : 'asc')"
             fill="tertiary"
             [disabled]="isProductsLoading"
           >
-            <ion-text color="primary">Product</ion-text>
+            <p color="primary">Product</p>
           </ion-button>
           <ng-container *ngIf="sortBy !== 'name'">
             <button
@@ -43,43 +48,7 @@
             </button>
           </ng-container>
         </ion-col>
-
-        <ion-col size="3">
-          <ion-button
-            fill="tertiary"
-            [disabled]="isProductsLoading"
-            (click)="
-              toggleSort('sellsPrice', sortOrder === 'asc' ? 'desc' : 'asc')
-            "
-          >
-            <ion-text color="primary">Sells Price</ion-text>
-          </ion-button>
-          <ng-container *ngIf="sortBy !== 'sellsPrice'">
-            <button
-              ion-button
-              icon-only
-              [disabled]="isProductsLoading"
-              (click)="toggleSort('sellsPrice', 'asc')"
-            >
-              <ion-icon name="swap-vertical-outline"></ion-icon>
-            </button>
-          </ng-container>
-          <ng-container *ngIf="sortBy === 'sellsPrice'">
-            <button
-              ion-button
-              icon-only
-              [disabled]="isProductsLoading"
-              (click)="
-                toggleSort('sellsPrice', sortOrder === 'asc' ? 'desc' : 'asc')
-              "
-            >
-              <ion-icon
-                [name]="sortOrder === 'asc' ? 'arrow-up' : 'arrow-down'"
-              ></ion-icon>
-            </button>
-          </ng-container>
-        </ion-col>
-        <ion-col size="2 ">
+        <ion-col [size]="isMobile ? 4 : 2">
           <ion-button
             [disabled]="isProductsLoading"
             fill="tertiary"
@@ -87,7 +56,7 @@
               toggleSort('quantity', sortOrder === 'asc' ? 'desc' : 'asc')
             "
           >
-            <ion-text color="primary">Stock</ion-text>
+            <p color="primary">Stock</p>
           </ion-button>
           <ng-container *ngIf="sortBy !== 'quantity'">
             <button
@@ -106,6 +75,41 @@
               icon-only
               (click)="
                 toggleSort('quantity', sortOrder === 'asc' ? 'desc' : 'asc')
+              "
+            >
+              <ion-icon
+                [name]="sortOrder === 'asc' ? 'arrow-up' : 'arrow-down'"
+              ></ion-icon>
+            </button>
+          </ng-container>
+        </ion-col>
+        <ion-col [size]="isMobile ? 4 : 3">
+          <ion-button
+            fill="tertiary"
+            [disabled]="isProductsLoading"
+            (click)="
+              toggleSort('sellsPrice', sortOrder === 'asc' ? 'desc' : 'asc')
+            "
+          >
+            <p color="primary">Sells Price</p>
+          </ion-button>
+          <ng-container *ngIf="sortBy !== 'sellsPrice'">
+            <button
+              ion-button
+              icon-only
+              [disabled]="isProductsLoading"
+              (click)="toggleSort('sellsPrice', 'asc')"
+            >
+              <ion-icon name="swap-vertical-outline"></ion-icon>
+            </button>
+          </ng-container>
+          <ng-container *ngIf="sortBy === 'sellsPrice'">
+            <button
+              ion-button
+              icon-only
+              [disabled]="isProductsLoading"
+              (click)="
+                toggleSort('sellsPrice', sortOrder === 'asc' ? 'desc' : 'asc')
               "
             >
               <ion-icon
@@ -153,17 +157,17 @@
                   </div>
                 </ion-col>
                 <ion-col>
-                  <ion-text style="overflow-wrap: anywhere">
+                  <p style="overflow-wrap: anywhere">
                     <ion-skeleton-text
                       [animated]="true"
                       style="width: 80%"
                     ></ion-skeleton-text>
-                  </ion-text>
+                  </p>
                 </ion-col>
               </ion-row>
             </ion-col>
 
-            <ion-col size="3">
+            <ion-col [size]="isMobile ? 4 : 3">
               <ion-skeleton-text
                 [animated]="true"
                 style="width: 80%"
@@ -177,7 +181,7 @@
               ></ion-skeleton-text>
             </ion-col>
           </ion-row>
-          <div  *ngFor="let product of products; let i = index">
+          <div *ngFor="let product of products; let i = index">
             <ion-row
               *ngIf="!isProductsLoading || isMobile"
               style="
@@ -190,7 +194,7 @@
               "
               (click)="openProductDetails(product)"
             >
-              <ion-col [size]="(screenState$ | async)?.isMobile ? 7 : 6">
+              <ion-col [size]="isMobile ? 5 : 6">
                 <ion-row
                   style="
                     display: flex;
@@ -218,22 +222,23 @@
                       </ion-avatar>
                     </div>
                   </ion-col>
-                  <ion-col style="text-align:start">
-                    <ion-text style="overflow-wrap: anywhere">
+                  <ion-col style="text-align: start">
+                    <p class="title3" style="overflow-wrap: anywhere">
                       {{ product.name }}
-                    </ion-text>
+                    </p>
                   </ion-col>
                 </ion-row>
               </ion-col>
 
-              <ion-col size="3">
-                <ion-text> ₹{{ product.sellsPrice }} </ion-text>
+              <ion-col size="2">
+                <p class="title4">{{ product.quantity }}</p>
+                <p class="captionMobile">{{ product.unit.name }} left</p>
+              </ion-col>
+              <ion-col [size]="isMobile ? 5 : 3">
+                <p class="title4">₹{{ product.sellsPrice }}</p>
               </ion-col>
 
-              <ion-col size="2">
-                <ion-text> {{ product.quantity }} </ion-text>
-              </ion-col>
-              <ion-col size="1" *ngIf="!(screenState$ | async)?.isMobile">
+              <ion-col size="1" *ngIf="!isMobile">
                 <ion-button
                   fill="tertiary"
                   (click)="openItemDetailsPage(product)"
@@ -242,7 +247,13 @@
                 </ion-button>
               </ion-col>
             </ion-row>
-            <div style="border-bottom: 1px solid lightblue; margin-left:10px; margin: right 20px;"></div>
+            <div
+              style="
+                border-bottom: 1px solid lightblue;
+                margin-left: 10px;
+                margin: right 20px;
+              "
+            ></div>
           </div>
         </ion-list>
         <ion-infinite-scroll
