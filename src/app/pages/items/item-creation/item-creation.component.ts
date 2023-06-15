@@ -101,13 +101,24 @@ export class ItemCreationComponent implements OnInit {
       this.currentStoreInfo = response;
     });
     this.presentingElement = document.querySelector('.ion-page');
-    console.log('inits');
+    console.log(
+      'inits',
+      this.editProduct,
+      this.editProduct?.category.map((cat) => cat.name).join(',')
+    );
     this.screenState$ = this.store.select((store) => store.screen);
     this.screenState$.subscribe((screen) => (this.isMobile = screen.isMobile));
+    const categoriesStr = this.editProduct?.category
+      .map((cat) => cat.name)
+      .join(',');
     this.productForm.patchValue({
       ...this.editProduct,
       unit: this.editProduct?.unit.name,
+      category: categoriesStr,
     });
+    if (categoriesStr) {
+      this.selectedCategoriesString = categoriesStr;
+    }
     if (this.editProduct?.variants) {
       this.variants = this.editProduct?.variants;
     }

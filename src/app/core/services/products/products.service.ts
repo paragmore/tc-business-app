@@ -14,7 +14,7 @@ export class ProductsService {
 
   createStoreCategory(createCategoryRequest: CreateCategoryRequestI) {
     const url = `${this.baseUrl}/products/category/create`;
-    console.log(url)
+    console.log(url);
     const headers = getAuthHeaders();
     const body = {
       ...createCategoryRequest,
@@ -154,7 +154,7 @@ export interface ProductI {
   description?: string;
   sellsPrice: number;
   purchasePrice?: number;
-  category: string[];
+  category: CategoryI[];
   variants: VariantI[];
   heroImage?: string;
   images: string[];
