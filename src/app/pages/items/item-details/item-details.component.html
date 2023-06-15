@@ -8,14 +8,7 @@
     </ion-toolbar>
   </ion-header>
   <div class="main-scrollable-page">
-    <ion-grid
-      style="
-        background-color: var(--ion-color-primary-contrast);
-        border-radius: 5px;
-        padding: 10px;
-        margin: 10px;
-      "
-    >
+    <ion-grid style="">
       <ion-row>
         <ion-col size-lg="4" size-xs="12">
           <ion-row class="product-hero-image-container">
@@ -56,45 +49,45 @@
             <ion-row>
               <ion-col>
                 <ion-row>
-                  <p> Sales Price </p>
+                  <p>Sales Price</p>
                 </ion-row>
                 <ion-row>
-                  <p class="titleLarge"> {{ productDetails?.sellsPrice }} </p>
+                  <p class="titleLarge">{{ productDetails?.sellsPrice }}</p>
                 </ion-row>
               </ion-col>
               <ion-col>
                 <ion-row>
-                  <p> Purchase Price </p>
+                  <p>Purchase Price</p>
                 </ion-row>
                 <ion-row>
                   <p class="titleLarge">
-                    {{ productDetails?.purchasePrice | hyphen }}</p
-                  >
+                    {{ productDetails?.purchasePrice | hyphen }}
+                  </p>
                 </ion-row>
               </ion-col>
               <ion-col>
                 <ion-row>
-                  <p> Stock Quantity </p>
+                  <p>Stock Quantity</p>
                 </ion-row>
                 <ion-row>
-                  <p class="titleLarge"> {{ productDetails?.quantity }}</p>
+                  <p class="titleLarge">{{ productDetails?.quantity }}</p>
                 </ion-row>
               </ion-col>
               <ion-col>
                 <ion-row>
-                  <p> Stock Value </p>
+                  <p>Stock Value</p>
                 </ion-row>
                 <ion-row>
                   <p class="titleLarge">
-                    {{ productDetails?.purchasePrice | hyphen }}</p
-                  >
+                    {{ productDetails?.purchasePrice | hyphen }}
+                  </p>
                 </ion-row>
               </ion-col>
             </ion-row>
             <ion-row>
               <ion-col>
                 <ion-row>
-                  <p> Unit </p>
+                  <p>Unit</p>
                 </ion-row>
                 <ion-row>
                   <p class="titleLarge">
@@ -104,7 +97,7 @@
               </ion-col>
               <ion-col>
                 <ion-row>
-                  <p> Low Stock </p>
+                  <p>Low Stock</p>
                 </ion-row>
                 <ion-row>
                   <p class="titleLarge">
@@ -114,7 +107,7 @@
               </ion-col>
               <ion-col>
                 <ion-row>
-                  <p> HSN Code </p>
+                  <p>HSN Code</p>
                 </ion-row>
                 <ion-row>
                   <p class="titleLarge">
@@ -124,7 +117,7 @@
               </ion-col>
               <ion-col>
                 <ion-row>
-                  <p> GST % </p>
+                  <p>GST %</p>
                 </ion-row>
                 <ion-row>
                   <p class="titleLarge">
@@ -152,14 +145,7 @@
         </app-variants-list>
       </ion-row>
     </ion-grid>
-    <ion-grid
-      style="
-        background-color: var(--ion-color-primary-contrast);
-        border-radius: 5px;
-        padding: 10px;
-        margin: 10px;
-      "
-    >
+    <ion-grid style="">
       <ion-row>
         <ion-title> ITEM ANALYTICS TRACKER </ion-title>
       </ion-row>
