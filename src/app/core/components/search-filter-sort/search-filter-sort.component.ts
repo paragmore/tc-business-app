@@ -10,7 +10,6 @@ import {
 import { IonSelect, IonicModule } from '@ionic/angular';
 import { ClickOutsideDirective } from '../../directives/click-outside-directive';
 import { FormsModule } from '@angular/forms';
-import { CustomDropdownComponent } from 'src/app/custom-dropdown/custom-dropdown.component';
 import { Observable } from 'rxjs';
 import { ScreenModel } from 'src/app/store/models/screen.models';
 import { Store } from '@ngrx/store';
