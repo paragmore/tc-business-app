@@ -15,10 +15,16 @@
 }
 
 .list-row-container {
-  flex: 0.72;
+  flex: 0.8;
   @media only screen and (min-width: 768px) {
     max-height: 75%;
-    flex:1
+    flex: 1;
+  }
+}
+
+.list-height {
+  @media only screen and (min-width: 768px) {
+    height: 95%;
   }
 }
 
@@ -32,7 +38,7 @@ ion-row {
   padding: 0px;
 }
 
-.products-list-header-row{
+.products-list-header-row {
   background-color: var(--ion-color-secondary);
   border-top-right-radius: 10px;
   border-top-left-radius: 10px;

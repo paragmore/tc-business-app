@@ -12,7 +12,7 @@
 </ion-header>
 <div class="list-outer-container">
   <ion-row class="list-row-container">
-    <ion-grid style="height: 95%">
+    <ion-grid class="list-height">
       <ion-row *ngIf="!isMobile" class="products-list-header-row">
         <ion-col
           style="display: flex; align-items: center"
@@ -123,8 +123,8 @@
         style="
           /* background-color: var(--ion-color-primary-contrast); */
           overflow-y: scroll;
-          height: 95%;
         "
+        class="list-height"
       >
         <ion-list
           style="/* background-color: var(--ion-color-primary-contrast); */"
@@ -266,9 +266,8 @@
       </ion-content>
     </ion-grid>
   </ion-row>
-  <ion-row style="width: 100%; bottom: 10px">
+  <ion-row *ngIf="!isMobile" style="width: 100%; bottom: 10px">
     <app-pagination-component
-      *ngIf="!isMobile"
       style="width: 100%"
       [currentPage]="currentPage"
       [totalPages]="totalPages"
