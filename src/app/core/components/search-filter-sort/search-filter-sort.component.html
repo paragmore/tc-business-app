@@ -13,9 +13,21 @@
       size="8"
     >
       <ion-searchbar
+        *ngIf="isMobile"
         style="--border-radius: 5px"
         placeholder="Search by Product name"
         (clickOutside)="hideSearchBar()"
+        show-cancel-button="always"
+        [debounce]="1000"
+        (ionCancel)="hideSearchBar()"
+      ></ion-searchbar>
+      <ion-searchbar
+        *ngIf="!isMobile"
+        style="--border-radius: 5px"
+        placeholder="Search by Product name"
+        (clickOutside)="hideSearchBar()"
+        [debounce]="1000"
+        (ionCancel)="hideSearchBar()"
       ></ion-searchbar>
     </ion-col>
     <ion-col size-md="4" size-xs="8">
