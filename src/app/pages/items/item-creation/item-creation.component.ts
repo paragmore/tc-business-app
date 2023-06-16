@@ -38,6 +38,7 @@ import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
 import { toastAlert } from 'src/app/core/utils/toastAlert';
 import { DiscountsListComponent } from '../discounts-list/discounts-list.component';
 import { VariantsListComponent } from '../variants-list/variants-list.component';
+import { MediaService } from 'src/app/core/services/media/media.service';
 
 @Component({
   selector: 'app-item-creation',
@@ -73,6 +74,12 @@ export class ItemCreationComponent implements OnInit {
   public screenState$: Observable<ScreenModel> | undefined;
   variants: VariantI[] = [];
   discounts: DiscountI[] = [];
+  productImages: {
+    file: File;
+    imageUrl: string;
+    id: string;
+    uploadStatus: UploadStatusEnum;
+  }[] = [];
   constructor(
     private modalController: ModalController,
     private formBuilder: FormBuilder,
@@ -80,7 +87,8 @@ export class ItemCreationComponent implements OnInit {
     private store: Store<AppState>,
     private currentStoreInfoService: CurrentStoreInfoService,
     private productsService: ProductsService,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private mediaService: MediaService
   ) {
     this.productForm = this.formBuilder.group({
       name: ['', Validators.required],
@@ -163,6 +171,76 @@ export class ItemCreationComponent implements OnInit {
       this.productForm.removeControl('purchaseUnitConversion');
     }
     console.log(event.detail);
+  }
+
+  uploadProductImages(images: File[]) {
+    if (!this.currentStoreInfo?._id) {
+      return;
+    }
+    this.mediaService
+      .uploadProductImages(images, this.currentStoreInfo?._id, false)
+      .subscribe({
+        next: (response) => {
+          //@ts-ignore
+          response.body.map((urlResponse) => {
+            const image = this.productImages.find((image) => {
+              console.log(
+                image.file.name,
+                urlResponse.fileName,
+                image.file.name === urlResponse.fileName
+              );
+              return image.file.name === urlResponse.fileName;
+            });
+            console.log('image', image);
+            if (!image) {
+              return;
+            }
+            if (urlResponse.url[0]) {
+              image.imageUrl = urlResponse.url[0];
+              image.uploadStatus = UploadStatusEnum.SUCCESSFUL;
+              return;
+            } else {
+              image.uploadStatus = UploadStatusEnum.FAILED;
+            }
+          });
+          console.log('UPLOAD', this.productImages);
+        },
+        error: (err) => {},
+        complete: () => {},
+      });
+  }
+
+  handleFileInput(event: any) {
+    const files: FileList = event.target.files;
+    console.log(files);
+    const imagesArray: File[] = [];
+    if (files.length > 5) {
+      toastAlert(this.toastController, 'Please select only up to 5 files');
+      console.log('Please select up to 5 files');
+      return;
+    }
+    for (let i = 0; i < files.length; i++) {
+      const file: File | null = files.item(i);
+      if (!file) {
+        continue;
+      }
+      if (file.size <= 5 * 1024 * 1024) {
+        imagesArray.push(file);
+        let imgUrl = URL.createObjectURL(file);
+        this.productImages.push({
+          file: file,
+          imageUrl: imgUrl,
+          id: i.toString(),
+          uploadStatus: UploadStatusEnum.UPLOADING,
+        });
+        console.log(this.productImages);
+        console.log(file);
+      } else {
+        toastAlert(this.toastController, 'File size exceeds the limit of 5 MB');
+        return;
+      }
+    }
+    // this.uploadProductImages(imagesArray);
   }
 
   async showTaxPopover(event: any) {
@@ -396,4 +474,10 @@ interface ProductFormValueI {
   quantity: number;
   lowStock: number;
   gstPercentage: string;
+}
+
+export enum UploadStatusEnum {
+  SUCCESSFUL = 'SUCCESSFUL',
+  FAILED = 'FAILED',
+  UPLOADING = 'UPLOADING',
 }

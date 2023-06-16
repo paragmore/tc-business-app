@@ -18,27 +18,59 @@
   <form [formGroup]="productForm">
     <h5>Product Details</h5>
     <div style="display: flex; align-items: center; justify-content: center">
-      <div
-        style="
-          padding: 10px;
-          margin: 10px;
-          border: 1.5px solid;
-          width: 120px;
-          height: 120px;
-          border-radius: 10px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-        "
-      >
-        <div>
-          <ion-icon name="add-outline"></ion-icon>
-          <ion-icon size="large" name="images-outline"></ion-icon>
-        </div>
+      <ion-row>
+        <ion-col *ngFor="let productImage of productImages">
+          <ion-card style="width: 170px; height: 170px; border-radius: 5px">
+            <ion-img
+              [src]="
+                productImage?.file
+                  ? productImage?.imageUrl
+                  : 'https://www.chanchao.com.tw/images/default.jpg'
+              "
+            >
+            </ion-img>
+          </ion-card>
+        </ion-col>
+      </ion-row>
 
-        <ion-label position="stacked">Add Photo</ion-label>
+      <div style="padding: 10px; margin: 10px">
+        <input
+          type="file"
+          accept="image/*"
+          (change)="handleFileInput($event)"
+          id="fileInput"
+          multiple
+        />
+        <label for="fileInput">
+          <div
+            style="
+              padding: 10px;
+              border: 2px solid var(--ion-color-primary);
+              width: 120px;
+              height: 120px;
+              border-radius: 10px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              text-align: center;
+              cursor: pointer;
+              text-align: center;
+            "
+          >
+            <div>
+              <ion-icon color="primary" name="add-outline"></ion-icon>
+              <ion-icon
+                color="primary"
+                size="large"
+                name="images-outline"
+              ></ion-icon>
+            </div>
+            <p style="color: var(--ion-color-primary)" position="stacked">
+              Add Photo
+            </p>
+          </div>
+        </label>
       </div>
     </div>
     <ion-grid>
