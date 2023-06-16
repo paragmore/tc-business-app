@@ -111,10 +111,13 @@ export class ItemCreationComponent implements OnInit {
     const categoriesStr = this.editProduct?.category
       .map((cat) => cat.name)
       .join(',');
+    const categoriesIdStr = this.editProduct?.category
+      .map((cat) => cat._id)
+      .join(',');
     this.productForm.patchValue({
       ...this.editProduct,
       unit: this.editProduct?.unit.name,
-      category: categoriesStr,
+      category: categoriesIdStr,
     });
     if (categoriesStr) {
       this.selectedCategoriesString = categoriesStr;
