@@ -102,7 +102,7 @@ ion-menu::part(container) {
 }
 
 .danger {
-  color: var(--ion-color-danger);
+  color: var(--ion-color-danger) !important;
 }
 
 // typography.scss

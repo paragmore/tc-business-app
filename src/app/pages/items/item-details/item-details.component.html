@@ -70,7 +70,19 @@
                   <p>Stock Quantity</p>
                 </ion-row>
                 <ion-row>
-                  <p class="titleLarge">{{ productDetails?.quantity }}</p>
+                  <p
+                    [class]="
+                      productDetails &&
+                      productDetails.quantity &&
+                      productDetails.lowStock &&
+                      productDetails.quantity <= productDetails.lowStock
+                        ? 'danger'
+                        : ''
+                    "
+                    class="titleLarge"
+                  >
+                    {{ productDetails?.quantity }}
+                  </p>
                 </ion-row>
               </ion-col>
               <ion-col>
@@ -83,8 +95,6 @@
                   </p>
                 </ion-row>
               </ion-col>
-            </ion-row>
-            <ion-row>
               <ion-col>
                 <ion-row>
                   <p>Unit</p>
@@ -124,8 +134,8 @@
                     {{ productDetails?.gstPercentage | hyphen }}
                   </p>
                 </ion-row>
-              </ion-col>
-            </ion-row>
+              </ion-col></ion-row
+            >
           </ion-card>
         </ion-col>
       </ion-row>
