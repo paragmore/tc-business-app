@@ -74,6 +74,7 @@ export class ItemCreationComponent implements OnInit {
   public screenState$: Observable<ScreenModel> | undefined;
   variants: VariantI[] = [];
   discounts: DiscountI[] = [];
+  UploadStatusEnum = UploadStatusEnum;
   productImages: {
     file: File;
     imageUrl: string;
@@ -137,6 +138,7 @@ export class ItemCreationComponent implements OnInit {
       this.discounts = this.editProduct?.discounts;
     }
   }
+  removeImage(image: any) {}
 
   formatDiscountValue(discount: any) {
     if (discount.type === 'amount') {
@@ -240,7 +242,7 @@ export class ItemCreationComponent implements OnInit {
         return;
       }
     }
-    // this.uploadProductImages(imagesArray);
+    this.uploadProductImages(imagesArray);
   }
 
   async showTaxPopover(event: any) {
@@ -367,6 +369,9 @@ export class ItemCreationComponent implements OnInit {
         variants: this.variants,
         discounts: this.discounts,
         gstPercentage: gstPercent,
+        images: this.productImages
+          .filter((image) => image.uploadStatus === UploadStatusEnum.SUCCESSFUL)
+          .map((img) => img.imageUrl),
       };
       this.updateProduct(updateProductPayload);
     } else {
@@ -377,6 +382,9 @@ export class ItemCreationComponent implements OnInit {
         variants: this.variants,
         discounts: this.discounts,
         gstPercentage: gstPercent,
+        images: this.productImages
+          .filter((image) => image.uploadStatus === UploadStatusEnum.SUCCESSFUL)
+          .map((img) => img.imageUrl),
       };
       this.createProduct(createProductPayload);
     }
