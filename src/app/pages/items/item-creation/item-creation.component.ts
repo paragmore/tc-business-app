@@ -75,12 +75,8 @@ export class ItemCreationComponent implements OnInit {
   variants: VariantI[] = [];
   discounts: DiscountI[] = [];
   UploadStatusEnum = UploadStatusEnum;
-  productImages: {
-    file: File;
-    imageUrl: string;
-    id: string;
-    uploadStatus: UploadStatusEnum;
-  }[] = [];
+  productImages: ProductImageFileI[] = [];
+  heroImage: ProductImageFileI | string | undefined;
   constructor(
     private modalController: ModalController,
     private formBuilder: FormBuilder,
@@ -138,7 +134,25 @@ export class ItemCreationComponent implements OnInit {
       this.discounts = this.editProduct?.discounts;
     }
   }
-  removeImage(image: any) {}
+  removeImage(image: ProductImageFileI) {
+    if (this.heroImage === image) {
+      this.heroImage = undefined;
+    }
+    const deleteIndex = this.productImages.findIndex(
+      (pImages) => pImages.file.name === image.file.name
+    );
+    if (deleteIndex !== -1) {
+      this.productImages.splice(deleteIndex, 1);
+    }
+  }
+
+  selectHeroImage(image: ProductImageFileI | string) {
+    if (this.heroImage === image) {
+      this.heroImage = undefined;
+      return;
+    }
+    this.heroImage = image;
+  }
 
   formatDiscountValue(discount: any) {
     if (discount.type === 'amount') {
@@ -205,6 +219,11 @@ export class ItemCreationComponent implements OnInit {
               image.uploadStatus = UploadStatusEnum.FAILED;
             }
           });
+          if (!this.editProduct?.heroImage) {
+            this.heroImage = this.productImages.find(
+              (img) => img.uploadStatus === UploadStatusEnum.SUCCESSFUL
+            );
+          }
           console.log('UPLOAD', this.productImages);
         },
         error: (err) => {},
@@ -372,6 +391,10 @@ export class ItemCreationComponent implements OnInit {
         images: this.productImages
           .filter((image) => image.uploadStatus === UploadStatusEnum.SUCCESSFUL)
           .map((img) => img.imageUrl),
+        heroImage:
+          typeof this.heroImage === 'string'
+            ? this.heroImage
+            : this.heroImage?.imageUrl,
       };
       this.updateProduct(updateProductPayload);
     } else {
@@ -385,6 +408,10 @@ export class ItemCreationComponent implements OnInit {
         images: this.productImages
           .filter((image) => image.uploadStatus === UploadStatusEnum.SUCCESSFUL)
           .map((img) => img.imageUrl),
+        heroImage:
+          typeof this.heroImage === 'string'
+            ? this.heroImage
+            : this.heroImage?.imageUrl,
       };
       this.createProduct(createProductPayload);
     }
@@ -488,4 +515,11 @@ export enum UploadStatusEnum {
   SUCCESSFUL = 'SUCCESSFUL',
   FAILED = 'FAILED',
   UPLOADING = 'UPLOADING',
+}
+
+export interface ProductImageFileI {
+  file: File;
+  imageUrl: string;
+  id: string;
+  uploadStatus: UploadStatusEnum;
 }

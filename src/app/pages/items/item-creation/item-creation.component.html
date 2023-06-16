@@ -19,22 +19,41 @@
     <h5>Product Details</h5>
     <div style="display: flex; align-items: center; justify-content: center">
       <ion-row>
-        <ion-col *ngFor="let image of editProduct?.images">
-          <ion-card style="width: 120px; height: 120px; border-radius: 10px">
-            <ion-img
-              [src]="
-                image ? image : 'https://www.chanchao.com.tw/images/default.jpg'
-              "
-            >
-            </ion-img>
-            <div class="overlay">
-              <ion-label class="uploading-text">Hero Image</ion-label>
+        <ion-col
+          *ngIf="editProduct && editProduct.heroImage"
+          (click)="selectHeroImage(editProduct.heroImage)"
+        >
+          <ion-card
+            [class]="heroImage ? '' : 'hero-image'"
+            style="width: 120px; height: 120px; border-radius: 10px"
+          >
+            <ion-img [src]="editProduct.heroImage"> </ion-img>
+            <div class="hero-image-overlay">
+              <ion-label class="hero-image-text">Hero Image</ion-label>
+            </div>
+          </ion-card>
+        </ion-col>
+        <ion-col
+          (click)="selectHeroImage(image)"
+          *ngFor="let image of editProduct?.images"
+        >
+          <ion-card
+            [class]="image === heroImage ? 'hero-image' : ''"
+            style="width: 120px; height: 120px; border-radius: 10px"
+          >
+            <ion-img [src]="image"> </ion-img>
+            <div *ngIf="image === heroImage" class="hero-image-overlay">
+              <ion-label class="hero-image-text">Hero Image</ion-label>
             </div>
           </ion-card>
         </ion-col>
         <ion-col *ngFor="let productImage of productImages">
           <div>
-            <ion-card style="width: 120px; height: 120px; border-radius: 10px">
+            <ion-card
+              (click)="selectHeroImage(productImage)"
+              style="width: 120px; height: 120px; border-radius: 10px"
+              [class]="productImage === heroImage ? 'hero-image' : ''"
+            >
               <ion-img
                 [src]="
                   productImage?.file
@@ -49,6 +68,12 @@
                 class="overlay"
               >
                 <ion-label class="uploading-text">Uploading...</ion-label>
+              </div>
+              <div
+                *ngIf="productImage === heroImage"
+                class="hero-image-overlay"
+              >
+                <ion-label class="hero-image-text">Hero Image</ion-label>
               </div>
             </ion-card>
             <ion-button
