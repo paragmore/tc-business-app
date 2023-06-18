@@ -18,6 +18,7 @@ p .danger {
   display: flex;
   flex-direction: column;
   overflow-y: scroll;
+  overflow-x: hidden;
   height: 90vh;
   @media only screen and (max-width: 768px) {
     height: 85vh;
@@ -73,6 +74,5 @@ ion-row {
   @media only screen and (min-width: 768px) {
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
-    margin-right: 10px;
   }
 }
