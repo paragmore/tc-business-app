@@ -49,7 +49,10 @@ export class ItemDetailsComponent implements OnInit {
     this.selectedProductState$ = this.store.select(
       (store) => store.selectedProduct
     );
-    this.store.select((state) => (this.isMobile = state.screen.isMobile));
+    const screenState$ = this.store.select((store) => store.screen);
+    screenState$.subscribe((screen) => {
+      this.isMobile = screen.isMobile;
+    });
     console.log('here');
     combineLatest([
       this.currentStoreInfoService.getCurrentStoreInfo(),
