@@ -101,6 +101,9 @@ export class ProductsService {
     if (options?.minSellsPrice) {
       queryParams.append('minSellsPrice', options.minSellsPrice);
     }
+    if (options?.itemType) {
+      queryParams.append('itemType', options.itemType);
+    }
     const url = `${this.baseUrl}/products/${storeId}?${queryParams.toString()}`;
     const headers = getAuthHeaders();
     return this.httpClient.get(url, { headers: headers });
@@ -171,6 +174,7 @@ export interface ProductI {
   inventoryProducts?: InventoryProductI[];
   lowStock?: number;
   _id: string;
+  isService?: boolean;
 }
 
 export interface InventoryProductI {
@@ -195,6 +199,7 @@ export interface ProductsFilterByQueryI {
   maxPurchasePrice?: string;
   minQuantity?: string;
   maxQuantity?: string;
+  itemType?: ItemTypeEnum;
 }
 
 export interface UpdateProductRequestI {
