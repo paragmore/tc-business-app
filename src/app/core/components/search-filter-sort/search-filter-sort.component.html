@@ -9,7 +9,7 @@
       *ngIf="isSearching || !isMobile"
       style="display: flex"
       size-xs="12"
-      size-md="8"
+      size-md="10"
       size="8"
     >
       <ion-searchbar
@@ -30,14 +30,17 @@
         (ionCancel)="hideSearchBar()"
       ></ion-searchbar>
     </ion-col>
-    <ion-col size-md="4" size-xs="8">
+    <ion-col size-md="2" size-xs="2">
       <div style="display: flex" *ngIf="!isSearching">
-        <ion-button fill="outline" id="sort-popover-button"
-          ><ion-icon name="funnel-outline"></ion-icon>SORT</ion-button
-        >
-        <ion-button fill="outline" id="filter-popover-button"
+        <ion-button fill="tertiary" id="sort-popover-button">
+          <div style="display: flex; flex-direction: column">
+            <ion-icon name="funnel-outline"></ion-icon>
+            <p class="tiny">Sort & Filters</p>
+          </div>
+        </ion-button>
+        <!-- <ion-button fill="tertiary" id="filter-popover-button"
           ><ion-icon name="filter-outline"></ion-icon>FILTER</ion-button
-        >
+        > -->
       </div>
     </ion-col>
     <ion-popover trigger="sort-popover-button" [dismissOnSelect]="true">
@@ -52,10 +55,19 @@
               >{{ sortItem.text }}</ion-item
             >
           </ion-list>
+          <ion-list>
+            <ion-item
+              *ngFor="let filterItem of filterSortLists.filter; let i = index"
+              [button]="true"
+              [detail]="false"
+              (click)="onFilter(filterItem)"
+              >{{ filterItem.text }}</ion-item
+            >
+          </ion-list>
         </ion-content>
       </ng-template>
     </ion-popover>
-
+    <!--
     <ion-popover trigger="filter-popover-button" [dismissOnSelect]="true">
       <ng-template>
         <ion-content>
@@ -70,6 +82,6 @@
           </ion-list>
         </ion-content>
       </ng-template>
-    </ion-popover>
+    </ion-popover> -->
   </ion-row>
 </ion-grid>
