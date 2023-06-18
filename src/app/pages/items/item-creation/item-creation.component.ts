@@ -100,12 +100,17 @@ export class ItemCreationComponent implements OnInit {
       purchasePrice: [''],
       taxIncluded: [true, Validators.required],
       hsnCode: [''],
-      quantity: ['', Validators.required],
       lowStock: [''],
       gstPercentage: [''],
     });
   }
   ngOnInit() {
+    if (this.type === ItemTypeEnum.PRODUCT) {
+      this.productForm.addControl(
+        'quantity',
+        this.formBuilder.control('', Validators.required)
+      );
+    }
     this.currentStoreInfoService.getCurrentStoreInfo().subscribe((response) => {
       this.currentStoreInfo = response;
     });
