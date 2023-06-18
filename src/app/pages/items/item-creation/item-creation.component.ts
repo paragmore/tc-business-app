@@ -11,6 +11,7 @@ import {
   CategoryI,
   CreateProductRequestI,
   DiscountI,
+  ItemTypeEnum,
   ProductI,
   ProductsService,
   UpdateProductRequestI,
@@ -61,6 +62,8 @@ import { HsnCodeModalComponent } from '../hsn-code-modal/hsn-code-modal.componen
 })
 export class ItemCreationComponent implements OnInit {
   @Input() editProduct: ProductI | undefined;
+  @Input() type!: ItemTypeEnum;
+  ItemTypeEnum = ItemTypeEnum;
   canDismiss = false;
   presentingElement: Element | null = null;
   selectedCategoryIds: string[] = [];

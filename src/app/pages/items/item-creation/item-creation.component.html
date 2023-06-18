@@ -2,7 +2,7 @@
   <ion-toolbar>
     <app-dialog-header
       style="width: 100%"
-      [headerTitle]="this.editProduct?._id ? 'Update product' : 'Add product'"
+      [headerTitle]="this.editProduct?._id ? 'Update ' + type : 'Add ' + type"
       [onClose]="onCloseProductCreationModal"
     >
     </app-dialog-header>
@@ -16,7 +16,7 @@
   "
 >
   <form [formGroup]="productForm">
-    <h5>Product Details</h5>
+    <h5>{{ type }} Details</h5>
     <div style="display: flex; align-items: center; justify-content: center">
       <ion-row>
         <ion-col
@@ -132,7 +132,7 @@
       <ion-row>
         <ion-col size-md="6" size-xs="12">
           <ion-input
-            label="Product Name"
+            label="{{ type }} Name"
             label-placement="floating"
             fill="outline"
             formControlName="name"
@@ -141,7 +141,7 @@
         <ion-col size-md="6" size-xs="12">
           <ion-input
             (click)="openCreateCategoryModal()"
-            label="Product Category"
+            label="{{ type }} Category"
             label-placement="floating"
             fill="outline"
             [value]="selectedCategoriesString"
@@ -247,7 +247,13 @@
         </ion-col>
         <ion-col size-md="6" size-xs="12">
           <ion-input
-            label="HSN code"
+            [label]="
+              type === ItemTypeEnum.PRODUCT
+                ? 'HSN'
+                : type === ItemTypeEnum.SERVICE
+                ? 'SAC'
+                : ''
+            "
             label-placement="floating"
             fill="outline"
             (click)="openHSNCodeModal($event)"
@@ -283,5 +289,5 @@
   class="btn btn-primary"
   (click)="createOrUpdateProduct()"
   [disabled]="productForm.invalid"
-  >{{ this.editProduct?._id ? "Update product" : "Add product" }}</ion-button
+  >{{ this.editProduct?._id ? "Update " + type : "Add " + type }}</ion-button
 >

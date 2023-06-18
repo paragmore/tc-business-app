@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { ItemCreationComponent } from '../item-creation/item-creation.component';
 import {
+  ItemTypeEnum,
   ProductI,
   ProductsService,
   SortOrder,
@@ -24,6 +25,7 @@ import {
 } from 'src/app/core/components/search-filter-sort/search-filter-sort.component';
 import { InfiniteScrollDirective } from 'src/app/core/directives/infinite-scroll.directive';
 import { LongPressDirective } from 'src/app/core/directives/long-press.directive';
+import { HyphenPipe } from 'src/app/core/pipes/hyphen.pipe';
 
 @Component({
   selector: 'app-items-list',
@@ -38,9 +40,12 @@ import { LongPressDirective } from 'src/app/core/directives/long-press.directive
     SearchFilterSortComponent,
     InfiniteScrollDirective,
     LongPressDirective,
+    HyphenPipe,
   ],
 })
 export class ItemsListComponent implements OnInit {
+  selectedTab: ItemTypeEnum = ItemTypeEnum.PRODUCT;
+  ItemTypeEnum = ItemTypeEnum;
   products: ProductI[] = [];
   currentPage = 1;
   totalPages = 100;
@@ -93,6 +98,10 @@ export class ItemsListComponent implements OnInit {
     });
   }
 
+  updateSelectedTab(event: any) {
+    this.selectedTab = event.detail.value;
+  }
+
   onProductSelectionToggle(event: any, product: ProductI) {
     if (event.detail.checked) {
       this.selectedProducts.push(product);
@@ -131,6 +140,7 @@ export class ItemsListComponent implements OnInit {
   async openAddProductModal() {
     const modal = await this.modalController.create({
       component: ItemCreationComponent,
+      componentProps: { type: this.selectedTab },
       backdropDismiss: true,
       cssClass: 'side-modal',
     });

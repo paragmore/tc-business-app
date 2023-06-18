@@ -7,6 +7,19 @@
   ></app-search-filter-sort>
 </ion-row>
 
+<ion-segment
+  (ionChange)="updateSelectedTab($event)"
+  [value]="selectedTab"
+  *ngIf="!isMobile"
+>
+  <ion-segment-button>
+    <ion-label>Products</ion-label>
+  </ion-segment-button>
+  <ion-segment-button>
+    <ion-label>Services</ion-label>
+  </ion-segment-button>
+</ion-segment>
+
 <div class="list-outer-container">
   <ion-row class="list-row-container">
     <ion-grid class="list-height">
@@ -149,7 +162,19 @@
               width: 100%;
               height: 70px;
             "
-          ></div>
+          >
+            <ion-segment
+              (ionChange)="updateSelectedTab($event)"
+              [value]="selectedTab"
+            >
+              <ion-segment-button [value]="ItemTypeEnum.PRODUCT">
+                <ion-label>Products</ion-label>
+              </ion-segment-button>
+              <ion-segment-button [value]="ItemTypeEnum.SERVICE">
+                <ion-label>Services</ion-label>
+              </ion-segment-button>
+            </ion-segment>
+          </div>
           <ion-row
             *ngIf="!this.isMobile && isProductsLoading"
             style="
@@ -251,7 +276,16 @@
                     <p class="title3" style="overflow-wrap: anywhere">
                       {{ product.name }}
                     </p>
-                    <p class="caption">HSN: {{ product.hsnCode }}</p>
+                    <p class="caption">
+                      {{
+                        selectedTab === ItemTypeEnum.PRODUCT
+                          ? "HSN"
+                          : selectedTab === ItemTypeEnum.SERVICE
+                          ? "SAC"
+                          : ""
+                      }}
+                      {{ product.hsnCode | hyphen }}
+                    </p>
                   </ion-col>
                 </ion-row>
               </ion-col>
@@ -346,6 +380,6 @@
       (isMobile && !enableMultiSelect)
     "
     (click)="openAddProductModal()"
-    >Add product</ion-button
+    >Add {{ selectedTab }}</ion-button
   >
 </div>

@@ -246,3 +246,8 @@ export interface CreateProductRequestI {
 export interface GetProductsQueryParamsI
   extends ProductsFilterByQueryI,
     PaginationQueryParamsI {}
+
+export enum ItemTypeEnum {
+  PRODUCT = 'Product',
+  SERVICE = 'Service',
+}
