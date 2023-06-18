@@ -1,12 +1,8 @@
 <div *ngIf="productDetails?.name">
-  <ion-header>
-    <ion-toolbar>
-      <ion-row>
-        <ion-title> {{ productDetails?.name }} </ion-title>
-        <ion-button (click)="openEditProductModal()"> Edit product </ion-button>
-      </ion-row>
-    </ion-toolbar>
-  </ion-header>
+  <ion-row class="header-row">
+    <ion-title> {{ productDetails?.name }} </ion-title>
+    <ion-button (click)="openEditProductModal()"> Edit product </ion-button>
+  </ion-row>
   <div class="main-scrollable-page">
     <ion-grid style="">
       <ion-row>
@@ -52,7 +48,7 @@
                   <p>Sales Price</p>
                 </ion-row>
                 <ion-row>
-                  <p class="titleLarge">{{ productDetails?.sellsPrice }}</p>
+                  <p class="titleMedium">{{ productDetails?.sellsPrice }}</p>
                 </ion-row>
               </ion-col>
               <ion-col>
@@ -60,7 +56,7 @@
                   <p>Purchase Price</p>
                 </ion-row>
                 <ion-row>
-                  <p class="titleLarge">
+                  <p class="titleMedium">
                     {{ productDetails?.purchasePrice | hyphen }}
                   </p>
                 </ion-row>
@@ -79,7 +75,7 @@
                         ? 'danger'
                         : ''
                     "
-                    class="titleLarge"
+                    class="titleMedium"
                   >
                     {{ productDetails?.quantity }}
                   </p>
@@ -90,7 +86,7 @@
                   <p>Stock Value</p>
                 </ion-row>
                 <ion-row>
-                  <p class="titleLarge">
+                  <p class="titleMedium">
                     {{ productDetails?.purchasePrice | hyphen }}
                   </p>
                 </ion-row>
@@ -100,7 +96,7 @@
                   <p>Unit</p>
                 </ion-row>
                 <ion-row>
-                  <p class="titleLarge">
+                  <p class="titleMedium">
                     {{ productDetails?.unit?.name | hyphen }}
                   </p>
                 </ion-row>
@@ -110,7 +106,7 @@
                   <p>Low Stock</p>
                 </ion-row>
                 <ion-row>
-                  <p class="titleLarge">
+                  <p class="titleMedium">
                     {{ productDetails?.lowStock | hyphen }}
                   </p>
                 </ion-row>
@@ -120,7 +116,7 @@
                   <p>HSN Code</p>
                 </ion-row>
                 <ion-row>
-                  <p class="titleLarge">
+                  <p class="titleMedium">
                     {{ productDetails?.hsnCode | hyphen }}
                   </p>
                 </ion-row>
@@ -130,7 +126,7 @@
                   <p>GST %</p>
                 </ion-row>
                 <ion-row>
-                  <p class="titleLarge">
+                  <p class="titleMedium">
                     {{ productDetails?.gstPercentage | hyphen }}
                   </p>
                 </ion-row>
