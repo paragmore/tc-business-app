@@ -23,6 +23,7 @@ import {
   SearchFilterSortComponent,
 } from 'src/app/core/components/search-filter-sort/search-filter-sort.component';
 import { InfiniteScrollDirective } from 'src/app/core/directives/infinite-scroll.directive';
+import { LongPressDirective } from 'src/app/core/directives/long-press.directive';
 
 @Component({
   selector: 'app-items-list',
@@ -36,6 +37,7 @@ import { InfiniteScrollDirective } from 'src/app/core/directives/infinite-scroll
     CommonModule,
     SearchFilterSortComponent,
     InfiniteScrollDirective,
+    LongPressDirective,
   ],
 })
 export class ItemsListComponent implements OnInit {
@@ -52,6 +54,8 @@ export class ItemsListComponent implements OnInit {
   isMobile = false;
   public selectedProductState$: Observable<SelectedProductModel> | undefined;
   public selectedProductState: SelectedProductModel | undefined;
+  enableMultiSelect = true;
+  selectedProducts: ProductI[] = [];
   filterSortOptions: FilterSortListsI = {
     filter: [
       { value: 'quantity', text: 'Low Stock' },
@@ -73,7 +77,10 @@ export class ItemsListComponent implements OnInit {
 
   ngOnInit() {
     this.screenState$ = this.store.select((store) => store.screen);
-    this.screenState$.subscribe((screen) => (this.isMobile = screen.isMobile));
+    this.screenState$.subscribe((screen) => {
+      this.isMobile = screen.isMobile;
+      this.enableMultiSelect = !this.isMobile;
+    });
     this.currentStoreInfoService.getCurrentStoreInfo().subscribe((response) => {
       this.currentStoreInfo = response;
       this.loadProducts();
@@ -84,6 +91,41 @@ export class ItemsListComponent implements OnInit {
     this.selectedProductState$.subscribe((productState) => {
       this.selectedProductState = productState;
     });
+  }
+
+  onProductSelectionToggle(event: any, product: ProductI) {
+    if (event.detail.checked) {
+      this.selectedProducts.push(product);
+    }
+    if (event.detail.checked === false) {
+      const deleteIndex = this.selectedProducts.findIndex(
+        (prod) => prod._id === product._id
+      );
+      this.selectedProducts.splice(deleteIndex, 1);
+    }
+    console.log(this.selectedProducts);
+  }
+
+  isProductSelected(product: ProductI) {
+    return this.selectedProducts.find((prod) => prod._id === product._id);
+  }
+
+  selectAllToggle(event: any) {
+    if (event.detail.checked) {
+      this.selectedProducts = this.products;
+    }
+    if (event.detail.checked === false) {
+      this.selectedProducts = [];
+    }
+  }
+
+  onMultipleSelectCancel() {
+    this.selectedProducts = [];
+  }
+
+  onLongPress() {
+    console.log('long');
+    this.enableMultiSelect = true;
   }
 
   async openAddProductModal() {
@@ -135,6 +177,9 @@ export class ItemsListComponent implements OnInit {
   }
 
   openProductDetails(product: ProductI) {
+    if (this.enableMultiSelect && this.isMobile) {
+      return;
+    }
     this.store.dispatch(
       setSelectedProduct({
         selectedProduct: { selectedProductId: product._id },
