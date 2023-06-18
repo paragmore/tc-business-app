@@ -16,7 +16,7 @@ import { Store } from '@ngrx/store';
 import { setSelectedProduct } from 'src/app/store/actions/selectedProduct.action';
 import { ScreenModel } from 'src/app/store/models/screen.models';
 import { Observable } from 'rxjs';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { SelectedProductModel } from 'src/app/store/models/selectedProduct.models';
 import {
@@ -77,7 +77,8 @@ export class ItemsListComponent implements OnInit {
     private modalController: ModalController,
     private store: Store<AppState>,
     private router: Router,
-    private _location: Location
+    private _location: Location,
+    private activatedRoute: ActivatedRoute
   ) {}
 
   ngOnInit() {
@@ -85,6 +86,17 @@ export class ItemsListComponent implements OnInit {
     this.screenState$.subscribe((screen) => {
       this.isMobile = screen.isMobile;
       this.enableMultiSelect = !this.isMobile;
+    });
+
+    this.activatedRoute.queryParams.subscribe((params) => {
+      console.log(params);
+      const queryType = params['type'];
+      if (queryType) {
+        this.selectedTab = queryType;
+      } else {
+        this.navigateWithQuery({ type: ItemTypeEnum.PRODUCT });
+        this.selectedTab = ItemTypeEnum.PRODUCT;
+      }
     });
     this.currentStoreInfoService.getCurrentStoreInfo().subscribe((response) => {
       this.currentStoreInfo = response;
@@ -96,12 +108,23 @@ export class ItemsListComponent implements OnInit {
     this.selectedProductState$.subscribe((productState) => {
       this.selectedProductState = productState;
     });
-    this.selectedTab = ItemTypeEnum.PRODUCT;
+  }
+
+  navigateWithQuery(queryParams: any, replace?: boolean) {
+    this.router.navigate([], {
+      queryParams,
+      queryParamsHandling: replace ? undefined : 'merge',
+    });
   }
 
   updateSelectedTab(event: any) {
+    console.log(this._location.path());
     this.selectedTab = event.detail.value;
-    this.loadProducts();
+    // this._location.replaceState(
+    //   this._location.path() + `?type=${this.selectedTab}`
+    // );
+    this.navigateWithQuery({ type: this.selectedTab });
+    this.loadProducts(undefined, true);
   }
 
   onProductSelectionToggle(event: any, product: ProductI) {
@@ -201,7 +224,7 @@ export class ItemsListComponent implements OnInit {
     this.isMobile ? this.openItemDetailsPage(product) : null;
   }
 
-  loadProducts(onLoadingFinished?: () => void) {
+  loadProducts(onLoadingFinished?: () => void, isReload?: boolean) {
     if (this.isProductsLoading) {
       return;
     }
@@ -227,13 +250,13 @@ export class ItemsListComponent implements OnInit {
             //@ts-ignore
             console.log(response.body.products);
             //@ts-ignore
-            this.products = this.isMobile
-              ? //@ts-ignore
+            this.products =
+              this.isMobile && !isReload
+                ? //@ts-ignore
+                  [...this.products, ...response.body.products]
+                : //@ts-ignore
 
-                [...this.products, ...response.body.products]
-              : //@ts-ignore
-
-                [...response.body.products];
+                  [...response.body.products];
             !this.isMobile &&
               !this.selectedProductState?.selectedProductId &&
               this.openProductDetails(this.products[0]);
