@@ -4,6 +4,7 @@
   </ion-buttons>
   <app-search-filter-sort
     [filterSortLists]="filterSortOptions"
+    (onSearchSortFilter)="onSearchSortFilter($event)"
   ></app-search-filter-sort>
 </ion-row>
 

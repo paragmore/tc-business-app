@@ -63,12 +63,16 @@ export class ItemsListComponent implements OnInit {
   selectedProducts: ProductI[] = [];
   filterSortOptions: FilterSortListsI = {
     filter: [
-      { value: 'quantity', text: 'Low Stock' },
-      { value: 'quantity', text: 'In Stock' },
+      { type: 'quantity', text: 'Low Stock', value: 'asc' },
+      { type: 'quantity', text: 'In Stock', value: 'asc' },
     ],
     sort: [
-      { value: 'sellsPrice', text: 'Sells Price Low to High' },
-      { value: 'sellsPrice', text: 'Sells Price High to Low' },
+      { type: 'sellsPrice', text: 'Sells Price Low to High', value: 'asc' },
+      { type: 'sellsPrice', text: 'Sells Price High to Low', value: 'desc' },
+      { type: 'name', text: 'Name ascending (A - Z)', value: 'asc' },
+      { type: 'name', text: 'Name decending (Z - A)', value: 'desc' },
+      { type: 'quantity', text: 'Stock Low to High', value: 'asc' },
+      { type: 'quantity', text: 'Stock High to Low', value: 'desc' },
     ],
   };
   constructor(
@@ -144,6 +148,11 @@ export class ItemsListComponent implements OnInit {
     return this.selectedProducts.find((prod) => prod._id === product._id);
   }
 
+  onSearchSortFilter = (event: any) => {
+    console.log(event);
+    this.toggleSort(event.selected.type, event.selected.value);
+  };
+
   selectAllToggle(event: any) {
     if (event.detail.checked) {
       this.selectedProducts = this.products;
@@ -193,7 +202,7 @@ export class ItemsListComponent implements OnInit {
   toggleSort(sortBy: string, order: SortOrder) {
     this.sortBy = sortBy;
     this.sortOrder = order;
-    this.loadProducts();
+    this.loadProducts(undefined, true);
   }
 
   goToPage(page: number) {

@@ -69,6 +69,7 @@ export class SearchFilterSortComponent implements OnInit {
 export interface FilterSortListItemI {
   value: string;
   text: string;
+  type: string;
 }
 export interface FilterSortListsI {
   filter: FilterSortListItemI[];
