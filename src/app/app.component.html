@@ -5,7 +5,7 @@
     type="overlay"
   >
     <ion-header>
-      <ion-toolbar color="tertiary">
+      <ion-toolbar color="primary">
         <ion-title>TaxPayer Corner</ion-title>
       </ion-toolbar>
     </ion-header>
@@ -85,5 +85,7 @@
 
   <!-- </ion-split-pane> -->
 
-  <app-tabs *ngIf="(screenState$ | async)?.isMobile && !currentRoute?.includes('login')"></app-tabs>
+  <app-tabs
+    *ngIf="(screenState$ | async)?.isMobile && !currentRoute?.includes('login')"
+  ></app-tabs>
 </ion-app>
