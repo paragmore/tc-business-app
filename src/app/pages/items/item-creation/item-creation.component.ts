@@ -39,6 +39,7 @@ import { toastAlert } from 'src/app/core/utils/toastAlert';
 import { DiscountsListComponent } from '../discounts-list/discounts-list.component';
 import { VariantsListComponent } from '../variants-list/variants-list.component';
 import { MediaService } from 'src/app/core/services/media/media.service';
+import { HsnCodeModalComponent } from '../hsn-code-modal/hsn-code-modal.component';
 
 @Component({
   selector: 'app-item-creation',
@@ -124,6 +125,9 @@ export class ItemCreationComponent implements OnInit {
       unit: this.editProduct?.unit.name,
       category: categoriesIdStr,
     });
+    if (this.editProduct?.category) {
+      this.selectedCategories = this.editProduct?.category;
+    }
     if (categoriesStr) {
       this.selectedCategoriesString = categoriesStr;
     }
@@ -326,6 +330,18 @@ export class ItemCreationComponent implements OnInit {
     }
 
     return combinations;
+  }
+
+  async openHSNCodeModal(event: any) {
+    const modal = await this.modalController.create({
+      component: HsnCodeModalComponent,
+      backdropDismiss: true,
+      cssClass: 'login-modal',
+      breakpoints: this.isMobile ? [0, 0.8, 1] : undefined,
+      initialBreakpoint: this.isMobile ? 0.8 : 1,
+    });
+
+    return await modal.present();
   }
 
   async openVariantCreationModal() {
