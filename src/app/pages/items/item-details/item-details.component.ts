@@ -7,6 +7,7 @@ import { SelectedProductModel } from 'src/app/store/models/selectedProduct.model
 import { Observable, combineLatest, forkJoin, take } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import {
+  ItemTypeEnum,
   ProductI,
   ProductsService,
 } from 'src/app/core/services/products/products.service';
@@ -38,6 +39,7 @@ export class ItemDetailsComponent implements OnInit {
   currentStoreInfo: StoreInfoModel | undefined;
   public productDetails: ProductI | undefined;
   isMobile = false;
+  type: ItemTypeEnum | undefined;
   constructor(
     private modalController: ModalController,
     private store: Store<AppState>,
@@ -79,6 +81,9 @@ export class ItemDetailsComponent implements OnInit {
             if (response.message === 'Success') {
               //@ts-ignore
               this.productDetails = response.body;
+              this.type = this.productDetails?.isService
+                ? ItemTypeEnum.SERVICE
+                : ItemTypeEnum.PRODUCT;
             }
           });
       },
@@ -94,6 +99,7 @@ export class ItemDetailsComponent implements OnInit {
         editProduct: {
           ...this.productDetails,
         },
+        type: this.type,
       },
       backdropDismiss: true,
       cssClass: 'side-modal',

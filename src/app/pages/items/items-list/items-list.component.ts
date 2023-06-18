@@ -96,10 +96,12 @@ export class ItemsListComponent implements OnInit {
     this.selectedProductState$.subscribe((productState) => {
       this.selectedProductState = productState;
     });
+    this.selectedTab = ItemTypeEnum.PRODUCT;
   }
 
   updateSelectedTab(event: any) {
     this.selectedTab = event.detail.value;
+    this.loadProducts();
   }
 
   onProductSelectionToggle(event: any, product: ProductI) {
@@ -214,6 +216,7 @@ export class ItemsListComponent implements OnInit {
         pageSize: this.pageSize.toString(),
         sortBy: this.sortBy,
         sortOrder: this.sortOrder,
+        itemType: this.selectedTab,
       })
       .subscribe(
         (response) => {

@@ -1,7 +1,9 @@
 <div *ngIf="productDetails?.name">
   <ion-row class="header-row">
     <ion-title> {{ productDetails?.name }} </ion-title>
-    <ion-button (click)="openEditProductModal()"> Edit product </ion-button>
+    <ion-button (click)="openEditProductModal()">
+      Edit {{ this.type }}
+    </ion-button>
   </ion-row>
   <div
     [class]="!isMobile ? 'scrollbar' : ''"
@@ -9,7 +11,7 @@
     class="main-scrollable-page"
   >
     <div>
-      <ion-grid style="">
+      <ion-grid>
         <ion-row>
           <ion-col size-lg="4" size-xs="12">
             <ion-row class="product-hero-image-container">

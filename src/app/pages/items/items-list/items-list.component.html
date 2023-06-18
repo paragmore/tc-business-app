@@ -12,10 +12,10 @@
   [value]="selectedTab"
   *ngIf="!isMobile"
 >
-  <ion-segment-button>
+  <ion-segment-button [value]="ItemTypeEnum.PRODUCT">
     <ion-label>Products</ion-label>
   </ion-segment-button>
-  <ion-segment-button>
+  <ion-segment-button [value]="ItemTypeEnum.SERVICE">
     <ion-label>Services</ion-label>
   </ion-segment-button>
 </ion-segment>
@@ -26,7 +26,15 @@
       <ion-row *ngIf="!isMobile" class="products-list-header-row">
         <ion-col
           style="display: flex; align-items: center"
-          [size]="isMobile ? 5 : 6"
+          [size]="
+            selectedTab === ItemTypeEnum.PRODUCT
+              ? isMobile
+                ? 5
+                : 6
+              : isMobile
+              ? 9
+              : 8
+          "
         >
           <ion-checkbox
             (ionChange)="selectAllToggle($event)"
@@ -38,7 +46,7 @@
             fill="tertiary"
             [disabled]="isProductsLoading"
           >
-            <p color="primary">Product</p>
+            <p color="primary">{{ selectedTab }}</p>
           </ion-button>
           <ng-container *ngIf="sortBy !== 'name'">
             <button
@@ -104,6 +112,7 @@
         <ion-col
           style="display: flex; align-items: center; justify-content: center"
           [size]="isMobile ? 4 : 2"
+          *ngIf="selectedTab === ItemTypeEnum.PRODUCT"
         >
           <ion-button
             [disabled]="isProductsLoading"
@@ -243,7 +252,17 @@
               (press)="onLongPress()"
               (click)="openProductDetails(product)"
             >
-              <ion-col [size]="isMobile ? 5 : 6">
+              <ion-col
+                [size]="
+                  selectedTab === ItemTypeEnum.PRODUCT
+                    ? isMobile
+                      ? 5
+                      : 6
+                    : isMobile
+                    ? 7
+                    : 8
+                "
+              >
                 <ion-row
                   style="
                     display: flex;
@@ -303,6 +322,7 @@
                     : ''
                 "
                 size="2"
+                *ngIf="selectedTab === ItemTypeEnum.PRODUCT"
               >
                 <p class="title4">
                   {{ product.quantity }}

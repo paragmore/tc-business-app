@@ -214,7 +214,7 @@
           >Tax included</ion-toggle
         ><br /><br />
       </ion-row>
-      <ion-row>
+      <ion-row *ngIf="type === ItemTypeEnum.PRODUCT">
         <ion-col size-md="6" size-xs="12">
           <ion-input
             label="Opening stock"
