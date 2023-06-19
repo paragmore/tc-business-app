@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
 })
 export class ProductsService {
   constructor(private httpClient: HttpClient) {}
-  baseUrl = environment.production
+  baseUrl = false
     ? 'https://products-api.taxpayercorner.com'
     : 'http://localhost:8015';
 
@@ -107,6 +107,16 @@ export class ProductsService {
     const url = `${this.baseUrl}/products/${storeId}?${queryParams.toString()}`;
     const headers = getAuthHeaders();
     return this.httpClient.get(url, { headers: headers });
+  }
+
+  deleteStoreProduct(storeId: string, productIds: string[]) {
+    const url = `${this.baseUrl}/products/delete`;
+    const headers = getAuthHeaders();
+    const body = {
+      storeId,
+      productIds,
+    };
+    return this.httpClient.post(url, body, { headers: headers });
   }
 }
 export interface CategoryI {
