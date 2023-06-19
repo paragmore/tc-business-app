@@ -50,7 +50,7 @@ export class ItemsListComponent implements OnInit {
   ItemTypeEnum = ItemTypeEnum;
   products: ProductI[] = [];
   currentPage = 1;
-  totalPages = 100;
+  totalPages = 1;
   pageSize = 10;
   hasMoreProducts = true;
   currentStoreInfo: StoreInfoModel | undefined;
@@ -115,6 +115,12 @@ export class ItemsListComponent implements OnInit {
     this.selectedProductState$.subscribe((productState) => {
       this.selectedProductState = productState;
     });
+  }
+
+  resetPagination() {
+    this.currentPage = 1;
+    this.totalPages = 1;
+    this.pageSize = 10;
   }
 
   navigateWithQuery(queryParams: any, replace?: boolean) {
@@ -298,6 +304,9 @@ export class ItemsListComponent implements OnInit {
   };
 
   loadProducts(onLoadingFinished?: () => void, isReload?: boolean) {
+    if (isReload) {
+      this.resetPagination();
+    }
     if (this.isProductsLoading) {
       return;
     }
