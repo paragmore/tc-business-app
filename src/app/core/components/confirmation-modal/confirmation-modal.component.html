@@ -1,0 +1,42 @@
+<div>
+  <app-dialog-header
+    style="width: 100%"
+    headerTitle=" "
+    [onClose]="onCloseConfirmationModal"
+  >
+  </app-dialog-header>
+  <div
+    style="
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      padding: 20px;
+      max-width: 400px;
+      text-align: center;
+    "
+  >
+    <ion-icon
+      [class]="confirmationModalInput.body.icon.class"
+      [name]="confirmationModalInput.body.icon.name"
+      style="font-size: 70px"
+    >
+    </ion-icon>
+    <p class="titleLarge">
+      {{ confirmationModalInput.body.title }}
+    </p>
+    <p class="bodySecondary" style="margin: 20px">
+      {{ confirmationModalInput.body.subText }}
+    </p>
+    <div style="gap: 30px; width: 100%; display: flex; justify-content: center">
+      <ion-button color="light"> Cancel </ion-button>
+      <ion-button
+        (click)="onConfirmClicked()"
+        [color]="confirmationModalInput.ctaButton.class"
+      >
+        {{ confirmationModalInput.ctaButton.text }}
+      </ion-button>
+    </div>
+  </div>
+</div>

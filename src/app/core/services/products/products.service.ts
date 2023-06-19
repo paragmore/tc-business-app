@@ -108,6 +108,16 @@ export class ProductsService {
     const headers = getAuthHeaders();
     return this.httpClient.get(url, { headers: headers });
   }
+
+  deleteStoreProduct(storeId: string, productIds: string[]) {
+    const url = `${this.baseUrl}/products/delete`;
+    const headers = getAuthHeaders();
+    const body = {
+      storeId,
+      productIds,
+    };
+    return this.httpClient.post(url, body, { headers: headers });
+  }
 }
 export interface CategoryI {
   name: string;

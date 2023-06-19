@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IonicModule, ModalController } from '@ionic/angular';
+import { IonicModule, ModalController, ToastController } from '@ionic/angular';
 import { ItemCreationComponent } from '../item-creation/item-creation.component';
 import {
   ItemTypeEnum,
@@ -26,6 +26,8 @@ import {
 import { InfiniteScrollDirective } from 'src/app/core/directives/infinite-scroll.directive';
 import { LongPressDirective } from 'src/app/core/directives/long-press.directive';
 import { HyphenPipe } from 'src/app/core/pipes/hyphen.pipe';
+import { ConfirmationModalComponent } from 'src/app/core/components/confirmation-modal/confirmation-modal.component';
+import { toastAlert } from 'src/app/core/utils/toastAlert';
 
 @Component({
   selector: 'app-items-list',
@@ -48,7 +50,7 @@ export class ItemsListComponent implements OnInit {
   ItemTypeEnum = ItemTypeEnum;
   products: ProductI[] = [];
   currentPage = 1;
-  totalPages = 100;
+  totalPages = 1;
   pageSize = 10;
   hasMoreProducts = true;
   currentStoreInfo: StoreInfoModel | undefined;
@@ -82,7 +84,8 @@ export class ItemsListComponent implements OnInit {
     private store: Store<AppState>,
     private router: Router,
     private _location: Location,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private toastContoller: ToastController
   ) {}
 
   ngOnInit() {
@@ -112,6 +115,12 @@ export class ItemsListComponent implements OnInit {
     this.selectedProductState$.subscribe((productState) => {
       this.selectedProductState = productState;
     });
+  }
+
+  resetPagination() {
+    this.currentPage = 1;
+    this.totalPages = 1;
+    this.pageSize = 10;
   }
 
   navigateWithQuery(queryParams: any, replace?: boolean) {
@@ -233,7 +242,71 @@ export class ItemsListComponent implements OnInit {
     this.isMobile ? this.openItemDetailsPage(product) : null;
   }
 
+  async openDeleteConfirmationModal() {
+    const modal = await this.modalController.create({
+      component: ConfirmationModalComponent,
+      componentProps: {
+        confirmationModalInput: {
+          headerTitle: 'Delete products',
+          body: {
+            title: 'Are you sure?',
+            icon: {
+              name: 'close-circle-outline',
+              class: 'danger',
+            },
+            subText:
+              'Do you really want to delete these products? This process cannot be undone',
+          },
+          ctaButton: {
+            text: 'Delete',
+            class: 'danger',
+            onClick: () => {
+              console.log('confirm clicked');
+              this.deleteProducts(() => modal.dismiss());
+            },
+          },
+        },
+      },
+      backdropDismiss: true,
+      cssClass: 'login-modal',
+    });
+
+    modal.onDidDismiss().then((event) => {
+      if (event && event.data) {
+        console.log('Modal dismissed with data:', event.data);
+      }
+    });
+
+    modal.onDidDismiss().then((modalData) => {});
+    return await modal.present();
+  }
+
+  deleteProducts = (onDeleteSuccessful?: () => {}) => {
+    const productIds = this.selectedProducts.map((product) => product._id);
+    const storeId = this.currentStoreInfo?._id;
+    if (!storeId) {
+      return;
+    }
+    return this.productsService
+      .deleteStoreProduct(storeId, productIds)
+      .subscribe({
+        next: (response) => {
+          //@ts-ignore
+          console.log(response?.body);
+          if (onDeleteSuccessful) {
+            onDeleteSuccessful();
+          }
+          toastAlert(this.toastContoller, 'Products deleted successfully');
+        },
+        error: (error) => {},
+        complete: () => {},
+      });
+  };
+
   loadProducts(onLoadingFinished?: () => void, isReload?: boolean) {
+    if (isReload) {
+      this.resetPagination();
+    }
     if (this.isProductsLoading) {
       return;
     }
