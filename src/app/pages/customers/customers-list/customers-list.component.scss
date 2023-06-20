@@ -13,3 +13,9 @@
     border-bottom-left-radius: 10px;
   }
 }
+
+.menu-button-mobile {
+  @media only screen and (max-width: 768px) {
+    flex: 1;
+  }
+}

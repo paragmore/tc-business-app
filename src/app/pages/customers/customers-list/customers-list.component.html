@@ -1,7 +1,7 @@
 <div style="display: flex; flex-direction: column; overflow: hidden">
   <ion-row class="header-row">
-    <ion-buttons class="menu-button-mobile">
-      <ion-menu-button></ion-menu-button>
+    <ion-buttons fill="clear" class="menu-button-mobile">
+      <ion-menu-button fill="clear"></ion-menu-button>
     </ion-buttons>
     <app-search-filter-sort
       [filterSortLists]="filterSortOptions"
@@ -26,9 +26,11 @@
   >
   </app-credit-debit-summary-card>
   <app-credit-debit-ledger-list
-    style="height: 60vh"
+    style="height: 77vh"
     [ledgerData]="ledgerData"
     (onloadMoreData)="loadMoreData($event)"
+    [mobileListHeaderComponent]="MobilePartiesListHeaderComponent"
+    [injector]="customersInjector"
   ></app-credit-debit-ledger-list>
   <ion-button (click)="openAddCustomerModal()" fill="outline"
     >Add Customer</ion-button

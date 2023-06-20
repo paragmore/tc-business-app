@@ -1,6 +1,7 @@
 import {
   Component,
   DoCheck,
+  Injector,
   OnChanges,
   OnInit,
   SimpleChanges,
@@ -36,6 +37,7 @@ import { CurrentStoreInfoService } from 'src/app/core/services/currentStore/curr
 import { AppState } from 'src/app/store/models/state.model';
 import { Store } from '@ngrx/store';
 import { CommonModule, Location } from '@angular/common';
+import { MobilePartiesListHeaderComponent } from '../../parties/mobile-parties-list-header/mobile-parties-list-header.component';
 
 @Component({
   selector: 'app-customers-list',
@@ -48,6 +50,7 @@ import { CommonModule, Location } from '@angular/common';
     SearchFilterSortComponent,
     CreditDebitLedgerListComponent,
     CommonModule,
+    MobilePartiesListHeaderComponent,
   ],
 })
 export class CustomersListComponent implements OnInit, DoCheck {
@@ -57,8 +60,12 @@ export class CustomersListComponent implements OnInit, DoCheck {
     private currentStoreInfoService: CurrentStoreInfoService,
     private store: Store<AppState>,
     private router: Router,
-    private _location: Location
-  ) {}
+    private _location: Location,
+    private injector: Injector
+  ) {
+    this.createInjector();
+  }
+  MobilePartiesListHeaderComponent = MobilePartiesListHeaderComponent;
   selectedTab: PartyTypeEnum = PartyTypeEnum.CUSTOMER;
   PartyTypeEnum = PartyTypeEnum;
   party: PartyTypeEnum = PartyTypeEnum.CUSTOMER;
@@ -77,6 +84,21 @@ export class CustomersListComponent implements OnInit, DoCheck {
   isMobile = false;
   totalBalance: StorePartiesTotalBalanceI | undefined;
   creditDebitSummaryData: CreditDebitSummaryCardInputI | undefined;
+
+  customersInjector!: Injector;
+
+  createInjector = () => {
+    this.customersInjector = Injector.create({
+      providers: [
+        { provide: 'selectedTab', useValue: this.selectedTab },
+        {
+          provide: 'creditDebitSummaryData',
+          useValue: this.creditDebitSummaryData,
+        },
+      ],
+      parent: this.injector,
+    });
+  };
   filterSortOptions: FilterSortListsI = {
     filter: [
       { type: 'quantity', text: 'Low Stock', value: 'asc' },
@@ -225,6 +247,7 @@ export class CustomersListComponent implements OnInit, DoCheck {
               onClick: this.onViewReportsClicked,
             },
           };
+          this.createInjector();
         },
         error: (e) => console.error(e),
         complete: () => console.info('complete'),

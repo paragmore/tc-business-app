@@ -1,7 +1,7 @@
 <ion-grid>
   <ion-row>
     <ion-col *ngIf="!isSearching && isMobile" size-xs="4">
-      <ion-button (click)="onSearchClicked()" fill="tertiary">
+      <ion-button fill="clear" (click)="onSearchClicked()">
         <ion-icon name="search"> </ion-icon>
       </ion-button>
     </ion-col>
@@ -32,7 +32,7 @@
     </ion-col>
     <ion-col size-md="2" size-xs="2">
       <div style="display: flex" *ngIf="!isSearching">
-        <ion-button fill="tertiary" id="sort-popover-button">
+        <ion-button fill="clear" id="sort-popover-button">
           <div style="display: flex; flex-direction: column">
             <ion-icon name="funnel-outline"></ion-icon>
             <p class="tiny">Sort & Filters</p>
