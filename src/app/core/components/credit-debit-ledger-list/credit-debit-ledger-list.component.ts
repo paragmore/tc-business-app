@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Injector,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
@@ -18,6 +25,9 @@ import { SortOrder } from '../../services/products/products.service';
 export class CreditDebitLedgerListComponent implements OnInit {
   @Output() onloadMoreData: EventEmitter<any> = new EventEmitter<any>();
   @Input() ledgerData!: LedgerDataI;
+  @Input() mobileListHeaderComponent: any;
+  @Input() injector?: Injector;
+
   public screenState$: Observable<ScreenModel> | undefined;
   isMobile = false;
   constructor(private store: Store<AppState>) {}
