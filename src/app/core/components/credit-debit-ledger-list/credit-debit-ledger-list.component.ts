@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
@@ -16,6 +16,7 @@ import { SortOrder } from '../../services/products/products.service';
   imports: [CommonModule, IonicModule, PaginationComponentComponent],
 })
 export class CreditDebitLedgerListComponent implements OnInit {
+  @Output() onloadMoreData: EventEmitter<any> = new EventEmitter<any>();
   @Input() ledgerData!: LedgerDataI;
   public screenState$: Observable<ScreenModel> | undefined;
   isMobile = false;
@@ -24,6 +25,12 @@ export class CreditDebitLedgerListComponent implements OnInit {
   ngOnInit() {
     this.screenState$ = this.store.select((store) => store.screen);
     this.screenState$.subscribe((screen) => (this.isMobile = screen.isMobile));
+  }
+
+  loadMoreDataEvent(event: any) {
+    if (event) {
+      this.onloadMoreData.emit(event);
+    }
   }
 }
 

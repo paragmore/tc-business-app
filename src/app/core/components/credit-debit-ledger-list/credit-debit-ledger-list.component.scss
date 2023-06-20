@@ -14,3 +14,14 @@ ion-row {
 .list-outer-container {
   height: 100%;
 }
+
+.customers-list-header-row {
+  background-color: var(--ion-color-secondary);
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+}
+
+ion-list {
+  padding: 0px;
+  margin: 0px;
+}
