@@ -26,13 +26,11 @@
   >
   </app-credit-debit-summary-card>
   <app-credit-debit-ledger-list
-    style="height: 77vh"
+    class="list-height"
     [ledgerData]="ledgerData"
     (onloadMoreData)="loadMoreData($event)"
     [mobileListHeaderComponent]="MobilePartiesListHeaderComponent"
     [injector]="customersInjector"
   ></app-credit-debit-ledger-list>
-  <ion-button (click)="openAddCustomerModal()" fill="outline"
-    >Add Customer</ion-button
-  >
+  <ion-button (click)="openAddCustomerModal()">Add Customer</ion-button>
 </div>
