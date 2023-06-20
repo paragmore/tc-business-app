@@ -256,6 +256,7 @@ export interface CreateProductRequestI {
   deliveryTime?: string;
   isInventory?: boolean;
   inventoryProducts?: InventoryProductI[];
+  isService: boolean;
 }
 
 export interface GetProductsQueryParamsI

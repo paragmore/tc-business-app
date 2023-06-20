@@ -436,6 +436,7 @@ export class ItemCreationComponent implements OnInit {
           typeof this.heroImage === 'string'
             ? this.heroImage
             : this.heroImage?.imageUrl,
+            isService: this.type === ItemTypeEnum.SERVICE
       };
       this.createProduct(createProductPayload);
     }
