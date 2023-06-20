@@ -16,7 +16,10 @@ import {
   CreditDebitSummaryCardComponent,
   CreditDebitSummaryCardInputI,
 } from 'src/app/core/components/credit-debit-summary-card/credit-debit-summary-card.component';
-import { SearchFilterSortComponent } from 'src/app/core/components/search-filter-sort/search-filter-sort.component';
+import {
+  FilterSortListsI,
+  SearchFilterSortComponent,
+} from 'src/app/core/components/search-filter-sort/search-filter-sort.component';
 import { PartyCreationModalComponent } from '../../parties/party-creation-modal/party-creation-modal.component';
 import {
   GetAllCustomersResponseI,
@@ -56,6 +59,8 @@ export class CustomersListComponent implements OnInit, DoCheck {
     private router: Router,
     private _location: Location
   ) {}
+  selectedTab: PartyTypeEnum = PartyTypeEnum.CUSTOMER;
+  PartyTypeEnum = PartyTypeEnum;
   party: PartyTypeEnum = PartyTypeEnum.CUSTOMER;
   currentCustomerId: string | undefined;
   private activatedRoute = inject(ActivatedRoute);
@@ -72,19 +77,57 @@ export class CustomersListComponent implements OnInit, DoCheck {
   isMobile = false;
   totalBalance: StorePartiesTotalBalanceI | undefined;
   creditDebitSummaryData: CreditDebitSummaryCardInputI | undefined;
+  filterSortOptions: FilterSortListsI = {
+    filter: [
+      { type: 'quantity', text: 'Low Stock', value: 'asc' },
+      { type: 'quantity', text: 'In Stock', value: 'asc' },
+    ],
+    sort: [
+      { type: 'sellsPrice', text: 'Sells Price Low to High', value: 'asc' },
+      { type: 'sellsPrice', text: 'Sells Price High to Low', value: 'desc' },
+      { type: 'name', text: 'Name ascending (A - Z)', value: 'asc' },
+      { type: 'name', text: 'Name decending (Z - A)', value: 'desc' },
+      { type: 'quantity', text: 'Stock Low to High', value: 'asc' },
+      { type: 'quantity', text: 'Stock High to Low', value: 'desc' },
+    ],
+  };
   toggleSort = (sortBy: string, order: SortOrder) => {
     this.sortBy = sortBy;
     this.sortOrder = order;
     this.loadCustomers();
   };
 
+  updateSelectedTab(event: any) {
+    console.log(this._location.path());
+    this.selectedTab = event.detail.value;
+    // this._location.replaceState(
+    //   this._location.path() + `?type=${this.selectedTab}`
+    // );
+    this.navigateWithQuery({ type: this.selectedTab });
+    this.loadCustomers(undefined, true);
+  }
+
+  navigateWithQuery(queryParams: any, replace?: boolean) {
+    this.router.navigate([], {
+      queryParams,
+      queryParamsHandling: replace ? undefined : 'merge',
+    });
+  }
   goToPage = (page: number) => {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
       // Fetch the data for the selected page or update the list accordingly
-      this.loadCustomers(page);
+      this.loadCustomers();
     }
   };
+
+  loadMoreData(event: any) {
+    console.log('load more daa', event);
+    if (event) {
+      this.currentPage = this.currentPage + 1;
+      this.loadCustomers(() => event.target.complete());
+    }
+  }
 
   changePageSize = (pageSize: number) => {
     console.log(pageSize);
@@ -188,7 +231,10 @@ export class CustomersListComponent implements OnInit, DoCheck {
       });
   }
 
-  loadCustomers(page?: number) {
+  loadCustomers(onLoadingFinished?: () => void, isReload?: boolean) {
+    if (isReload) {
+      this.resetPagination();
+    }
     if (this.isCustomersLoading) {
       return;
     }
@@ -213,7 +259,13 @@ export class CustomersListComponent implements OnInit, DoCheck {
             //@ts-ignore
             console.log(response.body.parties);
             //@ts-ignore
-            this.customers = [...response.body.parties];
+            this.customers =
+              this.isMobile && !isReload
+                ? //@ts-ignore
+                  [...this.customers, ...response.body.parties]
+                : //@ts-ignore
+
+                  [...response.body.parties];
             this.ledgerData.ledgerItems = this.customers.map((customer) => {
               const customerData = customer.customer;
               const customerInfoData = customer.customerStoreInfo;
@@ -253,6 +305,7 @@ export class CustomersListComponent implements OnInit, DoCheck {
         (error) => {},
         () => {
           this.isCustomersLoading = false;
+          onLoadingFinished && onLoadingFinished();
         }
       );
     console.log(3);
@@ -268,4 +321,15 @@ export class CustomersListComponent implements OnInit, DoCheck {
     modal.onDidDismiss().then((modalData) => {});
     return await modal.present();
   }
+
+  resetPagination() {
+    this.currentPage = 1;
+    this.totalPages = 1;
+    this.pageSize = 10;
+  }
+
+  onSearchSortFilter = (event: any) => {
+    console.log(event);
+    this.toggleSort(event.selected.type, event.selected.value);
+  };
 }

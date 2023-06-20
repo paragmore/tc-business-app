@@ -1,13 +1,34 @@
 <div style="display: flex; flex-direction: column; overflow: hidden">
+  <ion-row class="header-row">
+    <ion-buttons class="menu-button-mobile">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <app-search-filter-sort
+      [filterSortLists]="filterSortOptions"
+      (onSearchSortFilter)="onSearchSortFilter($event)"
+    ></app-search-filter-sort>
+  </ion-row>
+  <ion-segment
+    *ngIf="!isMobile"
+    (ionChange)="updateSelectedTab($event)"
+    [value]="selectedTab"
+  >
+    <ion-segment-button [value]="PartyTypeEnum.CUSTOMER">
+      <ion-label>Customers</ion-label>
+    </ion-segment-button>
+    <ion-segment-button [value]="PartyTypeEnum.SUPPLIER">
+      <ion-label>Suppliers</ion-label>
+    </ion-segment-button>
+  </ion-segment>
   <app-credit-debit-summary-card
-    *ngIf="creditDebitSummaryData"
+    *ngIf="creditDebitSummaryData && !isMobile"
     [creditDebitInput]="creditDebitSummaryData"
   >
   </app-credit-debit-summary-card>
-  <app-search-filter-sort></app-search-filter-sort>
   <app-credit-debit-ledger-list
     style="height: 60vh"
     [ledgerData]="ledgerData"
+    (onloadMoreData)="loadMoreData($event)"
   ></app-credit-debit-ledger-list>
   <ion-button (click)="openAddCustomerModal()" fill="outline"
     >Add Customer</ion-button

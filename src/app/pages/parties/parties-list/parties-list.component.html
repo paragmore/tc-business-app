@@ -1,11 +1,3 @@
-<ion-segment (ionChange)="updateSelectedListTab($event)" [value]="selectedTab">
-  <ion-segment-button [value]="PartyTypeEnum.CUSTOMER">
-    <ion-label>Customers</ion-label>
-  </ion-segment-button>
-  <ion-segment-button [value]="PartyTypeEnum.SUPPLIER">
-    <ion-label>Suppliers</ion-label>
-  </ion-segment-button>
-</ion-segment>
 <app-customers-list *ngIf="selectedTab === PartyTypeEnum.CUSTOMER">
 </app-customers-list>
 <app-suppliers-list *ngIf="selectedTab === PartyTypeEnum.SUPPLIER">
