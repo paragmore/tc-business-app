@@ -124,7 +124,7 @@
                 <ion-row
                   style="display: flex; align-items: center; text-align: center"
                 >
-                  <div style="width: 50px; height: 50px">
+                  <div style="width: 40px; height: 40px">
                     <ion-avatar style="width: fit-content; height: fit-content">
                       <ion-img
                         [src]="
@@ -136,7 +136,7 @@
                     </ion-avatar>
                   </div>
                   <div style="display: flex; flex-direction: column">
-                    <p style="overflow-wrap: anywhere">
+                    <p class="titleRegular" style="overflow-wrap: anywhere">
                       {{ ledger.title }}
                     </p>
                     <ion-chip *ngIf="ledger.chipText" fill="outline">
@@ -160,7 +160,7 @@
                       class="title3"
                       style="overflow-wrap: anywhere"
                     >
-                      {{ ledger.amount.text }}
+                      ₹ {{ ledger.amount.text }}
                     </p>
 
                     <p
@@ -183,6 +183,13 @@
                 </ion-button>
               </ion-col>
             </ion-row>
+            <div
+              style="
+                border-bottom: 1px solid lightblue;
+                margin-left: 10px;
+                margin: right 20px;
+              "
+            ></div>
           </div>
         </ion-list>
         <ion-infinite-scroll
