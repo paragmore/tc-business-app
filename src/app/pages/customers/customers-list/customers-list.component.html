@@ -32,5 +32,7 @@
     [mobileListHeaderComponent]="MobilePartiesListHeaderComponent"
     [injector]="customersInjector"
   ></app-credit-debit-ledger-list>
-  <ion-button (click)="openAddCustomerModal()">Add Customer</ion-button>
+  <ion-button (click)="openAddCustomerModal()"
+    >Add {{ selectedTab }}</ion-button
+  >
 </div>

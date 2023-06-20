@@ -95,6 +95,10 @@ export class CustomersListComponent implements OnInit, DoCheck {
           provide: 'creditDebitSummaryData',
           useValue: this.creditDebitSummaryData,
         },
+        {
+          provide: 'updateSelectedTab',
+          useValue: this.updateSelectedTab,
+        },
       ],
       parent: this.injector,
     });
@@ -119,7 +123,7 @@ export class CustomersListComponent implements OnInit, DoCheck {
     this.loadCustomers();
   };
 
-  updateSelectedTab(event: any) {
+  updateSelectedTab = (event: any) => {
     console.log(this._location.path());
     this.selectedTab = event.detail.value;
     // this._location.replaceState(
@@ -127,7 +131,7 @@ export class CustomersListComponent implements OnInit, DoCheck {
     // );
     this.navigateWithQuery({ type: this.selectedTab });
     this.loadCustomers(undefined, true);
-  }
+  };
 
   navigateWithQuery(queryParams: any, replace?: boolean) {
     this.router.navigate([], {

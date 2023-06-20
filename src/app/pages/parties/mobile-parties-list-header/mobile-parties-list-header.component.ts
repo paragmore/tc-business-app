@@ -18,17 +18,18 @@ export class MobilePartiesListHeaderComponent implements OnInit {
   selectedTab!: PartyTypeEnum;
   @Input() creditDebitSummaryData!: CreditDebitSummaryCardInputI;
   PartyTypeEnum = PartyTypeEnum;
+  updateSelectedTab: (event: any) => void;
   constructor(
     @Inject('selectedTab') selectedTab: PartyTypeEnum,
     @Inject('creditDebitSummaryData')
-    creditDebitSummaryData: CreditDebitSummaryCardInputI
+    creditDebitSummaryData: CreditDebitSummaryCardInputI,
+    @Inject('updateSelectedTab') updateSelectedTab: (event: any) => void
   ) {
     this.selectedTab = selectedTab;
     this.creditDebitSummaryData = creditDebitSummaryData;
+    this.updateSelectedTab = updateSelectedTab;
     console.log('CreditDebitSummaryCardInputI', creditDebitSummaryData);
   }
 
   ngOnInit() {}
-
-  updateSelectedTab(event: any) {}
 }
