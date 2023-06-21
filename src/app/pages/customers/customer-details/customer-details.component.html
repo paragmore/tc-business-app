@@ -23,38 +23,22 @@
   <div style="display: flex; flex-direction: row"></div>
   <ion-accordion-group [multiple]="true">
     <ion-accordion
-      *ngIf="
-        customerDetails &&
-        customerDetails.customerStoreInfo &&
-        customerDetails.customerStoreInfo.addresses &&
-        customerDetails.customerStoreInfo.addresses.length > 0
-      "
+      *ngIf="partyDetails && addresses && addresses.length > 0"
       value="first"
     >
       <ion-item slot="header" color="light">
         <ion-label>Addresses</ion-label>
       </ion-item>
-      <div
-        *ngFor="let address of customerDetails.customerStoreInfo.addresses"
-        class="ion-padding"
-        slot="content"
-      >
+      <div *ngFor="let address of addresses" class="ion-padding" slot="content">
         {{ address | json }}
       </div>
     </ion-accordion>
-    <ion-accordion
-      *ngIf="
-        customerDetails &&
-        customerDetails.customerStoreInfo &&
-        customerDetails.customerStoreInfo.gstin
-      "
-      value="second"
-    >
+    <ion-accordion *ngIf="partyDetails && gstin" value="second">
       <ion-item slot="header" color="light">
         <ion-label>GSTIN</ion-label>
       </ion-item>
       <div class="ion-padding" slot="content">
-        {{ customerDetails.customerStoreInfo.gstin }}
+        {{ gstin }}
       </div>
     </ion-accordion>
     <ion-accordion value="third">

@@ -18,9 +18,12 @@ import {
 } from 'src/app/core/components/entries-ledger-list/entries-ledger-list.component';
 import { CurrentStoreInfoService } from 'src/app/core/services/currentStore/current-store-info.service';
 import {
+  AddressI,
+  AdrressesI,
   GetAllCustomersResponseI,
   PartiesService,
   PartyTypeEnum,
+  SupplierI,
 } from 'src/app/core/services/parties/parties.service';
 import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
 import { PartyCreationModalComponent } from '../../parties/party-creation-modal/party-creation-modal.component';
@@ -38,13 +41,14 @@ import { PartyCreationModalComponent } from '../../parties/party-creation-modal/
   ],
 })
 export class CustomerDetailsComponent implements OnInit {
-  currentCustomerId: string | undefined;
+  currentPartyId: string | undefined;
   previousParams: any;
   currentStoreInfo: StoreInfoModel | undefined;
-  customerDetails: GetAllCustomersResponseI | undefined;
+  partyDetails: GetAllCustomersResponseI | SupplierI | undefined;
   basicPartyDetails: BasicPartyDetailsInputI | undefined;
   partyType = PartyTypeEnum.CUSTOMER;
-
+  addresses: Array<AdrressesI> | undefined;
+  gstin: string | undefined;
   // Define dummy data
   dummyData: EntriesLedgerDataI = {
     ledgerItems: [
@@ -116,11 +120,22 @@ export class CustomerDetailsComponent implements OnInit {
     });
     this.getInitialStoreCustomer();
     this._location.onUrlChange((url, state) => {
-      console.log('kssss', this.currentCustomerId);
-      this.currentCustomerId = url.replace('/parties/customers/', '');
+      console.log('kssss', this.currentPartyId);
+      // Extract the id
+      const idRegex = /parties\/(\w+)/;
+      const idMatch = url.match(idRegex);
+      const id = idMatch && idMatch[1];
+
+      // Extract the type
+      const typeRegex = /type=(\w+)/;
+      const typeMatch = url.match(typeRegex);
+      const type = typeMatch && typeMatch[1];
+
+      this.currentPartyId = id as string;
+      this.partyType = type as PartyTypeEnum;
       this.getStoreCustomerById();
     });
-    console.log('kss', this.currentCustomerId);
+    console.log('kss', this.currentPartyId);
   }
 
   openEditCustomerModal = async () => {
@@ -128,7 +143,7 @@ export class CustomerDetailsComponent implements OnInit {
       component: PartyCreationModalComponent,
       componentProps: {
         editParty: {
-          ...this.customerDetails,
+          ...this.partyDetails,
         },
         partyType: this.partyType,
       },
@@ -141,65 +156,108 @@ export class CustomerDetailsComponent implements OnInit {
   };
 
   getInitialStoreCustomer() {
-    this.currentCustomerId = this.activatedRoute.snapshot.params['id'];
+    this.currentPartyId = this.activatedRoute.snapshot.params['id'];
     this.getStoreCustomerById();
   }
 
   getStoreCustomerById() {
-    if (!this.currentStoreInfo?._id || !this.currentCustomerId) {
+    if (!this.currentStoreInfo?._id || !this.currentPartyId) {
       return;
     }
     this.partiesService
       .getStorePartyById(
         this.currentStoreInfo?._id,
         this.partyType,
-        this.currentCustomerId
+        this.currentPartyId
       )
       .subscribe((response) => {
         console.log(response);
         //@ts-ignore
         if (response.message === 'Success') {
           //@ts-ignore
-          this.customerDetails = response.body;
+          this.partyDetails = response.body;
           let subtitle = '';
-          const email = this.customerDetails?.customerStoreInfo.email;
-          const phNumber = this.customerDetails?.customer.phoneNumber;
-          if (phNumber && email) {
-            subtitle = `${phNumber} | ${email}`;
-          } else if (phNumber) {
-            subtitle = phNumber;
-          } else if (email) {
-            subtitle = email;
-          }
+          if (this.partyDetails && 'customer' in this.partyDetails) {
+            const email = this.partyDetails?.customerStoreInfo?.email;
+            const phNumber = this.partyDetails?.customer?.phoneNumber;
+            this.addresses = this.partyDetails.customerStoreInfo?.addresses;
+            this.gstin = this.partyDetails.customerStoreInfo?.gstin;
+            if (phNumber && email) {
+              subtitle = `${phNumber} | ${email}`;
+            } else if (phNumber) {
+              subtitle = phNumber;
+            } else if (email) {
+              subtitle = email;
+            }
 
-          this.basicPartyDetails = {
-            // avatarUrl: 'https://example.com/avatar.jpg',
-            name: this.customerDetails?.customerStoreInfo.name || '',
-            subtitle: subtitle,
-            amount: {
-              title: 'Total Amount',
-              value: Math.abs(
-                this.customerDetails?.customerStoreInfo.balance || 0
-              ),
-              color:
-                this.customerDetails &&
-                this.customerDetails.customerStoreInfo &&
-                this.customerDetails.customerStoreInfo.balance
-                  ? this.customerDetails.customerStoreInfo.balance < 0
-                    ? 'success'
-                    : 'danger'
-                  : '',
-              prefix:
-                this.customerDetails &&
-                this.customerDetails.customerStoreInfo &&
-                this.customerDetails.customerStoreInfo.balance
-                  ? this.customerDetails.customerStoreInfo.balance < 0
-                    ? "You'll give"
-                    : "You'll get"
-                  : '',
-            },
-            onEditClick: this.openEditCustomerModal,
-          };
+            this.basicPartyDetails = {
+              // avatarUrl: 'https://example.com/avatar.jpg',
+              name: this.partyDetails?.customerStoreInfo.name || '',
+              subtitle: subtitle,
+              amount: {
+                title: 'Total Amount',
+                value: Math.abs(
+                  this.partyDetails?.customerStoreInfo.balance || 0
+                ),
+                color:
+                  this.partyDetails &&
+                  this.partyDetails.customerStoreInfo &&
+                  this.partyDetails.customerStoreInfo.balance
+                    ? this.partyDetails.customerStoreInfo.balance < 0
+                      ? 'success'
+                      : 'danger'
+                    : '',
+                prefix:
+                  this.partyDetails &&
+                  this.partyDetails.customerStoreInfo &&
+                  this.partyDetails.customerStoreInfo.balance
+                    ? this.partyDetails.customerStoreInfo.balance < 0
+                      ? "You'll give"
+                      : "You'll get"
+                    : '',
+              },
+              onEditClick: this.openEditCustomerModal,
+            };
+          } else {
+            const email = this.partyDetails?.email;
+            const phNumber = this.partyDetails?.phoneNumber;
+            this.addresses = this.partyDetails?.addresses;
+            this.gstin = this.partyDetails?.gstin;
+            if (phNumber && email) {
+              subtitle = `${phNumber} | ${email}`;
+            } else if (phNumber) {
+              subtitle = phNumber;
+            } else if (email) {
+              subtitle = email;
+            }
+
+            this.basicPartyDetails = {
+              // avatarUrl: 'https://example.com/avatar.jpg',
+              name: this.partyDetails?.name || '',
+              subtitle: subtitle,
+              amount: {
+                title: 'Total Amount',
+                value: Math.abs(this.partyDetails?.balance || 0),
+                color:
+                  this.partyDetails &&
+                  this.partyDetails &&
+                  this.partyDetails.balance
+                    ? this.partyDetails.balance < 0
+                      ? 'success'
+                      : 'danger'
+                    : '',
+                prefix:
+                  this.partyDetails &&
+                  this.partyDetails &&
+                  this.partyDetails.balance
+                    ? this.partyDetails.balance < 0
+                      ? "You'll give"
+                      : "You'll get"
+                    : '',
+              },
+              onEditClick: this.openEditCustomerModal,
+            };
+          }
         }
       });
   }
