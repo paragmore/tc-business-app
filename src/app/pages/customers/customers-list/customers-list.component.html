@@ -30,9 +30,7 @@
     [ledgerData]="ledgerData"
     (onloadMoreData)="loadMoreData($event)"
     [mobileListHeaderComponent]="MobilePartiesListHeaderComponent"
-    [injector]="customersInjector"
+    [injector]="partiesInjector"
   ></app-credit-debit-ledger-list>
-  <ion-button (click)="openAddCustomerModal()"
-    >Add {{ selectedTab }}</ion-button
-  >
+  <ion-button (click)="openAddPartyModal()">Add {{ selectedTab }}</ion-button>
 </div>

@@ -23,10 +23,12 @@ import {
 } from 'src/app/core/components/search-filter-sort/search-filter-sort.component';
 import { PartyCreationModalComponent } from '../../parties/party-creation-modal/party-creation-modal.component';
 import {
+  CustomerI,
   GetAllCustomersResponseI,
   PartiesService,
   PartyTypeEnum,
   StorePartiesTotalBalanceI,
+  SupplierI,
 } from 'src/app/core/services/parties/parties.service';
 import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
 import { SortOrder } from 'src/app/core/services/products/products.service';
@@ -69,9 +71,9 @@ export class CustomersListComponent implements OnInit, DoCheck {
   selectedTab: PartyTypeEnum = PartyTypeEnum.CUSTOMER;
   PartyTypeEnum = PartyTypeEnum;
   party: PartyTypeEnum = PartyTypeEnum.CUSTOMER;
-  currentCustomerId: string | undefined;
+  currentPartyId: string | undefined;
   private activatedRoute = inject(ActivatedRoute);
-  customers: GetAllCustomersResponseI[] = [];
+  parties: Array<GetAllCustomersResponseI | SupplierI> = [];
   currentPage = 1;
   totalPages = 100;
   pageSize = 10;
@@ -84,11 +86,11 @@ export class CustomersListComponent implements OnInit, DoCheck {
   isMobile = false;
   totalBalance: StorePartiesTotalBalanceI | undefined;
   creditDebitSummaryData: CreditDebitSummaryCardInputI | undefined;
-
-  customersInjector!: Injector;
+  selectedParties: Array<CustomerI | SupplierI> = [];
+  partiesInjector!: Injector;
 
   createInjector = () => {
-    this.customersInjector = Injector.create({
+    this.partiesInjector = Injector.create({
       providers: [
         { provide: 'selectedTab', useValue: this.selectedTab },
         {
@@ -173,7 +175,7 @@ export class CustomersListComponent implements OnInit, DoCheck {
     col2Title: 'Amount',
   };
   ngOnInit() {
-    this.currentCustomerId = this.activatedRoute.snapshot.paramMap.get(
+    this.currentPartyId = this.activatedRoute.snapshot.paramMap.get(
       'id'
     ) as string;
     this.screenState$ = this.store.select((store) => store.screen);
@@ -201,22 +203,60 @@ export class CustomersListComponent implements OnInit, DoCheck {
   }
   onViewReportsClicked = () => {};
 
-  openCustomerDetailsPage = (customerId: string) => {
-    this.router.navigate([`parties/customer/${customerId}`]);
+  openPartyDetailsPage = (customerId: string) => {
+    this.router.navigate([`party/${customerId}`], {
+      queryParams: { type: this.selectedTab },
+    });
   };
 
-  openCustomerDetails = (customerId: string) => {
-    this._location.replaceState(`parties/customers/${customerId}`);
-    this.isMobile ? this.openCustomerDetailsPage(customerId) : null;
+  openPartyDetails = (customerId: string) => {
+    this._location.replaceState(
+      `parties/${customerId}?type=${this.selectedTab}`
+    );
+    this.isMobile ? this.openPartyDetailsPage(customerId) : null;
   };
 
   onCustomerLedgerCardClicked = (ledger: LedgerItemI) => {
-    this.openCustomerDetails(ledger.id);
+    this.openPartyDetails(ledger.id);
   };
 
   onOpenDetailsPage = (ledger: LedgerItemI) => {
-    this.openCustomerDetailsPage(ledger.id);
+    this.openPartyDetailsPage(ledger.id);
   };
+
+  onPartySelectionToggle(event: any, product: CustomerI | SupplierI) {
+    if (event.detail.checked) {
+      this.selectedParties.push(product);
+    }
+    if (event.detail.checked === false) {
+      const deleteIndex = this.selectedParties.findIndex(
+        (prod) => prod._id === product._id
+      );
+      this.selectedParties.splice(deleteIndex, 1);
+    }
+    console.log(this.selectedParties);
+  }
+  selectAllToggle(event: any) {
+    if (event.detail.checked) {
+      const selected = this.parties.map((resp) => {
+        if ('customer' in resp) {
+          return resp.customer;
+        } else {
+          return resp;
+        }
+      });
+      if (selected) {
+        this.selectedParties = selected;
+      }
+    }
+    if (event.detail.checked === false) {
+      this.selectedParties = [];
+    }
+  }
+
+  onMultipleSelectCancel() {
+    this.selectedParties = [];
+  }
 
   loadStorePartiesTotalBalance() {
     if (!this.currentStoreInfo?._id) {
@@ -271,7 +311,7 @@ export class CustomersListComponent implements OnInit, DoCheck {
     this.isCustomersLoading = true;
     console.log(1);
     this.partiesService
-      .getAllStoreParties(this.currentStoreInfo?._id, PartyTypeEnum.CUSTOMER, {
+      .getAllStoreParties(this.currentStoreInfo?._id, this.selectedTab, {
         page: this.currentPage.toString(),
         pageSize: this.pageSize.toString(),
         sortBy: this.sortBy,
@@ -286,42 +326,74 @@ export class CustomersListComponent implements OnInit, DoCheck {
             //@ts-ignore
             console.log(response.body.parties);
             //@ts-ignore
-            this.customers =
+            this.parties =
               this.isMobile && !isReload
                 ? //@ts-ignore
-                  [...this.customers, ...response.body.parties]
+                  [...this.parties, ...response.body.parties]
                 : //@ts-ignore
 
                   [...response.body.parties];
-            this.ledgerData.ledgerItems = this.customers.map((customer) => {
-              const customerData = customer.customer;
-              const customerInfoData = customer.customerStoreInfo;
-              const ledgerItem: LedgerItemI = {
-                id: customerInfoData.customerId,
-                title: customerInfoData.name || '',
-                amount: {
-                  text: Math.abs(customerInfoData.balance || 0)?.toString(),
-                  color:
-                    customerInfoData &&
-                    customerInfoData.balance &&
-                    customerInfoData.balance > 0
-                      ? 'danger'
-                      : customerInfoData &&
-                        customerInfoData.balance &&
-                        customerInfoData.balance < 0
-                      ? 'success'
-                      : '',
-                },
-                subTitle: customerData.phoneNumber,
-                imageUrl: customerData.photoUrl,
-                onClick: this.onCustomerLedgerCardClicked,
-                openDetailsPage: this.onOpenDetailsPage,
-              };
-              return ledgerItem;
+            this.ledgerData.ledgerItems = this.parties.map((party) => {
+              let ledgerItem: LedgerItemI;
+              if ('customer' in party) {
+                const customerData = party.customer;
+                const customerInfoData = party.customerStoreInfo;
+                ledgerItem = {
+                  id: customerInfoData.customerId,
+                  title: customerInfoData.name || '',
+                  amount: {
+                    text: Math.abs(customerInfoData.balance || 0)?.toString(),
+                    color:
+                      customerInfoData &&
+                      customerInfoData.balance &&
+                      customerInfoData.balance > 0
+                        ? 'danger'
+                        : customerInfoData &&
+                          customerInfoData.balance &&
+                          customerInfoData.balance < 0
+                        ? 'success'
+                        : '',
+                  },
+                  subTitle: customerData.phoneNumber,
+                  imageUrl: customerData.photoUrl,
+                  onClick: this.onCustomerLedgerCardClicked,
+                  openDetailsPage: this.onOpenDetailsPage,
+                };
+                return ledgerItem;
+              } else {
+                const supplierData = party;
+                ledgerItem = {
+                  id: supplierData._id,
+                  title: supplierData.name || '',
+                  amount: {
+                    text: Math.abs(supplierData.balance || 0)?.toString(),
+                    color:
+                      supplierData &&
+                      supplierData.balance &&
+                      supplierData.balance > 0
+                        ? 'danger'
+                        : supplierData &&
+                          supplierData.balance &&
+                          supplierData.balance < 0
+                        ? 'success'
+                        : '',
+                  },
+                  subTitle: supplierData.phoneNumber,
+                  imageUrl: supplierData.photoUrl,
+                  onClick: this.onCustomerLedgerCardClicked,
+                  openDetailsPage: this.onOpenDetailsPage,
+                };
+                return ledgerItem;
+              }
             });
             !this.isMobile &&
-              !this.currentCustomerId &&
-              this.openCustomerDetails(this.customers[0].customer._id);
+            !this.currentPartyId &&
+            'customer' in this.parties[0]
+              ? this.openPartyDetails(this.parties[0].customer._id)
+              : '_id' in this.parties[0]
+              ? this.openPartyDetails(this.parties[0]._id)
+              : null;
+
             //@ts-ignore
             const pagination = response.body.pagination;
             this.currentPage = pagination.page;
@@ -337,10 +409,10 @@ export class CustomersListComponent implements OnInit, DoCheck {
       );
     console.log(3);
   }
-  async openAddCustomerModal() {
+  async openAddPartyModal() {
     const modal = await this.modalController.create({
       component: PartyCreationModalComponent,
-      componentProps: { partyType: this.party },
+      componentProps: { partyType: this.selectedTab },
       backdropDismiss: true,
       cssClass: 'side-modal',
     });
