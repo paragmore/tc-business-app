@@ -107,20 +107,7 @@ export class CustomerDetailsComponent implements OnInit {
     private modalController: ModalController
   ) {}
   ngOnInit() {
-    combineLatest([
-      this.currentStoreInfoService.getCurrentStoreInfo(),
-    ]).subscribe({
-      next: (v) => {
-        const [currentStoreInfoResponse] = v;
-        this.currentStoreInfo = currentStoreInfoResponse;
-        this.getStoreCustomerById();
-      },
-      error: (e) => console.error(e),
-      complete: () => console.info('complete'),
-    });
-    this.getInitialStoreCustomer();
     this._location.onUrlChange((url, state) => {
-      console.log('kssss', this.currentPartyId);
       // Extract the id
       const idRegex = /parties\/(\w+)/;
       const idMatch = url.match(idRegex);
@@ -135,6 +122,19 @@ export class CustomerDetailsComponent implements OnInit {
       this.partyType = type as PartyTypeEnum;
       this.getStoreCustomerById();
     });
+    combineLatest([
+      this.currentStoreInfoService.getCurrentStoreInfo(),
+    ]).subscribe({
+      next: (v) => {
+        const [currentStoreInfoResponse] = v;
+        this.currentStoreInfo = currentStoreInfoResponse;
+        this.getStoreCustomerById();
+      },
+      error: (e) => console.error(e),
+      complete: () => console.info('complete'),
+    });
+    this.getInitialStoreCustomer();
+
     console.log('kss', this.currentPartyId);
   }
 
@@ -157,6 +157,7 @@ export class CustomerDetailsComponent implements OnInit {
 
   getInitialStoreCustomer() {
     this.currentPartyId = this.activatedRoute.snapshot.params['id'];
+    this.partyType = this.activatedRoute.snapshot.queryParams['type'];
     this.getStoreCustomerById();
   }
 

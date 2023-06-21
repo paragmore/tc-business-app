@@ -215,6 +215,7 @@ export class CustomersListComponent implements OnInit, DoCheck {
   onViewReportsClicked = () => {};
 
   openPartyDetailsPage = (customerId: string) => {
+    console.log('openPartyDetailsPage');
     this.router.navigate([`party/${customerId}`], {
       queryParams: { type: this.selectedTab },
     });
@@ -224,6 +225,7 @@ export class CustomersListComponent implements OnInit, DoCheck {
     this._location.replaceState(
       `parties/${customerId}?type=${this.selectedTab}`
     );
+    console.log('openPartyDetails');
     this.isMobile ? this.openPartyDetailsPage(customerId) : null;
   };
 
@@ -232,6 +234,8 @@ export class CustomersListComponent implements OnInit, DoCheck {
   };
 
   onOpenDetailsPage = (ledger: LedgerItemI) => {
+    console.log('onOpenDetailsPage');
+
     this.openPartyDetailsPage(ledger.id);
   };
 
@@ -339,8 +343,8 @@ export class CustomersListComponent implements OnInit, DoCheck {
                 ? //@ts-ignore
                   [...this.parties, ...response.body.parties]
                 : //@ts-ignore
-
                   [...response.body.parties];
+            //@ts-ignore
             this.ledgerData.ledgerItems = this.parties.map((party) => {
               let ledgerItem: LedgerItemI;
               if ('customer' in party) {
@@ -398,7 +402,9 @@ export class CustomersListComponent implements OnInit, DoCheck {
             !this.currentPartyId &&
             'customer' in this.parties[0]
               ? this.openPartyDetails(this.parties[0].customer._id)
-              : '_id' in this.parties[0]
+              : !this.isMobile &&
+                !this.currentPartyId &&
+                '_id' in this.parties[0]
               ? this.openPartyDetails(this.parties[0]._id)
               : null;
 

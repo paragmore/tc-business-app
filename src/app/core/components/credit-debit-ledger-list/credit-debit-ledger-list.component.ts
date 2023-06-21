@@ -33,6 +33,7 @@ export class CreditDebitLedgerListComponent implements OnInit {
   constructor(private store: Store<AppState>) {}
 
   ngOnInit() {
+    console.log(this.ledgerData);
     this.screenState$ = this.store.select((store) => store.screen);
     this.screenState$.subscribe((screen) => (this.isMobile = screen.isMobile));
   }
@@ -41,6 +42,10 @@ export class CreditDebitLedgerListComponent implements OnInit {
     if (event) {
       this.onloadMoreData.emit(event);
     }
+  }
+
+  trackByFn(i: any) {
+    return i.id;
   }
 }
 
