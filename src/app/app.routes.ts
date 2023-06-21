@@ -13,7 +13,7 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
-    path: 'parties/customer/:id',
+    path: 'party/:id',
     loadComponent: () =>
       import(
         './pages/customers/customer-details/customer-details.component'
@@ -22,7 +22,7 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
-    path: 'parties/customers/:id',
+    path: 'parties/:id',
     loadComponent: () =>
       import('./pages/parties/parties.component').then(
         (m) => m.PartiesComponent
