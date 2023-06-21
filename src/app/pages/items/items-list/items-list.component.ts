@@ -140,6 +140,15 @@ export class ItemsListComponent implements OnInit {
     this.loadProducts(undefined, true);
   }
 
+  isProductSelected(product: ProductI) {
+    return this.selectedProducts.find((prod) => prod._id === product._id);
+  }
+
+  onSearchSortFilter = (event: any) => {
+    console.log(event);
+    this.toggleSort(event.selected.type, event.selected.value);
+  };
+
   onProductSelectionToggle(event: any, product: ProductI) {
     if (event.detail.checked) {
       this.selectedProducts.push(product);
@@ -152,16 +161,6 @@ export class ItemsListComponent implements OnInit {
     }
     console.log(this.selectedProducts);
   }
-
-  isProductSelected(product: ProductI) {
-    return this.selectedProducts.find((prod) => prod._id === product._id);
-  }
-
-  onSearchSortFilter = (event: any) => {
-    console.log(event);
-    this.toggleSort(event.selected.type, event.selected.value);
-  };
-
   selectAllToggle(event: any) {
     if (event.detail.checked) {
       this.selectedProducts = this.products;
