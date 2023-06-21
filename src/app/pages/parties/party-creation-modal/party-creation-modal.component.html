@@ -20,6 +20,59 @@
       <ion-row>
         <ion-col>
           <ion-input
+            style="width: 100%"
+            fill="outline"
+            id="gst-type-popover-button"
+            formControlName="gstType"
+            placeholder="Select GST Type"
+            label="GST Type"
+            label-placement="floating"
+          >
+          </ion-input>
+        </ion-col>
+        <ion-popover
+          size="cover"
+          trigger="gst-type-popover-button"
+          [dismissOnSelect]="true"
+        >
+          <ng-template>
+            <ion-content>
+              <ion-list
+                style="max-height: 350px; overflow-y: scroll"
+                class="scrollbar"
+                id="style-1"
+              >
+                <ion-item
+                  *ngFor="let gstType of gstTypeList; let i = index"
+                  [button]="true"
+                  [detail]="false"
+                  (click)="selectGSTType(gstType)"
+                  ><div
+                    style="display: flex; flex-direction: column; padding: 10px"
+                  >
+                    <p>{{ gstType.title }}</p>
+                    <p class="caption">{{ gstType.subtitle }}</p>
+                  </div></ion-item
+                >
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+      </ion-row>
+      <ion-row *ngIf="selectedGSTType?.isGstin">
+        <ion-col>
+          <ion-input
+            label="GSTIN"
+            label-placement="floating"
+            fill="outline"
+            placeholder="Add GSTIN"
+            formControlName="gstin"
+          ></ion-input>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-input
             [label]="partyText + ' Name'"
             label-placement="floating"
             fill="outline"
@@ -76,23 +129,9 @@
     <ion-accordion-group>
       <ion-accordion value="first">
         <ion-button slot="header" color="light">
-          <ion-label>Add GSTIN & Address (Optional)</ion-label>
+          <ion-label>Address (Optional)</ion-label>
         </ion-button>
         <div class="ion-padding" slot="content">
-          <ion-grid>
-            <ion-row>
-              <ion-col>
-                <ion-input
-                  label="GSTIN"
-                  label-placement="floating"
-                  fill="outline"
-                  placeholder="Add GSTIN"
-                  formControlName="gstin"
-                ></ion-input>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
-
           <ion-grid>
             <div formGroupName="address">
               <ion-row formGroupName="shipping">

@@ -44,6 +44,59 @@ export class PartyCreationModalComponent implements OnInit {
   currentStoreInfo: StoreInfoModel | undefined;
   partyId = '';
   partyText = '';
+  selectedGSTType: GSTTypeI | undefined;
+  gstTypeList: Array<GSTTypeI> = [
+    {
+      title: 'Registered Business - Regular',
+      subtitle: 'Business that is registered under GST',
+      isGstin: true,
+    },
+    {
+      title: 'Registered Business - Composition',
+      subtitle: 'Business that is registered under the Composition Scheme GST',
+      isGstin: true,
+    },
+    {
+      title: 'Unregistred Business',
+      subtitle: 'Business that has not been registred under GST',
+      isGstin: false,
+    },
+    {
+      title: 'Consumer',
+      subtitle: 'A consumer who is a regular consumer',
+      isGstin: false,
+    },
+    {
+      title: 'Overseas',
+      subtitle:
+        'Persons with whom you do import or export of supplies outside India',
+      isGstin: false,
+    },
+    {
+      title: 'Special Economic Zone',
+      subtitle:
+        'Business (Unit) that is located in a Special Economic Zone (SEZ) of India or a SEZ Developer',
+      isGstin: true,
+    },
+    {
+      title: 'Deemed Export',
+      subtitle:
+        'Supply of goods to an Export Oriented Unit or against Advanced Authorization/Export Promotion Capital Goods',
+      isGstin: true,
+    },
+    {
+      title: 'Tax Deductor',
+      subtitle:
+        'Departments of State/Central government, governmental agencies or local authorities',
+      isGstin: true,
+    },
+    {
+      title: 'SEZ Developer',
+      subtitle:
+        'A person/organisation who owns atleast 26% of the equity in creating business units in Special Economic Zone (SEZ)',
+      isGstin: true,
+    },
+  ];
   constructor(
     private modalController: ModalController,
     private formBuilder: FormBuilder,
@@ -53,6 +106,7 @@ export class PartyCreationModalComponent implements OnInit {
     private toastController: ToastController
   ) {
     this.partyForm = this.formBuilder.group({
+      gstType: ['', Validators.required],
       name: ['', Validators.required],
       phoneNumber: [''],
       email: [''],
@@ -94,6 +148,10 @@ export class PartyCreationModalComponent implements OnInit {
     }
   }
 
+  async selectGSTType(gstType: GSTTypeI) {
+    this.selectedGSTType = gstType;
+    this.partyForm.patchValue({ gstType: gstType.title });
+  }
   async createOrUpdateParty() {
     console.log(this.partyForm.value);
     //@ts-ignore
@@ -171,4 +229,10 @@ export interface PartyFormValueI {
   balance?: number;
   gstin?: string;
   address: AdrressesI;
+}
+
+export interface GSTTypeI {
+  title: string;
+  subtitle: string;
+  isGstin: boolean;
 }
