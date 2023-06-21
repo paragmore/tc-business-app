@@ -178,6 +178,16 @@ export class CustomersListComponent implements OnInit, DoCheck {
     this.currentPartyId = this.activatedRoute.snapshot.paramMap.get(
       'id'
     ) as string;
+    this.activatedRoute.queryParams.subscribe((params) => {
+      console.log(params);
+      const queryType = params['type'];
+      if (queryType) {
+        this.selectedTab = queryType;
+      } else {
+        this.navigateWithQuery({ type: PartyTypeEnum.CUSTOMER });
+        this.selectedTab = PartyTypeEnum.CUSTOMER;
+      }
+    });
     this.screenState$ = this.store.select((store) => store.screen);
     this.screenState$.subscribe((screen) => (this.isMobile = screen.isMobile));
     this.currentStoreInfoService.getCurrentStoreInfo().subscribe((response) => {
