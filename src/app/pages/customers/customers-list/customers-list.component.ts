@@ -133,6 +133,7 @@ export class CustomersListComponent implements OnInit, DoCheck {
     // );
     this.navigateWithQuery({ type: this.selectedTab });
     this.loadCustomers(undefined, true);
+    this.loadStorePartiesTotalBalance();
   };
 
   navigateWithQuery(queryParams: any, replace?: boolean) {
@@ -274,10 +275,7 @@ export class CustomersListComponent implements OnInit, DoCheck {
     }
 
     this.partiesService
-      .getStorePartiesTotalBalance(
-        this.currentStoreInfo?._id,
-        PartyTypeEnum.CUSTOMER
-      )
+      .getStorePartiesTotalBalance(this.currentStoreInfo?._id, this.selectedTab)
       .subscribe({
         next: (v) => {
           //@ts-ignore
