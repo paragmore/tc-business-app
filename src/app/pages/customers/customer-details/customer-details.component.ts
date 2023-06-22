@@ -20,6 +20,8 @@ import { CurrentStoreInfoService } from 'src/app/core/services/currentStore/curr
 import {
   AddressI,
   AdrressesI,
+  CustomerI,
+  CustomerStoreInfoI,
   GetAllCustomersResponseI,
   PartiesService,
   PartyTypeEnum,
@@ -48,6 +50,7 @@ export class CustomerDetailsComponent implements OnInit {
   basicPartyDetails: BasicPartyDetailsInputI | undefined;
   partyType = PartyTypeEnum.CUSTOMER;
   addresses: Array<AdrressesI> | undefined;
+  parsedPartyDetails: CustomerStoreInfoI | SupplierI | undefined;
   gstin: string | undefined;
   // Define dummy data
   dummyData: EntriesLedgerDataI = {
@@ -183,6 +186,7 @@ export class CustomerDetailsComponent implements OnInit {
             const phNumber = this.partyDetails?.customer?.phoneNumber;
             this.addresses = this.partyDetails.customerStoreInfo?.addresses;
             this.gstin = this.partyDetails.customerStoreInfo?.gstin;
+            this.parsedPartyDetails = this.partyDetails.customerStoreInfo;
             if (phNumber && email) {
               subtitle = `${phNumber} | ${email}`;
             } else if (phNumber) {
@@ -224,6 +228,8 @@ export class CustomerDetailsComponent implements OnInit {
             const phNumber = this.partyDetails?.phoneNumber;
             this.addresses = this.partyDetails?.addresses;
             this.gstin = this.partyDetails?.gstin;
+            this.parsedPartyDetails = this.partyDetails;
+
             if (phNumber && email) {
               subtitle = `${phNumber} | ${email}`;
             } else if (phNumber) {

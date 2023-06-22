@@ -3,13 +3,14 @@ import { getAuthHeaders } from '../../utils/authHeaders';
 import { HttpClient } from '@angular/common/http';
 import { PaginationQueryParamsI } from '../products/products.service';
 import { environment } from 'src/environments/environment';
+import { GSTTypeEnum } from 'src/app/pages/parties/party-creation-modal/party-creation-modal.component';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PartiesService {
   constructor(private httpClient: HttpClient) {}
-  baseUrl = environment.production
+  baseUrl = false
     ? 'https://parties-api.taxpayercorner.com'
     : 'http://localhost:8020';
 
@@ -81,6 +82,7 @@ export interface CreatePartyRequestI {
   balance?: number;
   gstin?: string;
   address: AdrressesI;
+  gstType: GSTTypeEnum;
 }
 
 export enum PartyTypeEnum {
@@ -111,6 +113,7 @@ export interface UpdatePartyRequestI {
   balance?: number;
   gstin?: string;
   address?: AdrressesI;
+  gstType: GSTTypeEnum;
 }
 
 export interface GetPartiesQueryParamsI
@@ -156,6 +159,7 @@ export interface SupplierI {
   storeId: string;
   supplierStoreId?: string;
   _id: string;
+  gstType: GSTTypeEnum;
 }
 
 export interface CustomerStoreInfoI {
@@ -169,6 +173,7 @@ export interface CustomerStoreInfoI {
   addresses?: Array<AdrressesI>;
   customerId: string;
   gstin?: string;
+  gstType: GSTTypeEnum;
 }
 
 export interface GetAllCustomersResponseI {

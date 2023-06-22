@@ -45,58 +45,7 @@ export class PartyCreationModalComponent implements OnInit {
   partyId = '';
   partyText = '';
   selectedGSTType: GSTTypeI | undefined;
-  gstTypeList: Array<GSTTypeI> = [
-    {
-      title: 'Registered Business - Regular',
-      subtitle: 'Business that is registered under GST',
-      isGstin: true,
-    },
-    {
-      title: 'Registered Business - Composition',
-      subtitle: 'Business that is registered under the Composition Scheme GST',
-      isGstin: true,
-    },
-    {
-      title: 'Unregistred Business',
-      subtitle: 'Business that has not been registred under GST',
-      isGstin: false,
-    },
-    {
-      title: 'Consumer',
-      subtitle: 'A consumer who is a regular consumer',
-      isGstin: false,
-    },
-    {
-      title: 'Overseas',
-      subtitle:
-        'Persons with whom you do import or export of supplies outside India',
-      isGstin: false,
-    },
-    {
-      title: 'Special Economic Zone',
-      subtitle:
-        'Business (Unit) that is located in a Special Economic Zone (SEZ) of India or a SEZ Developer',
-      isGstin: true,
-    },
-    {
-      title: 'Deemed Export',
-      subtitle:
-        'Supply of goods to an Export Oriented Unit or against Advanced Authorization/Export Promotion Capital Goods',
-      isGstin: true,
-    },
-    {
-      title: 'Tax Deductor',
-      subtitle:
-        'Departments of State/Central government, governmental agencies or local authorities',
-      isGstin: true,
-    },
-    {
-      title: 'SEZ Developer',
-      subtitle:
-        'A person/organisation who owns atleast 26% of the equity in creating business units in Special Economic Zone (SEZ)',
-      isGstin: true,
-    },
-  ];
+  gstTypeList: Array<GSTTypeI> = gstTypeList;
   constructor(
     private modalController: ModalController,
     private formBuilder: FormBuilder,
@@ -106,7 +55,7 @@ export class PartyCreationModalComponent implements OnInit {
     private toastController: ToastController
   ) {
     this.partyForm = this.formBuilder.group({
-      gstType: ['', Validators.required],
+      gstTypeTitle: ['', Validators.required],
       name: ['', Validators.required],
       phoneNumber: [''],
       email: [''],
@@ -142,15 +91,28 @@ export class PartyCreationModalComponent implements OnInit {
           ? this.editParty.customerStoreInfo.addresses[0]
           : [],
       });
+      this.selectGSTTypeByEnum(this.editParty.customerStoreInfo.gstType);
     }
     if (this.editParty && '_id' in this.editParty) {
       this.partyForm.patchValue({ ...this.editParty });
+      this.selectGSTTypeByEnum(this.editParty.gstType);
     }
+  }
+
+  async selectGSTTypeByEnum(gstTypeEnum: GSTTypeEnum) {
+    const gstType = this.gstTypeList.find(
+      (type) => type.enumValue === gstTypeEnum
+    );
+    if (!gstType) {
+      return;
+    }
+    this.selectedGSTType = gstType;
+    this.partyForm.patchValue({ gstTypeTitle: gstType.title });
   }
 
   async selectGSTType(gstType: GSTTypeI) {
     this.selectedGSTType = gstType;
-    this.partyForm.patchValue({ gstType: gstType.title });
+    this.partyForm.patchValue({ gstTypeTitle: gstType.title });
   }
   async createOrUpdateParty() {
     console.log(this.partyForm.value);
@@ -160,12 +122,16 @@ export class PartyCreationModalComponent implements OnInit {
       return;
     }
     const partyFormValue = this.partyForm.value as PartyFormValueI;
+    if (!this.selectedGSTType) {
+      return;
+    }
     if (this.editParty) {
       const updatePartyPayload: UpdatePartyRequestI = {
         ...partyFormValue,
         storeId: this.currentStoreInfo._id,
         type: this.partyType,
         partyId: this.partyId,
+        gstType: this.selectedGSTType?.enumValue,
       };
       this.updateProduct(updatePartyPayload);
     } else {
@@ -173,6 +139,7 @@ export class PartyCreationModalComponent implements OnInit {
         ...partyFormValue,
         storeId: this.currentStoreInfo._id,
         type: this.partyType,
+        gstType: this.selectedGSTType?.enumValue,
       };
       this.createProduct(createProductPayload);
     }
@@ -235,4 +202,79 @@ export interface GSTTypeI {
   title: string;
   subtitle: string;
   isGstin: boolean;
+  enumValue: GSTTypeEnum;
 }
+
+export enum GSTTypeEnum {
+  REGISTERED = 'REGISTERED',
+  REGISTERED_COMPOSITION = 'REGISTERED_COMPOSITION',
+  UNREGISTERED = 'UNREGISTERED',
+  CONSUMER = 'CONSUMER',
+  OVERSEAS = 'OVERSEAS',
+  SPECIAL_ECONOMIC_ZONE = 'SPECIAL_ECONOMIC_ZONE',
+  DEEMED_EXPORT = 'DEEMED_EXPORT',
+  TAX_DEDUCTOR = 'TAX_DEDUCTOR',
+  SEZ_DEVELOPER = 'SEZ_DEVELOPER',
+}
+
+export const gstTypeList: Array<GSTTypeI> = [
+  {
+    title: 'Registered Business - Regular',
+    subtitle: 'Business that is registered under GST',
+    isGstin: true,
+    enumValue: GSTTypeEnum.REGISTERED,
+  },
+  {
+    title: 'Registered Business - Composition',
+    subtitle: 'Business that is registered under the Composition Scheme GST',
+    isGstin: true,
+    enumValue: GSTTypeEnum.REGISTERED_COMPOSITION,
+  },
+  {
+    title: 'Unregistered Business',
+    subtitle: 'Business that has not been registered under GST',
+    isGstin: false,
+    enumValue: GSTTypeEnum.UNREGISTERED,
+  },
+  {
+    title: 'Consumer',
+    subtitle: 'A consumer who is a regular consumer',
+    isGstin: false,
+    enumValue: GSTTypeEnum.CONSUMER,
+  },
+  {
+    title: 'Overseas',
+    subtitle:
+      'Persons with whom you do import or export of supplies outside India',
+    isGstin: false,
+    enumValue: GSTTypeEnum.OVERSEAS,
+  },
+  {
+    title: 'Special Economic Zone',
+    subtitle:
+      'Business (Unit) that is located in a Special Economic Zone (SEZ) of India or a SEZ Developer',
+    isGstin: true,
+    enumValue: GSTTypeEnum.SPECIAL_ECONOMIC_ZONE,
+  },
+  {
+    title: 'Deemed Export',
+    subtitle:
+      'Supply of goods to an Export Oriented Unit or against Advanced Authorization/Export Promotion Capital Goods',
+    isGstin: true,
+    enumValue: GSTTypeEnum.DEEMED_EXPORT,
+  },
+  {
+    title: 'Tax Deductor',
+    subtitle:
+      'Departments of State/Central government, governmental agencies or local authorities',
+    isGstin: true,
+    enumValue: GSTTypeEnum.TAX_DEDUCTOR,
+  },
+  {
+    title: 'SEZ Developer',
+    subtitle:
+      'A person/organization who owns at least 26% of the equity in creating business units in Special Economic Zone (SEZ)',
+    isGstin: true,
+    enumValue: GSTTypeEnum.SEZ_DEVELOPER,
+  },
+];

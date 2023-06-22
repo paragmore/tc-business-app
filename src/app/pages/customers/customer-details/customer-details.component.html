@@ -67,12 +67,15 @@
         </div>
       </div>
     </ion-accordion>
-    <ion-accordion *ngIf="partyDetails && gstin" value="second">
+    <ion-accordion
+      *ngIf="partyDetails && parsedPartyDetails?.gstType"
+      value="second"
+    >
       <ion-item slot="header" color="light">
         <ion-label>GSTIN</ion-label>
       </ion-item>
       <div class="ion-padding" slot="content">
-        {{ gstin }}
+        {{ parsedPartyDetails?.gstType }}:{{ parsedPartyDetails?.gstin }}
       </div>
     </ion-accordion>
   </ion-accordion-group>
