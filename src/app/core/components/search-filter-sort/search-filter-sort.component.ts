@@ -74,6 +74,7 @@ export interface FilterSortListItemI {
 export interface FilterSortListsI {
   filter: FilterSortListItemI[];
   sort: FilterSortListItemI[];
+  searchPlaceholder: string;
 }
 
 export interface SearchSortFilterEvent {

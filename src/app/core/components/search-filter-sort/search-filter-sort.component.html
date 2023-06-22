@@ -15,7 +15,7 @@
       <ion-searchbar
         *ngIf="isMobile"
         style="--border-radius: 5px"
-        placeholder="Search by Product name"
+        [placeholder]="filterSortLists.searchPlaceholder"
         (clickOutside)="hideSearchBar()"
         show-cancel-button="always"
         [debounce]="1000"
@@ -24,7 +24,7 @@
       <ion-searchbar
         *ngIf="!isMobile"
         style="--border-radius: 5px"
-        placeholder="Search by Product name"
+        [placeholder]="filterSortLists.searchPlaceholder"
         (clickOutside)="hideSearchBar()"
         [debounce]="1000"
         (ionCancel)="hideSearchBar()"
