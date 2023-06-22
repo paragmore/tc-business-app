@@ -1,7 +1,7 @@
 <ion-grid>
-  <ion-row style="display: flex">
+  <ion-row class="header-row" style="display: flex">
     <div style="flex: 1; display: flex">
-      <div style="width: 50px; height: 50px">
+      <div style="width: 40px; height: 40px">
         <ion-avatar style="width: fit-content; height: fit-content">
           <ion-img
             *ngIf="partyDetails.avatarUrl"
@@ -31,8 +31,8 @@
     </div>
   </ion-row>
   <ion-row style="justify-content: end">
-    <div style="display: flex; flex-direction: column">
-      <p class="">
+    <div style="display: flex; flex-direction: column; padding: 10px">
+      <p class="titleSmall">
         {{ partyDetails.amount.title }}
       </p>
       <div
@@ -43,11 +43,11 @@
           align-items: center;
         "
       >
-        <p class="bodyPrimary">
-          {{ partyDetails.amount.prefix }}
+        <p class="caption">
+          {{ partyDetails.amount.prefix + " " }}
         </p>
         <p [class]="partyDetails.amount.color" class="titleMedium">
-          {{ partyDetails.amount.value }}
+          ₹ {{ partyDetails.amount.value }}
         </p>
       </div>
     </div>
