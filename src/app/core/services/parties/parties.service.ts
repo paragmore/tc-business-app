@@ -52,9 +52,9 @@ export class PartiesService {
     if (options?.sortOrder) {
       queryParams.append('sortOrder', options.sortOrder);
     }
-    const url = `${
-      this.baseUrl
-    }/parties/${storeId}/${type}?${queryParams.toString()}`;
+    const url = `${this.baseUrl}/parties/${storeId}/${type}?${queryParams
+      .toString()
+      .replace('%2C', ',')}`;
     const headers = getAuthHeaders();
     return this.httpClient.get(url, { headers: headers });
   }

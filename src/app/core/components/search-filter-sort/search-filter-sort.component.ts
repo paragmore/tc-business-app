@@ -60,7 +60,7 @@ export class SearchFilterSortComponent implements OnInit {
 
   onSort(selected: FilterSortListItemI) {
     this.onSearchSortFilter.emit({
-      type: SearchSortFilterEventTypeEnum.FILTER,
+      type: SearchSortFilterEventTypeEnum.SORT,
       selected,
     });
   }

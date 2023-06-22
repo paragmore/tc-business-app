@@ -20,11 +20,13 @@ import {
 import {
   FilterSortListsI,
   SearchFilterSortComponent,
+  SearchSortFilterEventTypeEnum,
 } from 'src/app/core/components/search-filter-sort/search-filter-sort.component';
 import { PartyCreationModalComponent } from '../../parties/party-creation-modal/party-creation-modal.component';
 import {
   CustomerI,
   GetAllCustomersResponseI,
+  PartiesFilterByQueryI,
   PartiesService,
   PartyTypeEnum,
   StorePartiesTotalBalanceI,
@@ -88,7 +90,7 @@ export class CustomersListComponent implements OnInit, DoCheck {
   creditDebitSummaryData: CreditDebitSummaryCardInputI | undefined;
   selectedParties: Array<CustomerI | SupplierI> = [];
   partiesInjector!: Injector;
-
+  filters: PartiesFilterByQueryI = {};
   createInjector = () => {
     this.partiesInjector = Injector.create({
       providers: [
@@ -107,22 +109,28 @@ export class CustomersListComponent implements OnInit, DoCheck {
   };
   filterSortOptions: FilterSortListsI = {
     filter: [
-      { type: 'quantity', text: 'Low Stock', value: 'asc' },
-      { type: 'quantity', text: 'In Stock', value: 'asc' },
+      { type: 'balance', text: "You'll give", value: 'gt,0' },
+      { type: 'balance', text: "You'll get", value: 'lt,0' },
+      { type: 'balance', text: 'Zero Balance', value: 'eq,0' },
     ],
     sort: [
-      { type: 'sellsPrice', text: 'Sells Price Low to High', value: 'asc' },
-      { type: 'sellsPrice', text: 'Sells Price High to Low', value: 'desc' },
       { type: 'name', text: 'Name ascending (A - Z)', value: 'asc' },
       { type: 'name', text: 'Name decending (Z - A)', value: 'desc' },
-      { type: 'quantity', text: 'Stock Low to High', value: 'asc' },
-      { type: 'quantity', text: 'Stock High to Low', value: 'desc' },
+      { type: 'balance', text: 'Balance low to high', value: 'asc' },
+      { type: 'balance', text: 'Balance high to low', value: 'desc' },
     ],
   };
   toggleSort = (sortBy: string, order: SortOrder) => {
     this.sortBy = sortBy;
     this.sortOrder = order;
-    this.loadCustomers();
+    this.loadCustomers(undefined, true);
+  };
+
+  addFilter = (filterBy: string, filterValue: string) => {
+    if (filterBy === 'balance') {
+      this.filters.balance = filterValue;
+    }
+    this.loadCustomers(undefined, true);
   };
 
   updateSelectedTab = (event: any) => {
@@ -328,10 +336,11 @@ export class CustomersListComponent implements OnInit, DoCheck {
         pageSize: this.pageSize.toString(),
         sortBy: this.sortBy,
         sortOrder: this.sortOrder,
+        ...this.filters,
       })
       .subscribe(
         (response) => {
-          console.log(2);
+          console.log('FILTERS', this.filters);
 
           //@ts-ignore
           if (response.message === 'Success') {
@@ -443,6 +452,11 @@ export class CustomersListComponent implements OnInit, DoCheck {
 
   onSearchSortFilter = (event: any) => {
     console.log(event);
-    this.toggleSort(event.selected.type, event.selected.value);
+    if (event.type === SearchSortFilterEventTypeEnum.FILTER) {
+      this.addFilter(event.selected.type, event.selected.value);
+    }
+    if (event.type === SearchSortFilterEventTypeEnum.SORT) {
+      this.toggleSort(event.selected.type, event.selected.value);
+    }
   };
 }
