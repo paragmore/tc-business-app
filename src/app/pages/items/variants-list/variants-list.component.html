@@ -1,51 +1,54 @@
 <ion-grid *ngIf="variants && variants.length > 0">
-  <ion-row
-    style="background-color: var(--ion-color-medium); border-radius: 5px"
-  >
-    <ion-col size="8"> Variant </ion-col>
-    <ion-col size="2"> Price </ion-col>
-    <ion-col size="2"> SKU Id </ion-col>
+  <ion-row>
+    <ion-col
+      size-xs="12"
+      size-lg="6"
+      *ngFor="let variant of variants; let i = index"
+    >
+      <ion-card style="padding: 5px; margin: 0px">
+        <ion-col>
+          <ion-row>
+            <ion-col>
+              <div style="display: flex">
+                <div style="width: 40px; height: 40px">
+                  <ion-avatar
+                    style="
+                      --border-radius: 5px;
+                      width: fit-content;
+                      height: fit-content;
+                    "
+                  >
+                    <ion-img
+                      src="https://ionicframework.com/docs/img/demos/avatar.svg"
+                    ></ion-img>
+                  </ion-avatar>
+                </div>
+                <p>
+                  {{ variant.properties | seperate }}
+                </p>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-col>
+        <ion-col size="6">
+          <ion-input
+            [readonly]="readonly"
+            label-placement="floating"
+            fill="outline"
+            label="Sells price"
+            [(ngModel)]="variant.sellsPrice"
+          ></ion-input>
+        </ion-col>
+        <ion-col size="6">
+          <ion-input
+            [readonly]="readonly"
+            label-placement="floating"
+            fill="outline"
+            label="Sku Id"
+            [(ngModel)]="variant.skuId"
+          ></ion-input>
+        </ion-col>
+      </ion-card>
+    </ion-col>
   </ion-row>
-  <div *ngFor="let variant of variants; let i = index">
-    <ion-row>
-      <ion-col size="6">
-        <ion-row>
-          <ion-col>
-            <div style="width: 40px; height: 40px">
-              <ion-avatar
-                style="
-                  --border-radius: 5px;
-                  width: fit-content;
-                  height: fit-content;
-                "
-              >
-                <ion-img
-                  src="https://ionicframework.com/docs/img/demos/avatar.svg"
-                ></ion-img>
-              </ion-avatar>
-            </div>
-          </ion-col>
-          <ion-col>
-            {{ variant.properties | seperate }}
-          </ion-col>
-        </ion-row>
-      </ion-col>
-      <ion-col size="3">
-        <ion-input
-          [readonly]="readonly"
-          label-placement="floating"
-          fill="outline"
-          [(ngModel)]="variant.sellsPrice"
-        ></ion-input>
-      </ion-col>
-      <ion-col size="3">
-        <ion-input
-          [readonly]="readonly"
-          label-placement="floating"
-          fill="outline"
-          [(ngModel)]="variant.skuId"
-        ></ion-input>
-      </ion-col>
-    </ion-row>
-  </div>
 </ion-grid>

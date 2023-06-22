@@ -1,21 +1,8 @@
 <ion-grid *ngIf="discounts && discounts.length > 0">
-  <ion-row
-    style="background-color: var(--ion-color-secondary); border-radius: 5px"
-    *ngIf="!isMobile"
-  >
-    <ion-col size-xs="6" size-lg="3"> Type </ion-col>
-    <ion-col size-xs="6" size-lg="3"> Code </ion-col>
-    <ion-col size-xs="4" size-lg="2"> Value </ion-col>
-    <ion-col size-xs="4" size-lg="2"> Minimum Order </ion-col>
-    <ion-col size-xs="4" size-lg="2"> Max Discount </ion-col>
-  </ion-row>
   <div *ngFor="let discount of discounts; let i = index">
     <ion-card>
       <ion-row>
-        <ion-col size-xs="6" size-lg="3">
-          {{ discount.type }}
-        </ion-col>
-        <ion-col size-xs="6" size-lg="3">
+        <ion-col size-xs="6">
           <ion-input
             [readonly]="readonly"
             label-placement="floating"
@@ -24,31 +11,36 @@
             [(ngModel)]="discount.code"
           ></ion-input>
         </ion-col>
-        <ion-col size-xs="4" size-lg="2">
+        <ion-col size-xs="6">
           <ion-input
             [readonly]="readonly"
             type="number"
             label-placement="floating"
             fill="outline"
-            label="Value"
+            [label]="'Discount ' + discount.type"
+            [min]="0"
+            [max]="100"
             [(ngModel)]="discount.value"
           ></ion-input>
         </ion-col>
-        <ion-col size-xs="4" size-lg="2">
+        <ion-col size-xs="6">
           <ion-input
             [readonly]="readonly"
             label-placement="floating"
             fill="outline"
-            label="Minimum"
+            [label]="
+              'Minimum ' +
+              (discount.minType === 'orderQuantity' ? 'quantity' : 'value')
+            "
             [(ngModel)]="discount.minimum"
           ></ion-input>
         </ion-col>
-        <ion-col size-xs="4" size-lg="2">
+        <ion-col size-xs="6">
           <ion-input
             [readonly]="readonly"
             label-placement="floating"
             fill="outline"
-            label="Maximum"
+            label="Maximum Value"
             [(ngModel)]="discount.maxDiscount"
           ></ion-input>
         </ion-col> </ion-row
