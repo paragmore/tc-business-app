@@ -150,19 +150,43 @@
           </ion-col>
         </ion-row>
         <ion-row>
-          <app-discounts-list
-            style="width: 100%"
-            [discounts]="productDetails?.discounts"
-            [readonly]="true"
-          ></app-discounts-list>
+          <ion-accordion-group style="width: 100%">
+            <ion-accordion value="first">
+              <ion-item slot="header" color="light">
+                <p style="color: var(--ion-color-primary)" class="titleSmall">
+                  Discounts
+                </p>
+              </ion-item>
+
+              <div class="ion-padding" slot="content">
+                <app-discounts-list
+                  style="width: 100%"
+                  [discounts]="productDetails?.discounts"
+                  [readonly]="true"
+                ></app-discounts-list>
+              </div>
+            </ion-accordion>
+          </ion-accordion-group>
         </ion-row>
         <ion-row>
-          <app-variants-list
-            style="width: 100%"
-            [variants]="productDetails?.variants"
-            [readonly]="true"
-          >
-          </app-variants-list>
+          <ion-accordion-group style="width: 100%">
+            <ion-accordion value="first">
+              <ion-item slot="header" color="light">
+                <p style="color: var(--ion-color-primary)" class="titleSmall">
+                  Variants
+                </p>
+              </ion-item>
+
+              <div class="ion-padding" slot="content">
+                <app-variants-list
+                  style="width: 100%"
+                  [variants]="productDetails?.variants"
+                  [readonly]="true"
+                >
+                </app-variants-list>
+              </div>
+            </ion-accordion>
+          </ion-accordion-group>
         </ion-row>
       </ion-grid>
       <ion-grid style="">

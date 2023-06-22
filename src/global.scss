@@ -37,6 +37,10 @@ ion-input {
   --border-radius: 10px !important;
 }
 
+ion-button {
+  text-transform: none;
+}
+
 .side-modal {
   justify-content: end;
   height: 100%;

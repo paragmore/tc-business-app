@@ -119,6 +119,7 @@ export class CustomersListComponent implements OnInit, DoCheck {
       { type: 'balance', text: 'Balance low to high', value: 'asc' },
       { type: 'balance', text: 'Balance high to low', value: 'desc' },
     ],
+    searchPlaceholder: `Search by ${this.selectedTab} name`,
   };
   toggleSort = (sortBy: string, order: SortOrder) => {
     this.sortBy = sortBy;
@@ -142,6 +143,7 @@ export class CustomersListComponent implements OnInit, DoCheck {
     this.navigateWithQuery({ type: this.selectedTab });
     this.loadCustomers(undefined, true);
     this.loadStorePartiesTotalBalance();
+    this.filterSortOptions.searchPlaceholder = `Search by ${this.selectedTab} name`;
   };
 
   navigateWithQuery(queryParams: any, replace?: boolean) {

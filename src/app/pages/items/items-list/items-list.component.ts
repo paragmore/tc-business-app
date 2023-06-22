@@ -76,6 +76,7 @@ export class ItemsListComponent implements OnInit {
       { type: 'quantity', text: 'Stock Low to High', value: 'asc' },
       { type: 'quantity', text: 'Stock High to Low', value: 'desc' },
     ],
+    searchPlaceholder: 'Search by product name',
   };
   constructor(
     private productsService: ProductsService,

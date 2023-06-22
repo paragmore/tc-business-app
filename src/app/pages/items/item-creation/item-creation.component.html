@@ -263,16 +263,45 @@
       </ion-row>
     </ion-grid>
   </form>
-  <h5>Discounts</h5>
-  <ion-button fill="outline" (click)="openDiscountsModal()">
-    <ion-icon name="add"></ion-icon> Add Discount
-  </ion-button>
-  <app-discounts-list [discounts]="discounts"> </app-discounts-list>
-  <h5>Variants</h5>
-  <ion-button fill="outline" (click)="openVariantCreationModal()">
-    <ion-icon name="add"></ion-icon> Add new Variant
-  </ion-button>
-  <app-variants-list [variants]="variants"></app-variants-list>
+
+  <ion-row>
+    <ion-accordion-group>
+      <ion-accordion value="first">
+        <ion-button fill="clear" slot="header" color="primary">
+          <p style="color: var(--ion-color-primary)" class="titleSmall">
+            Discounts
+          </p>
+          <ion-icon name="chevron-down-outline"></ion-icon>
+        </ion-button>
+        <div class="ion-padding" slot="content">
+          <ion-button fill="outline" (click)="openDiscountsModal()">
+            <ion-icon name="add"></ion-icon> Add Discount
+          </ion-button>
+
+          <app-discounts-list [discounts]="discounts"> </app-discounts-list>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+  </ion-row>
+
+  <ion-row>
+    <ion-accordion-group>
+      <ion-accordion value="first">
+        <ion-button fill="clear" slot="header" color="primary">
+          <p style="color: var(--ion-color-primary)" class="titleSmall">
+            Variants
+          </p>
+          <ion-icon name="chevron-down-outline"></ion-icon>
+        </ion-button>
+        <div class="ion-padding" slot="content">
+          <ion-button fill="outline" (click)="openVariantCreationModal()">
+            <ion-icon name="add"></ion-icon> Add new Variant
+          </ion-button>
+          <app-variants-list [variants]="variants"></app-variants-list>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+  </ion-row>
 </div>
 
 <ion-button
