@@ -29,8 +29,42 @@
       <ion-item slot="header" color="light">
         <ion-label>Addresses</ion-label>
       </ion-item>
-      <div *ngFor="let address of addresses" class="ion-padding" slot="content">
-        {{ address | json }}
+      <div
+        style="
+          border: 1px solid var(--ion-color-primary);
+          margin: 10px;
+          border-radius: 10px;
+        "
+        *ngFor="let address of addresses"
+        class="ion-padding"
+        slot="content"
+      >
+        <div *ngIf="address.shipping">
+          <p class="bodySecondary">{{ address.shipping.line1 }}</p>
+          <p class="bodySecondary">{{ address.shipping.line2 }}</p>
+          <p class="bodySecondary">
+            {{ address.shipping.city }}
+            {{ address.shipping.state }}
+            {{ address.shipping.pinCode }}
+          </p>
+        </div>
+        <ion-checkbox
+          labelPlacement="end"
+          [checked]="address.billingSameAsShipping"
+          disabled="true"
+          ><p class="tiny">
+            Shipping address same as billing address
+          </p></ion-checkbox
+        >
+        <div *ngIf="address.billing && !address.billingSameAsShipping">
+          <p class="bodySecondary">{{ address.billing.line1 }}</p>
+          <p class="bodySecondary">{{ address.billing.line2 }}</p>
+          <p class="bodySecondary">
+            {{ address.billing.city }}
+            {{ address.billing.state }}
+            {{ address.billing.pinCode }}
+          </p>
+        </div>
       </div>
     </ion-accordion>
     <ion-accordion *ngIf="partyDetails && gstin" value="second">
