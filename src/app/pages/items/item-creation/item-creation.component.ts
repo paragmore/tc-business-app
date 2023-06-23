@@ -73,6 +73,7 @@ export class ItemCreationComponent implements OnInit {
   sameUnits: boolean = true;
   isMobile: boolean = false;
   gstPercentage!: string;
+  hsnCode!: string;
   currentStoreInfo: StoreInfoModel | undefined;
   taxPopover: any;
   public screenState$: Observable<ScreenModel> | undefined;
@@ -348,6 +349,12 @@ export class ItemCreationComponent implements OnInit {
       cssClass: 'login-modal',
     });
 
+    modal.onDidDismiss().then((modalData) => {
+      if (modalData && modalData.data.selectedValue) {
+        this.hsnCode = modalData.data.selectedValue.code;
+        this.productForm.patchValue({ hsnCode: this.hsnCode });
+      }
+    });
     return await modal.present();
   }
 

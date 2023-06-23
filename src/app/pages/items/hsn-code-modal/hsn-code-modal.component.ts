@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, DoCheck, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { DialogHeaderComponent } from 'src/app/core/components/dialog-header/dialog-header.component';
+import { ItemNotFoundComponent } from 'src/app/core/components/item-not-found/item-not-found.component';
 import {
   PartiesService,
   PartyTypeEnum,
@@ -18,9 +19,15 @@ import {
   templateUrl: './hsn-code-modal.component.html',
   styleUrls: ['./hsn-code-modal.component.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, DialogHeaderComponent, FormsModule],
+  imports: [
+    IonicModule,
+    CommonModule,
+    DialogHeaderComponent,
+    FormsModule,
+    ItemNotFoundComponent,
+  ],
 })
-export class HsnCodeModalComponent implements OnInit {
+export class HsnCodeModalComponent implements OnInit, DoCheck {
   @Input() itemType!: ItemTypeEnum;
   hsnCodes: HSNSACCodeI[] = [];
   newItem: string | undefined;
@@ -28,13 +35,24 @@ export class HsnCodeModalComponent implements OnInit {
   totalPages = 1;
   pageSize = 10;
   isLoading = false;
-  search = '';
+  search: string | undefined = '';
   sortBy: string = 'name';
   sortOrder: SortOrder = 'asc';
+  disabled: boolean = true;
   constructor(
     public popoverController: ModalController,
     private productsService: ProductsService
   ) {}
+
+  ngDoCheck(): void {
+    console.log(this.newItem, this.newItem !== this.search);
+    if (this.newItem !== this.search) {
+      this.loadHSNCodes(undefined, true);
+      if (this.newItem) {
+        this.disabled = typeof Number(this.newItem) === 'number';
+      }
+    }
+  }
 
   ngOnInit() {
     this.loadHSNCodes();
@@ -47,6 +65,7 @@ export class HsnCodeModalComponent implements OnInit {
   }
 
   loadHSNCodes(onLoadingFinished?: () => void, isReload?: boolean) {
+    console.log('load');
     if (isReload) {
       this.resetPagination();
     }
@@ -61,6 +80,7 @@ export class HsnCodeModalComponent implements OnInit {
         pageSize: this.pageSize.toString(),
         sortBy: this.sortBy,
         sortOrder: this.sortOrder,
+        //@ts-ignore
         search: this.newItem,
       })
       .subscribe(
@@ -90,6 +110,7 @@ export class HsnCodeModalComponent implements OnInit {
         () => {
           this.isLoading = false;
           onLoadingFinished && onLoadingFinished();
+          this.search = this.newItem;
         }
       );
     console.log(3);
@@ -106,7 +127,7 @@ export class HsnCodeModalComponent implements OnInit {
     if (this.newItem) {
       // this.itemList.push(this.newItem);
       this.popoverController.dismiss({
-        selectedValue: `GST @ ${this.newItem} %`,
+        selectedValue: { code: this.newItem },
       });
     }
   }

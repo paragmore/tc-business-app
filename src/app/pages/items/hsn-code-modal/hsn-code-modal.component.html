@@ -6,7 +6,7 @@
     [onClose]="onClosePopover"
   >
   </app-dialog-header>
-  <ion-content class="hsn-content-style">
+  <ion-content *ngIf="hsnCodes.length > 0" class="hsn-content-style">
     <ion-list>
       <ion-item
         style="padding-top: 5px; padding-bottom: 5px"
@@ -29,12 +29,19 @@
       <ion-infinite-scroll-content></ion-infinite-scroll-content>
     </ion-infinite-scroll>
   </ion-content>
+  <app-item-not-found
+    *ngIf="!isLoading && hsnCodes.length <= 0"
+  ></app-item-not-found>
   <ion-item style="margin-top: 20px">
     <ion-input
       [(ngModel)]="newItem"
       placeholder="Search or enter hsn code"
     ></ion-input>
-    <ion-button slot="end" (click)="addItem()" [disabled]="!newItem"
+    <ion-button
+      slot="end"
+      [disabled]="disabled"
+      (click)="addItem()"
+      [disabled]="!newItem"
       >Add</ion-button
     >
   </ion-item>
