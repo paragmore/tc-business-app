@@ -343,10 +343,9 @@ export class ItemCreationComponent implements OnInit {
   async openHSNCodeModal(event: any) {
     const modal = await this.modalController.create({
       component: HsnCodeModalComponent,
+      componentProps: { itemType: this.type },
       backdropDismiss: true,
       cssClass: 'login-modal',
-      breakpoints: this.isMobile ? [0, 0.8, 1] : undefined,
-      initialBreakpoint: this.isMobile ? 0.8 : 1,
     });
 
     return await modal.present();
@@ -436,7 +435,7 @@ export class ItemCreationComponent implements OnInit {
           typeof this.heroImage === 'string'
             ? this.heroImage
             : this.heroImage?.imageUrl,
-            isService: this.type === ItemTypeEnum.SERVICE
+        isService: this.type === ItemTypeEnum.SERVICE,
       };
       this.createProduct(createProductPayload);
     }
