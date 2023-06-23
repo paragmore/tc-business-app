@@ -118,6 +118,30 @@ export class ProductsService {
     };
     return this.httpClient.post(url, body, { headers: headers });
   }
+
+  getHSNCodes(type: ItemTypeEnum, options?: GetHSNCodesQueryParamsI) {
+    const queryParams = new URLSearchParams();
+    if (options?.search) {
+      queryParams.append('search', options.search);
+    }
+    if (options?.pageSize) {
+      queryParams.append('pageSize', options.pageSize);
+    }
+    if (options?.page) {
+      queryParams.append('page', options.page);
+    }
+    if (options?.sortBy) {
+      queryParams.append('sortBy', options.sortBy);
+    }
+    if (options?.sortOrder) {
+      queryParams.append('sortOrder', options.sortOrder);
+    }
+    const url = `${this.baseUrl}/products/hsnCodes/${type}?${queryParams
+      .toString()
+      .replace('%2C', ',')}`;
+    const headers = getAuthHeaders();
+    return this.httpClient.get(url, { headers: headers });
+  }
 }
 export interface CategoryI {
   name: string;
@@ -267,3 +291,14 @@ export enum ItemTypeEnum {
   PRODUCT = 'Product',
   SERVICE = 'Service',
 }
+
+export interface HSNCodesFilterByQueryI {
+  search: string;
+}
+
+export interface HSNCodesFilterByI {
+  search: string;
+}
+export interface GetHSNCodesQueryParamsI
+  extends HSNCodesFilterByQueryI,
+    PaginationQueryParamsI {}
