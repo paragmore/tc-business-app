@@ -14,6 +14,12 @@
   }
 }
 
+.item-list-body {
+  @media only screen and (min-width: 768px) {
+    margin-left: 10px;
+  }
+}
+
 .list-row-container {
   flex: 0.8;
   @media only screen and (min-width: 768px) {
@@ -73,11 +79,6 @@ ion-checkbox {
   flex-direction: row;
   background-color: var(--ion-color-secondary);
   border-bottom: 1px solid var(--ion-color-secondary);
-
-  @media only screen and (min-width: 768px) {
-    border-top-left-radius: 10px;
-    border-bottom-left-radius: 10px;
-  }
 }
 
 .hide-scrollbar {

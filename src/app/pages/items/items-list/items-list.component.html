@@ -7,400 +7,411 @@
     (onSearchSortFilter)="onSearchSortFilter($event)"
   ></app-search-filter-sort>
 </ion-row>
+<div class="item-list-body">
+  <ion-segment
+    (ionChange)="updateSelectedTab($event)"
+    [value]="selectedTab"
+    *ngIf="!isMobile"
+  >
+    <ion-segment-button [value]="ItemTypeEnum.PRODUCT">
+      <ion-label>Products</ion-label>
+    </ion-segment-button>
+    <ion-segment-button [value]="ItemTypeEnum.SERVICE">
+      <ion-label>Services</ion-label>
+    </ion-segment-button>
+  </ion-segment>
 
-<ion-segment
-  (ionChange)="updateSelectedTab($event)"
-  [value]="selectedTab"
-  *ngIf="!isMobile"
->
-  <ion-segment-button [value]="ItemTypeEnum.PRODUCT">
-    <ion-label>Products</ion-label>
-  </ion-segment-button>
-  <ion-segment-button [value]="ItemTypeEnum.SERVICE">
-    <ion-label>Services</ion-label>
-  </ion-segment-button>
-</ion-segment>
-
-<div class="list-outer-container">
-  <ion-row class="list-row-container">
-    <ion-grid class="list-height">
-      <ion-row *ngIf="!isMobile" class="products-list-header-row">
-        <ion-col
-          style="display: flex; align-items: center"
-          [size]="
-            selectedTab === ItemTypeEnum.PRODUCT
-              ? isMobile
-                ? 5
-                : 6
-              : isMobile
-              ? 9
-              : 8
-          "
-        >
-          <ion-checkbox
-            (ionChange)="selectAllToggle($event)"
-            *ngIf="enableMultiSelect"
-          ></ion-checkbox>
-
-          <ion-button
-            (click)="toggleSort('name', sortOrder === 'asc' ? 'desc' : 'asc')"
-            fill="tertiary"
-            [disabled]="isProductsLoading"
-          >
-            <p color="primary">{{ selectedTab }}</p>
-          </ion-button>
-          <ng-container *ngIf="sortBy !== 'name'">
-            <button
-              [disabled]="isProductsLoading"
-              ion-button
-              icon-only
-              (click)="toggleSort('name', 'asc')"
-            >
-              <ion-icon name="swap-vertical-outline"></ion-icon>
-            </button>
-          </ng-container>
-          <ng-container *ngIf="sortBy === 'name'">
-            <button
-              ion-button
-              icon-only
-              [disabled]="isProductsLoading"
-              (click)="toggleSort('name', sortOrder === 'asc' ? 'desc' : 'asc')"
-            >
-              <ion-icon
-                [name]="sortOrder === 'asc' ? 'arrow-up' : 'arrow-down'"
-              ></ion-icon>
-            </button>
-          </ng-container>
-        </ion-col>
-        <ion-col
-          style="display: flex; align-items: center; justify-content: center"
-          [size]="isMobile ? 4 : 3"
-        >
-          <ion-button
-            fill="tertiary"
-            [disabled]="isProductsLoading"
-            (click)="
-              toggleSort('sellsPrice', sortOrder === 'asc' ? 'desc' : 'asc')
+  <div class="list-outer-container">
+    <ion-row class="list-row-container">
+      <ion-grid class="list-height">
+        <ion-row *ngIf="!isMobile" class="products-list-header-row">
+          <ion-col
+            style="display: flex; align-items: center"
+            [size]="
+              selectedTab === ItemTypeEnum.PRODUCT
+                ? isMobile
+                  ? 5
+                  : 6
+                : isMobile
+                ? 9
+                : 8
             "
           >
-            <p color="primary">Sells Price</p>
-          </ion-button>
-          <ng-container *ngIf="sortBy !== 'sellsPrice'">
-            <button
-              ion-button
-              icon-only
+            <ion-checkbox
+              (ionChange)="selectAllToggle($event)"
+              *ngIf="enableMultiSelect"
+            ></ion-checkbox>
+
+            <ion-button
+              (click)="toggleSort('name', sortOrder === 'asc' ? 'desc' : 'asc')"
+              fill="tertiary"
               [disabled]="isProductsLoading"
-              (click)="toggleSort('sellsPrice', 'asc')"
             >
-              <ion-icon name="swap-vertical-outline"></ion-icon>
-            </button>
-          </ng-container>
-          <ng-container *ngIf="sortBy === 'sellsPrice'">
-            <button
-              ion-button
-              icon-only
+              <p color="primary">{{ selectedTab }}</p>
+            </ion-button>
+            <ng-container *ngIf="sortBy !== 'name'">
+              <button
+                [disabled]="isProductsLoading"
+                ion-button
+                icon-only
+                (click)="toggleSort('name', 'asc')"
+              >
+                <ion-icon name="swap-vertical-outline"></ion-icon>
+              </button>
+            </ng-container>
+            <ng-container *ngIf="sortBy === 'name'">
+              <button
+                ion-button
+                icon-only
+                [disabled]="isProductsLoading"
+                (click)="
+                  toggleSort('name', sortOrder === 'asc' ? 'desc' : 'asc')
+                "
+              >
+                <ion-icon
+                  [name]="sortOrder === 'asc' ? 'arrow-up' : 'arrow-down'"
+                ></ion-icon>
+              </button>
+            </ng-container>
+          </ion-col>
+          <ion-col
+            style="display: flex; align-items: center; justify-content: center"
+            [size]="isMobile ? 4 : 3"
+          >
+            <ion-button
+              fill="tertiary"
               [disabled]="isProductsLoading"
               (click)="
                 toggleSort('sellsPrice', sortOrder === 'asc' ? 'desc' : 'asc')
               "
             >
-              <ion-icon
-                [name]="sortOrder === 'asc' ? 'arrow-up' : 'arrow-down'"
-              ></ion-icon>
-            </button>
-          </ng-container>
-        </ion-col>
-        <ion-col
-          style="display: flex; align-items: center; justify-content: center"
-          [size]="isMobile ? 4 : 2"
-          *ngIf="selectedTab === ItemTypeEnum.PRODUCT"
-        >
-          <ion-button
-            [disabled]="isProductsLoading"
-            fill="tertiary"
-            (click)="
-              toggleSort('quantity', sortOrder === 'asc' ? 'desc' : 'asc')
-            "
+              <p color="primary">Sells Price</p>
+            </ion-button>
+            <ng-container *ngIf="sortBy !== 'sellsPrice'">
+              <button
+                ion-button
+                icon-only
+                [disabled]="isProductsLoading"
+                (click)="toggleSort('sellsPrice', 'asc')"
+              >
+                <ion-icon name="swap-vertical-outline"></ion-icon>
+              </button>
+            </ng-container>
+            <ng-container *ngIf="sortBy === 'sellsPrice'">
+              <button
+                ion-button
+                icon-only
+                [disabled]="isProductsLoading"
+                (click)="
+                  toggleSort('sellsPrice', sortOrder === 'asc' ? 'desc' : 'asc')
+                "
+              >
+                <ion-icon
+                  [name]="sortOrder === 'asc' ? 'arrow-up' : 'arrow-down'"
+                ></ion-icon>
+              </button>
+            </ng-container>
+          </ion-col>
+          <ion-col
+            style="display: flex; align-items: center; justify-content: center"
+            [size]="isMobile ? 4 : 2"
+            *ngIf="selectedTab === ItemTypeEnum.PRODUCT"
           >
-            <p color="primary">Stock</p>
-          </ion-button>
-          <ng-container *ngIf="sortBy !== 'quantity'">
-            <button
+            <ion-button
               [disabled]="isProductsLoading"
-              ion-button
-              icon-only
-              (click)="toggleSort('quantity', 'asc')"
-            >
-              <ion-icon name="swap-vertical-outline"></ion-icon>
-            </button>
-          </ng-container>
-          <ng-container *ngIf="sortBy === 'quantity'">
-            <button
-              [disabled]="isProductsLoading"
-              ion-button
-              icon-only
+              fill="tertiary"
               (click)="
                 toggleSort('quantity', sortOrder === 'asc' ? 'desc' : 'asc')
               "
             >
-              <ion-icon
-                [name]="sortOrder === 'asc' ? 'arrow-up' : 'arrow-down'"
-              ></ion-icon>
-            </button>
-          </ng-container>
-        </ion-col>
-      </ion-row>
-      <ion-content
-        style="
-          /* background-color: var(--ion-color-primary-contrast); */
-          overflow-y: scroll;
-        "
-        class="list-height hide-scrollbar"
-      >
-        <ion-list
-          style="overflow-x: hidden"
-          [class]="!isMobile ? 'scrollbar' : ''"
-          id="style-1"
+              <p color="primary">Stock</p>
+            </ion-button>
+            <ng-container *ngIf="sortBy !== 'quantity'">
+              <button
+                [disabled]="isProductsLoading"
+                ion-button
+                icon-only
+                (click)="toggleSort('quantity', 'asc')"
+              >
+                <ion-icon name="swap-vertical-outline"></ion-icon>
+              </button>
+            </ng-container>
+            <ng-container *ngIf="sortBy === 'quantity'">
+              <button
+                [disabled]="isProductsLoading"
+                ion-button
+                icon-only
+                (click)="
+                  toggleSort('quantity', sortOrder === 'asc' ? 'desc' : 'asc')
+                "
+              >
+                <ion-icon
+                  [name]="sortOrder === 'asc' ? 'arrow-up' : 'arrow-down'"
+                ></ion-icon>
+              </button>
+            </ng-container>
+          </ion-col>
+        </ion-row>
+        <ion-content
+          style="
+            /* background-color: var(--ion-color-primary-contrast); */
+            overflow-y: scroll;
+          "
+          class="list-height hide-scrollbar"
         >
-          <div
-            *ngIf="isMobile"
-            style="
-              background-color: var(--ion-color-secondary);
-              padding: 6px;
-              border-bottom-left-radius: 10px;
-              border-bottom-right-radius: 10px;
-              width: 100%;
-              height: 70px;
-            "
+          <ion-list
+            style="overflow-x: hidden"
+            [class]="!isMobile ? 'scrollbar' : ''"
+            id="style-1"
           >
-            <ion-segment
-              (ionChange)="updateSelectedTab($event)"
-              [value]="selectedTab"
+            <div
+              *ngIf="isMobile"
+              style="
+                background-color: var(--ion-color-secondary);
+                padding: 6px;
+                border-bottom-left-radius: 10px;
+                border-bottom-right-radius: 10px;
+                width: 100%;
+                height: 70px;
+              "
             >
-              <ion-segment-button [value]="ItemTypeEnum.PRODUCT">
-                <ion-label>Products</ion-label>
-              </ion-segment-button>
-              <ion-segment-button [value]="ItemTypeEnum.SERVICE">
-                <ion-label>Services</ion-label>
-              </ion-segment-button>
-            </ion-segment>
-          </div>
-          <ion-row
-            *ngIf="!this.isMobile && isProductsLoading"
-            style="
-              background-color: var(--ion-color-primary-contrast);
-              border-radius: 5px;
-              padding: 10px;
-              margin: 5px;
-            "
-          >
-            <ion-col>
-              <ion-row>
-                <ion-col>
-                  <div style="width: 40px; height: 40px">
-                    <ion-avatar
-                      style="
-                        --border-radius: 5px;
-                        width: fit-content;
-                        height: fit-content;
-                      "
-                    >
+              <ion-segment
+                (ionChange)="updateSelectedTab($event)"
+                [value]="selectedTab"
+              >
+                <ion-segment-button [value]="ItemTypeEnum.PRODUCT">
+                  <ion-label>Products</ion-label>
+                </ion-segment-button>
+                <ion-segment-button [value]="ItemTypeEnum.SERVICE">
+                  <ion-label>Services</ion-label>
+                </ion-segment-button>
+              </ion-segment>
+            </div>
+            <div *ngIf="products.length <= 0">
+              <app-item-not-found></app-item-not-found>
+            </div>
+            <ion-row
+              *ngIf="!this.isMobile && isProductsLoading"
+              style="
+                background-color: var(--ion-color-primary-contrast);
+                border-radius: 5px;
+                padding: 10px;
+                margin: 5px;
+              "
+            >
+              <ion-col>
+                <ion-row>
+                  <ion-col>
+                    <div style="width: 40px; height: 40px">
+                      <ion-avatar
+                        style="
+                          --border-radius: 5px;
+                          width: fit-content;
+                          height: fit-content;
+                        "
+                      >
+                        <ion-skeleton-text
+                          [animated]="true"
+                          style="width: 80%"
+                        ></ion-skeleton-text>
+                      </ion-avatar>
+                    </div>
+                  </ion-col>
+                  <ion-col>
+                    <p style="overflow-wrap: anywhere">
                       <ion-skeleton-text
                         [animated]="true"
                         style="width: 80%"
                       ></ion-skeleton-text>
-                    </ion-avatar>
-                  </div>
-                </ion-col>
-                <ion-col>
-                  <p style="overflow-wrap: anywhere">
-                    <ion-skeleton-text
-                      [animated]="true"
-                      style="width: 80%"
-                    ></ion-skeleton-text>
-                  </p>
-                </ion-col>
-              </ion-row>
-            </ion-col>
-
-            <ion-col [size]="isMobile ? 4 : 3">
-              <ion-skeleton-text
-                [animated]="true"
-                style="width: 80%"
-              ></ion-skeleton-text>
-            </ion-col>
-
-            <ion-col size="2">
-              <ion-skeleton-text
-                [animated]="true"
-                style="width: 80%"
-              ></ion-skeleton-text>
-            </ion-col>
-          </ion-row>
-          <div *ngFor="let product of products; let i = index">
-            <ion-row
-              *ngIf="!isProductsLoading || isMobile"
-              style="
-                background-color: var(--ion-color-primary-contrast);
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                text-align: center;
-              "
-              ion-button
-              long-press
-              (press)="onLongPress()"
-              (click)="openProductDetails(product)"
-            >
-              <ion-col
-                [size]="
-                  selectedTab === ItemTypeEnum.PRODUCT
-                    ? isMobile
-                      ? 5
-                      : 6
-                    : isMobile
-                    ? 7
-                    : 8
-                "
-              >
-                <ion-row
-                  style="
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    text-align: center;
-                  "
-                >
-                  <ion-checkbox
-                    [checked]="isProductSelected(product)"
-                    (ionChange)="onProductSelectionToggle($event, product)"
-                    *ngIf="enableMultiSelect"
-                  ></ion-checkbox>
-                  <ion-col size="4">
-                    <div style="width: 60px; height: 60px; padding: 10px">
-                      <ion-avatar
-                        style="--border-radius: 5px; width: 40px; height: 40px"
-                      >
-                        <ion-img
-                          [src]="
-                            product.heroImage
-                              ? product.heroImage
-                              : 'https://www.chanchao.com.tw/images/default.jpg'
-                          "
-                        ></ion-img>
-                      </ion-avatar>
-                    </div>
-                  </ion-col>
-                  <ion-col style="text-align: start">
-                    <p class="title3" style="overflow-wrap: anywhere">
-                      {{ product.name }}
-                    </p>
-                    <p class="caption">
-                      {{
-                        selectedTab === ItemTypeEnum.PRODUCT
-                          ? "HSN"
-                          : selectedTab === ItemTypeEnum.SERVICE
-                          ? "SAC"
-                          : ""
-                      }}
-                      {{ product.hsnCode | hyphen }}
                     </p>
                   </ion-col>
                 </ion-row>
               </ion-col>
-              <ion-col [size]="isMobile ? 5 : 3">
-                <p class="title4">₹{{ product.sellsPrice }}</p>
+
+              <ion-col [size]="isMobile ? 4 : 3">
+                <ion-skeleton-text
+                  [animated]="true"
+                  style="width: 80%"
+                ></ion-skeleton-text>
               </ion-col>
 
-              <ion-col
-                [class]="
-                  product &&
-                  product.quantity &&
-                  product.lowStock &&
-                  product.quantity <= product.lowStock
-                    ? 'danger'
-                    : ''
-                "
-                size="2"
-                *ngIf="selectedTab === ItemTypeEnum.PRODUCT"
-              >
-                <p class="title4">
-                  {{ product.quantity }}
-                </p>
-                <p class="captionMobile">{{ product.unit.name }} left</p>
-              </ion-col>
-
-              <ion-col size="1" *ngIf="!isMobile">
-                <ion-button
-                  fill="tertiary"
-                  (click)="openItemDetailsPage(product)"
-                >
-                  <ion-icon name="open-outline"></ion-icon>
-                </ion-button>
+              <ion-col size="2">
+                <ion-skeleton-text
+                  [animated]="true"
+                  style="width: 80%"
+                ></ion-skeleton-text>
               </ion-col>
             </ion-row>
-            <div
-              style="
-                border-bottom: 1px solid lightblue;
-                margin-left: 10px;
-                margin: right 20px;
-              "
-            ></div>
-          </div>
-        </ion-list>
-        <ion-infinite-scroll
-          *ngIf="isMobile"
-          [disabled]="false"
-          (ionInfinite)="loadMoreData($event)"
-        >
-          <ion-infinite-scroll-content></ion-infinite-scroll-content>
-        </ion-infinite-scroll>
-      </ion-content>
-    </ion-grid>
-  </ion-row>
-  <ion-row *ngIf="!isMobile" style="width: 100%; bottom: 10px">
-    <app-pagination-component
-      style="width: 100%"
-      [currentPage]="currentPage"
-      [totalPages]="totalPages"
-      (pageChange)="goToPage($event)"
-      (pageSizeChange)="changePageSize($event)"
-    ></app-pagination-component>
-  </ion-row>
-  <ion-row
-    style="
-      gap: 10px;
-      justify-content: center;
-      align-items: center;
-      display: flex;
-      flex-direction: row;
-    "
-    *ngIf="
-      (isMobile && enableMultiSelect) ||
-      (!isMobile && selectedProducts.length > 0)
-    "
-  >
-    <ion-col size="5">
-      <ion-button
+
+            <div *ngFor="let product of products; let i = index">
+              <ion-row
+                *ngIf="!isProductsLoading || isMobile"
+                style="
+                  background-color: var(--ion-color-primary-contrast);
+                  cursor: pointer;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  text-align: center;
+                "
+                ion-button
+                long-press
+                (press)="onLongPress()"
+                (click)="openProductDetails(product)"
+              >
+                <ion-col
+                  [size]="
+                    selectedTab === ItemTypeEnum.PRODUCT
+                      ? isMobile
+                        ? 5
+                        : 6
+                      : isMobile
+                      ? 7
+                      : 8
+                  "
+                >
+                  <ion-row
+                    style="
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      text-align: center;
+                    "
+                  >
+                    <ion-checkbox
+                      [checked]="isProductSelected(product)"
+                      (ionChange)="onProductSelectionToggle($event, product)"
+                      *ngIf="enableMultiSelect"
+                    ></ion-checkbox>
+                    <ion-col size="4">
+                      <div style="width: 60px; height: 60px; padding: 10px">
+                        <ion-avatar
+                          style="
+                            --border-radius: 5px;
+                            width: 40px;
+                            height: 40px;
+                          "
+                        >
+                          <ion-img
+                            [src]="
+                              product.heroImage
+                                ? product.heroImage
+                                : 'https://www.chanchao.com.tw/images/default.jpg'
+                            "
+                          ></ion-img>
+                        </ion-avatar>
+                      </div>
+                    </ion-col>
+                    <ion-col style="text-align: start">
+                      <p class="title3" style="overflow-wrap: anywhere">
+                        {{ product.name }}
+                      </p>
+                      <p class="caption">
+                        {{
+                          selectedTab === ItemTypeEnum.PRODUCT
+                            ? "HSN"
+                            : selectedTab === ItemTypeEnum.SERVICE
+                            ? "SAC"
+                            : ""
+                        }}
+                        {{ product.hsnCode | hyphen }}
+                      </p>
+                    </ion-col>
+                  </ion-row>
+                </ion-col>
+                <ion-col [size]="isMobile ? 5 : 3">
+                  <p class="title4">₹{{ product.sellsPrice }}</p>
+                </ion-col>
+
+                <ion-col
+                  [class]="
+                    product &&
+                    product.quantity &&
+                    product.lowStock &&
+                    product.quantity <= product.lowStock
+                      ? 'danger'
+                      : ''
+                  "
+                  size="2"
+                  *ngIf="selectedTab === ItemTypeEnum.PRODUCT"
+                >
+                  <p class="title4">
+                    {{ product.quantity }}
+                  </p>
+                  <p class="captionMobile">{{ product.unit.name }} left</p>
+                </ion-col>
+
+                <ion-col size="1" *ngIf="!isMobile">
+                  <ion-button
+                    fill="tertiary"
+                    (click)="openItemDetailsPage(product)"
+                  >
+                    <ion-icon name="open-outline"></ion-icon>
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+              <div
+                style="
+                  border-bottom: 1px solid lightblue;
+                  margin-left: 10px;
+                  margin: right 20px;
+                "
+              ></div>
+            </div>
+          </ion-list>
+          <ion-infinite-scroll
+            *ngIf="isMobile"
+            [disabled]="false"
+            (ionInfinite)="loadMoreData($event)"
+          >
+            <ion-infinite-scroll-content></ion-infinite-scroll-content>
+          </ion-infinite-scroll>
+        </ion-content>
+      </ion-grid>
+    </ion-row>
+    <ion-row *ngIf="!isMobile" style="width: 100%; bottom: 10px">
+      <app-pagination-component
         style="width: 100%"
-        color="danger"
-        (click)="openDeleteConfirmationModal()"
-        >Delete</ion-button
-      > </ion-col
-    >s
-    <ion-col size="5">
-      <ion-button style="width: 100%" (click)="onMultipleSelectCancel()"
-        >Cancel</ion-button
-      >
-    </ion-col>
-  </ion-row>
-  <ion-button
-    *ngIf="
-      (!isMobile && selectedProducts.length <= 0) ||
-      (isMobile && !enableMultiSelect)
-    "
-    (click)="openAddProductModal()"
-    >Add {{ selectedTab }}</ion-button
-  >
+        [currentPage]="currentPage"
+        [totalPages]="totalPages"
+        (pageChange)="goToPage($event)"
+        (pageSizeChange)="changePageSize($event)"
+      ></app-pagination-component>
+    </ion-row>
+    <ion-row
+      style="
+        gap: 10px;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        flex-direction: row;
+      "
+      *ngIf="
+        (isMobile && enableMultiSelect) ||
+        (!isMobile && selectedProducts.length > 0)
+      "
+    >
+      <ion-col size="5">
+        <ion-button
+          style="width: 100%"
+          color="danger"
+          (click)="openDeleteConfirmationModal()"
+          >Delete</ion-button
+        > </ion-col
+      >s
+      <ion-col size="5">
+        <ion-button style="width: 100%" (click)="onMultipleSelectCancel()"
+          >Cancel</ion-button
+        >
+      </ion-col>
+    </ion-row>
+    <ion-button
+      *ngIf="
+        (!isMobile && selectedProducts.length <= 0) ||
+        (isMobile && !enableMultiSelect)
+      "
+      (click)="openAddProductModal()"
+      >Add {{ selectedTab }}</ion-button
+    >
+  </div>
 </div>
