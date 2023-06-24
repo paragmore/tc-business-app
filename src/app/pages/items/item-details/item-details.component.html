@@ -1,9 +1,6 @@
 <div *ngIf="productDetails?.name">
   <ion-row class="header-row">
-    <ion-title> {{ productDetails?.name }} </ion-title>
-    <ion-button (click)="openEditProductModal()">
-      Edit {{ this.type }}
-    </ion-button>
+    <app-right-header style="width: 100%"></app-right-header>
   </ion-row>
   <div
     [class]="!isMobile ? 'scrollbar' : ''"
@@ -12,6 +9,12 @@
   >
     <div>
       <ion-grid>
+        <ion-row>
+          <ion-title> {{ productDetails?.name }} </ion-title>
+          <ion-button (click)="openEditProductModal()">
+            Edit {{ this.type }}
+          </ion-button>
+        </ion-row>
         <ion-row>
           <ion-col size-lg="4" size-xs="12">
             <ion-row class="product-hero-image-container">
@@ -149,7 +152,13 @@
             </ion-card>
           </ion-col>
         </ion-row>
-        <ion-row>
+        <ion-row
+          *ngIf="
+            productDetails &&
+            productDetails?.discounts &&
+            productDetails.discounts.length > 0
+          "
+        >
           <ion-accordion-group style="width: 100%">
             <ion-accordion value="first">
               <ion-item slot="header" color="light">
@@ -158,17 +167,31 @@
                 </p>
               </ion-item>
 
-              <div class="ion-padding" slot="content">
+              <div
+                *ngIf="
+                  productDetails &&
+                  productDetails?.discounts &&
+                  productDetails.discounts.length > 0
+                "
+                class="ion-padding"
+                slot="content"
+              >
                 <app-discounts-list
                   style="width: 100%"
-                  [discounts]="productDetails?.discounts"
+                  [discounts]="productDetails.discounts"
                   [readonly]="true"
                 ></app-discounts-list>
               </div>
             </ion-accordion>
           </ion-accordion-group>
         </ion-row>
-        <ion-row>
+        <ion-row
+          *ngIf="
+            productDetails &&
+            productDetails?.variants &&
+            productDetails.variants.length > 0
+          "
+        >
           <ion-accordion-group style="width: 100%">
             <ion-accordion value="first">
               <ion-item slot="header" color="light">
@@ -177,10 +200,18 @@
                 </p>
               </ion-item>
 
-              <div class="ion-padding" slot="content">
+              <div
+                *ngIf="
+                  productDetails &&
+                  productDetails?.variants &&
+                  productDetails.variants.length > 0
+                "
+                class="ion-padding"
+                slot="content"
+              >
                 <app-variants-list
                   style="width: 100%"
-                  [variants]="productDetails?.variants"
+                  [variants]="productDetails.variants"
                   [readonly]="true"
                 >
                 </app-variants-list>

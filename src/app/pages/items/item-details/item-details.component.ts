@@ -17,6 +17,7 @@ import { HyphenPipe } from 'src/app/core/pipes/hyphen.pipe';
 import { VariantSeperatorPipe } from 'src/app/core/pipes/variant-seperator.pipe';
 import { VariantsListComponent } from '../variants-list/variants-list.component';
 import { DiscountsListComponent } from '../discounts-list/discounts-list.component';
+import { RightHeaderComponent } from 'src/app/right-header/right-header.component';
 
 @Component({
   selector: 'app-item-details',
@@ -31,6 +32,7 @@ import { DiscountsListComponent } from '../discounts-list/discounts-list.compone
     VariantSeperatorPipe,
     VariantsListComponent,
     DiscountsListComponent,
+    RightHeaderComponent,
   ],
 })
 export class ItemDetailsComponent implements OnInit {
