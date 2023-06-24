@@ -1,8 +1,9 @@
-import { ToastController } from '@ionic/angular';
+import { ToastController, ToastOptions } from '@ionic/angular';
 
 export const toastAlert = async (
   toastController: ToastController,
   message: string,
+  color?: ToastOptions['color'],
   toastPosition?: 'top' | 'middle' | 'bottom',
   toastDuration?: number
 ) => {
@@ -12,6 +13,7 @@ export const toastAlert = async (
     message,
     duration,
     position,
+    color,
   });
   await toast.present();
 };
