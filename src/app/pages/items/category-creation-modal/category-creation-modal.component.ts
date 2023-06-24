@@ -76,14 +76,18 @@ export class CategoryCreationModalComponent implements OnInit {
         console.log(response);
         //@ts-ignore
         if (response.message === 'Success') {
-          toastAlert(this.toastController, 'Category created successfully');
+          toastAlert(
+            this.toastController,
+            'Category created successfully',
+            'success'
+          );
           //@ts-ignore
           this.onCloseCategoryCreationModal({ created: response.body });
         }
       },
       (error) => {
         console.log(error);
-        toastAlert(this.toastController, error.error.message);
+        toastAlert(this.toastController, error.error.message, 'danger');
       }
     );
   }

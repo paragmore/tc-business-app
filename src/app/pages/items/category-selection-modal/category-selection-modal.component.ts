@@ -53,6 +53,8 @@ export class CategorySelectionModalComponent implements OnInit {
       .getAllStoreCategories(this.currentStoreInfo?._id, {
         page: this.currentPage.toString(),
         pageSize: this.pageSize.toString(),
+        sortBy: 'name',
+        sortOrder: 'asc',
       })
       .subscribe((response) => {
         console.log(response);
@@ -109,6 +111,22 @@ export class CategorySelectionModalComponent implements OnInit {
     return this.selectedCategories.some((c) => c.name === category.name);
   }
 
+  addCategory(category: CategoryI) {
+    // Find the index where the new category should be inserted
+    const insertIndex = this.categories.findIndex(
+      (existingCategory) =>
+        category.name.localeCompare(existingCategory.name) < 0
+    );
+
+    // If no insert index is found, push the category to the end
+    if (insertIndex === -1) {
+      this.categories.push(category);
+    } else {
+      // Insert the category at the appropriate index
+      this.categories.splice(insertIndex, 0, category);
+    }
+  }
+
   async openCreateCategoryModal() {
     const modal = await this.modalController.create({
       component: CategoryCreationModalComponent,
@@ -118,8 +136,8 @@ export class CategorySelectionModalComponent implements OnInit {
     });
     modal.onDidDismiss().then((modelData) => {
       if (modelData !== null) {
-        // this.modelData = modelData.data;
-        // console.log('Modal Data : ' + modelData.data);
+        console.log('Modal Data : ' + JSON.stringify(modelData.data));
+        this.addCategory(modelData.data.created);
       }
     });
     return await modal.present();
