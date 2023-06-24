@@ -28,7 +28,10 @@ import { LongPressDirective } from 'src/app/core/directives/long-press.directive
 import { HyphenPipe } from 'src/app/core/pipes/hyphen.pipe';
 import { ConfirmationModalComponent } from 'src/app/core/components/confirmation-modal/confirmation-modal.component';
 import { toastAlert } from 'src/app/core/utils/toastAlert';
-import { ItemNotFoundComponent } from 'src/app/core/components/item-not-found/item-not-found.component';
+import {
+  ItemNotFoundComponent,
+  ItemNotFoundComponentInputI,
+} from 'src/app/core/components/item-not-found/item-not-found.component';
 
 @Component({
   selector: 'app-items-list',
@@ -200,6 +203,28 @@ export class ItemsListComponent implements OnInit {
 
   onInfiniteScroll() {
     console.log('event');
+  }
+
+  getNotFoundInput() {
+    if (this.selectedTab === ItemTypeEnum.PRODUCT) {
+      const notfoundInput: ItemNotFoundComponentInputI = {
+        title: 'Products not found',
+        subtitle: 'Please create new product',
+      };
+      return notfoundInput;
+    }
+    if (this.selectedTab === ItemTypeEnum.SERVICE) {
+      const notfoundInput: ItemNotFoundComponentInputI = {
+        title: 'Services not found',
+        subtitle: 'Please create new service',
+      };
+      return notfoundInput;
+    }
+    const notfoundInput: ItemNotFoundComponentInputI = {
+      title: '',
+      subtitle: '',
+    };
+    return notfoundInput;
   }
 
   loadMoreData(event: any) {
