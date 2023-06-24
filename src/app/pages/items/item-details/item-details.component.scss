@@ -23,6 +23,13 @@ p .danger {
   @media only screen and (max-width: 768px) {
     height: 85vh;
   }
+
+  @media only screen and (min-width: 768px) {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
 }
 
 .details-card {

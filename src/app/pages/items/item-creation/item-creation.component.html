@@ -13,266 +13,294 @@
     background-color: var(--ion-color-primary-contrast);
     height: 95%;
     overflow-y: scroll;
+    padding: 5px;
   "
 >
   <form [formGroup]="productForm">
-    <h5>{{ type }} Details</h5>
-    <div style="display: flex; align-items: center; justify-content: center">
-      <ion-row>
-        <ion-col
-          *ngIf="editProduct && editProduct.heroImage"
-          (click)="selectHeroImage(editProduct.heroImage)"
-        >
-          <ion-card
-            [class]="heroImage ? '' : 'hero-image'"
-            style="width: 120px; height: 120px; border-radius: 10px"
-          >
-            <ion-img [src]="editProduct.heroImage"> </ion-img>
-            <div class="hero-image-overlay">
-              <ion-label class="hero-image-text">Hero Image</ion-label>
-            </div>
-          </ion-card>
-        </ion-col>
-        <ion-col
-          (click)="selectHeroImage(image)"
-          *ngFor="let image of editProduct?.images"
-        >
-          <ion-card
-            [class]="image === heroImage ? 'hero-image' : ''"
-            style="width: 120px; height: 120px; border-radius: 10px"
-          >
-            <ion-img [src]="image"> </ion-img>
-            <div *ngIf="image === heroImage" class="hero-image-overlay">
-              <ion-label class="hero-image-text">Hero Image</ion-label>
-            </div>
-          </ion-card>
-        </ion-col>
-        <ion-col *ngFor="let productImage of productImages">
-          <div>
-            <ion-card
-              (click)="selectHeroImage(productImage)"
-              style="width: 120px; height: 120px; border-radius: 10px"
-              [class]="productImage === heroImage ? 'hero-image' : ''"
-            >
-              <ion-img
-                [src]="
-                  productImage?.file
-                    ? productImage?.imageUrl
-                    : 'https://www.chanchao.com.tw/images/default.jpg'
-                "
-              >
-              </ion-img>
-
-              <div
-                *ngIf="productImage.uploadStatus === UploadStatusEnum.UPLOADING"
-                class="overlay"
-              >
-                <ion-label class="uploading-text">Uploading...</ion-label>
-              </div>
-              <div
-                *ngIf="productImage === heroImage"
-                class="hero-image-overlay"
-              >
-                <ion-label class="hero-image-text">Hero Image</ion-label>
-              </div>
-            </ion-card>
-            <ion-button
-              class="close-button"
-              fill="clear"
-              (click)="removeImage(productImage)"
-            >
-              <ion-icon name="close-circle"></ion-icon>
-            </ion-button>
-          </div>
-        </ion-col>
-        <ion-col>
-          <div style="padding: 10px; margin: 10px">
-            <input
-              type="file"
-              accept="image/*"
-              (change)="handleFileInput($event)"
-              id="fileInput"
-              multiple
-            />
-            <label for="fileInput">
-              <div
-                style="
-                  padding: 10px;
-                  border: 2px solid var(--ion-color-primary);
-                  width: 120px;
-                  height: 120px;
-                  border-radius: 10px;
-                  display: flex;
-                  flex-direction: column;
-                  align-items: center;
-                  justify-content: center;
-                  text-align: center;
-                  cursor: pointer;
-                  text-align: center;
-                "
-              >
-                <div>
-                  <ion-icon color="primary" name="add-outline"></ion-icon>
-                  <ion-icon
-                    color="primary"
-                    size="large"
-                    name="images-outline"
-                  ></ion-icon>
-                </div>
-                <p style="color: var(--ion-color-primary)" position="stacked">
-                  Add Photo
-                </p>
-              </div>
-            </label>
-          </div>
-        </ion-col>
-      </ion-row>
-    </div>
-    <ion-grid>
-      <ion-row>
-        <ion-col size-md="6" size-xs="12">
-          <ion-input
-            label="{{ type }} Name"
-            label-placement="stacked"
-            fill="outline"
-            formControlName="name"
-          ></ion-input>
-        </ion-col>
-        <ion-col size-md="6" size-xs="12">
-          <ion-input
-            (click)="openCreateCategoryModal()"
-            label="{{ type }} Category"
-            label-placement="stacked"
-            fill="outline"
-            [value]="selectedCategoriesString"
-          ></ion-input>
-        </ion-col>
-      </ion-row>
-      <br /><br />
-      <ion-row>
-        <ion-toggle
-          (ionChange)="onSameUnitsToggled($event)"
-          [checked]="sameUnits"
-          >Sales Unit same as Purchase Unit</ion-toggle
-        >
-      </ion-row>
-
-      <ion-row>
-        <ion-col size-md="12" size-xs="12">
-          <ion-input
-            label="Unit"
-            label-placement="stacked"
-            fill="outline"
-            formControlName="unit"
-          ></ion-input>
-        </ion-col>
-      </ion-row>
-      <ion-row *ngIf="!sameUnits">
-        <ion-col size-md="6" size-xs="12">
-          <ion-input
-            label="Purchase Unit"
-            label-placement="stacked"
-            fill="outline"
-            formControlName="purchaseUnitName"
-          ></ion-input>
-        </ion-col>
-        <ion-col size-md="6" size-xs="12">
-          <ion-input
-            label="Conversion factor"
-            label-placement="stacked"
-            fill="outline"
-            formControlName="purchaseUnitConversion"
-          ></ion-input>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-
-    <ion-grid>
-      <ion-row>
-        <ion-col size-xs="6" size-md="4">
-          <ion-input
-            label="Sells price"
-            label-placement="stacked"
-            fill="outline"
-            formControlName="sellsPrice"
-          ></ion-input>
-        </ion-col>
-        <ion-col size-xs="6" size-md="4">
-          <ion-input
-            label="Purchase price"
-            label-placement="stacked"
-            fill="outline"
-            formControlName="purchasePrice"
-          ></ion-input>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-    <h5>Tax and inventory</h5>
-    <ion-grid>
-      <ion-row>
-        <ion-toggle formControlName="taxIncluded" [checked]="true"
-          >Tax included</ion-toggle
-        ><br /><br />
-      </ion-row>
-      <ion-row *ngIf="type === ItemTypeEnum.PRODUCT">
-        <ion-col size-md="6" size-xs="12">
-          <ion-input
-            label="Opening stock"
-            label-placement="stacked"
-            fill="outline"
-            formControlName="quantity"
-          ></ion-input>
-        </ion-col>
-        <ion-col size-md="6" size-xs="12">
-          <ion-input
-            label="Low stock"
-            label-placement="stacked"
-            fill="outline"
-            formControlName="lowStock"
-          ></ion-input>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-    <ion-grid>
-      <ion-row>
-        <ion-col size-md="6" size-xs="12">
-          <ion-input
-            label="Tax %"
-            label-placement="stacked"
-            fill="outline"
-            (click)="showTaxPopover($event)"
-            [value]="gstPercentage"
-            formControlName="gstPercentage"
-          ></ion-input>
-        </ion-col>
-        <ion-col size-md="6" size-xs="12">
-          <ion-input
-            [label]="
-              type === ItemTypeEnum.PRODUCT
-                ? 'HSN'
-                : type === ItemTypeEnum.SERVICE
-                ? 'SAC'
-                : ''
-            "
-            label-placement="stacked"
-            fill="outline"
-            (click)="openHSNCodeModal($event)"
-            formControlName="hsnCode"
-          ></ion-input>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </form>
-
-  <ion-row>
-    <ion-accordion-group>
+    <ion-accordion-group [multiple]="true" [value]="['first', 'second']">
       <ion-accordion value="first">
-        <ion-button fill="clear" slot="header" color="primary">
-          <p style="color: var(--ion-color-primary)" class="titleSmall">
+        <ion-item slot="header">
+          <p style="color: var(--ion-color-primary)" class="titleRegular">
+            {{ type }} Details
+          </p>
+        </ion-item>
+        <div class="ion-padding" slot="content">
+          <div
+            style="display: flex; align-items: center; justify-content: center"
+          >
+            <ion-row>
+              <ion-col
+                *ngIf="editProduct && editProduct.heroImage"
+                (click)="selectHeroImage(editProduct.heroImage)"
+              >
+                <ion-card
+                  [class]="heroImage ? '' : 'hero-image'"
+                  style="width: 120px; height: 120px; border-radius: 10px"
+                >
+                  <ion-img [src]="editProduct.heroImage"> </ion-img>
+                  <div class="hero-image-overlay">
+                    <ion-label class="hero-image-text">Hero Image</ion-label>
+                  </div>
+                </ion-card>
+              </ion-col>
+              <ion-col
+                (click)="selectHeroImage(image)"
+                *ngFor="let image of editProduct?.images"
+              >
+                <ion-card
+                  [class]="image === heroImage ? 'hero-image' : ''"
+                  style="width: 120px; height: 120px; border-radius: 10px"
+                >
+                  <ion-img [src]="image"> </ion-img>
+                  <div *ngIf="image === heroImage" class="hero-image-overlay">
+                    <ion-label class="hero-image-text">Hero Image</ion-label>
+                  </div>
+                </ion-card>
+              </ion-col>
+              <ion-col *ngFor="let productImage of productImages">
+                <div>
+                  <ion-card
+                    (click)="selectHeroImage(productImage)"
+                    style="width: 120px; height: 120px; border-radius: 10px"
+                    [class]="productImage === heroImage ? 'hero-image' : ''"
+                  >
+                    <ion-img
+                      [src]="
+                        productImage?.file
+                          ? productImage?.imageUrl
+                          : 'https://www.chanchao.com.tw/images/default.jpg'
+                      "
+                    >
+                    </ion-img>
+
+                    <div
+                      *ngIf="
+                        productImage.uploadStatus === UploadStatusEnum.UPLOADING
+                      "
+                      class="overlay"
+                    >
+                      <ion-label class="uploading-text">Uploading...</ion-label>
+                    </div>
+                    <div
+                      *ngIf="productImage === heroImage"
+                      class="hero-image-overlay"
+                    >
+                      <ion-label class="hero-image-text">Hero Image</ion-label>
+                    </div>
+                  </ion-card>
+                  <ion-button
+                    class="close-button"
+                    fill="clear"
+                    (click)="removeImage(productImage)"
+                  >
+                    <ion-icon name="close-circle"></ion-icon>
+                  </ion-button>
+                </div>
+              </ion-col>
+              <ion-col>
+                <div style="padding: 10px; margin: 10px">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    (change)="handleFileInput($event)"
+                    id="fileInput"
+                    multiple
+                  />
+                  <label for="fileInput">
+                    <div
+                      style="
+                        padding: 10px;
+                        border: 2px solid var(--ion-color-primary);
+                        width: 120px;
+                        height: 120px;
+                        border-radius: 10px;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        text-align: center;
+                        cursor: pointer;
+                        text-align: center;
+                      "
+                    >
+                      <div>
+                        <ion-icon color="primary" name="add-outline"></ion-icon>
+                        <ion-icon
+                          color="primary"
+                          size="large"
+                          name="images-outline"
+                        ></ion-icon>
+                      </div>
+                      <p
+                        style="color: var(--ion-color-primary)"
+                        position="stacked"
+                      >
+                        Add Photo
+                      </p>
+                    </div>
+                  </label>
+                </div>
+              </ion-col>
+            </ion-row>
+          </div>
+          <ion-grid>
+            <ion-row>
+              <ion-col size-md="6" size-xs="12">
+                <ion-input
+                  label="{{ type }} Name"
+                  label-placement="stacked"
+                  fill="outline"
+                  formControlName="name"
+                ></ion-input>
+              </ion-col>
+              <ion-col size-md="6" size-xs="12">
+                <ion-input
+                  (click)="openCreateCategoryModal()"
+                  label="{{ type }} Category"
+                  label-placement="stacked"
+                  fill="outline"
+                  [value]="selectedCategoriesString"
+                ></ion-input>
+              </ion-col>
+            </ion-row>
+            <br /><br />
+            <ion-row>
+              <ion-toggle
+                (ionChange)="onSameUnitsToggled($event)"
+                [checked]="sameUnits"
+                ><p class="bodySecondary">
+                  Sales Unit same as Purchase Unit
+                </p></ion-toggle
+              >
+            </ion-row>
+
+            <ion-row>
+              <ion-col size-md="12" size-xs="12">
+                <ion-input
+                  label="Unit"
+                  label-placement="stacked"
+                  fill="outline"
+                  formControlName="unit"
+                ></ion-input>
+              </ion-col>
+            </ion-row>
+            <ion-row *ngIf="!sameUnits">
+              <ion-col size-md="6" size-xs="12">
+                <ion-input
+                  label="Purchase Unit"
+                  label-placement="stacked"
+                  fill="outline"
+                  formControlName="purchaseUnitName"
+                ></ion-input>
+              </ion-col>
+              <ion-col size-md="6" size-xs="12">
+                <ion-input
+                  label="Conversion factor"
+                  label-placement="stacked"
+                  fill="outline"
+                  formControlName="purchaseUnitConversion"
+                ></ion-input>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+
+          <ion-grid>
+            <ion-row>
+              <ion-col size-xs="6" size-md="4">
+                <ion-input
+                  label="Sells price"
+                  label-placement="stacked"
+                  fill="outline"
+                  formControlName="sellsPrice"
+                  type="number"
+                ></ion-input>
+              </ion-col>
+              <ion-col size-xs="6" size-md="4">
+                <ion-input
+                  label="Purchase price"
+                  label-placement="stacked"
+                  fill="outline"
+                  formControlName="purchasePrice"
+                  type="number"
+                ></ion-input>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </div>
+      </ion-accordion>
+      <ion-accordion value="second">
+        <ion-item slot="header">
+          <p style="color: var(--ion-color-primary)" class="titleRegular">
+            Tax and inventory
+          </p>
+        </ion-item>
+        <div class="ion-padding" slot="content">
+          <ion-grid>
+            <ion-row>
+              <ion-toggle formControlName="taxIncluded" [checked]="true"
+                ><p class="bodySecondary">Tax included</p></ion-toggle
+              ><br /><br />
+            </ion-row>
+            <ion-row *ngIf="type === ItemTypeEnum.PRODUCT">
+              <ion-col size-md="6" size-xs="12">
+                <ion-input
+                  label="Opening stock"
+                  label-placement="stacked"
+                  fill="outline"
+                  formControlName="quantity"
+                  type="number"
+                ></ion-input>
+              </ion-col>
+              <ion-col size-md="6" size-xs="12">
+                <ion-input
+                  label="Low stock"
+                  label-placement="stacked"
+                  fill="outline"
+                  formControlName="lowStock"
+                  type="number"
+                ></ion-input>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+          <ion-grid>
+            <ion-row>
+              <ion-col size-md="6" size-xs="12">
+                <ion-input
+                  label="Tax %"
+                  label-placement="stacked"
+                  fill="outline"
+                  (click)="showTaxPopover($event)"
+                  [value]="gstPercentage"
+                  formControlName="gstPercentage"
+                ></ion-input>
+              </ion-col>
+              <ion-col size-md="6" size-xs="12">
+                <ion-input
+                  [label]="
+                    type === ItemTypeEnum.PRODUCT
+                      ? 'HSN'
+                      : type === ItemTypeEnum.SERVICE
+                      ? 'SAC'
+                      : ''
+                  "
+                  label-placement="stacked"
+                  fill="outline"
+                  (click)="openHSNCodeModal($event)"
+                  formControlName="hsnCode"
+                ></ion-input>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </div>
+      </ion-accordion>
+
+      <ion-accordion value="third">
+        <ion-item slot="header">
+          <p style="color: var(--ion-color-primary)" class="titleRegular">
             Discounts
           </p>
-          <ion-icon name="chevron-down-outline"></ion-icon>
-        </ion-button>
+        </ion-item>
+
         <div class="ion-padding" slot="content">
           <ion-button fill="outline" (click)="openDiscountsModal()">
             <ion-icon name="add"></ion-icon> Add Discount
@@ -281,18 +309,12 @@
           <app-discounts-list [discounts]="discounts"> </app-discounts-list>
         </div>
       </ion-accordion>
-    </ion-accordion-group>
-  </ion-row>
-
-  <ion-row>
-    <ion-accordion-group>
-      <ion-accordion value="first">
-        <ion-button fill="clear" slot="header" color="primary">
-          <p style="color: var(--ion-color-primary)" class="titleSmall">
+      <ion-accordion value="fourth">
+        <ion-item slot="header">
+          <p style="color: var(--ion-color-primary)" class="titleRegular">
             Variants
           </p>
-          <ion-icon name="chevron-down-outline"></ion-icon>
-        </ion-button>
+        </ion-item>
         <div class="ion-padding" slot="content">
           <ion-button fill="outline" (click)="openVariantCreationModal()">
             <ion-icon name="add"></ion-icon> Add new Variant
@@ -301,7 +323,7 @@
         </div>
       </ion-accordion>
     </ion-accordion-group>
-  </ion-row>
+  </form>
 </div>
 
 <ion-button
