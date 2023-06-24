@@ -27,7 +27,7 @@
 
 ion-input {
   font-family: "Roboto", sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   // border: 1px solid #ccc;
   // // border-style: dotted;
   // box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
@@ -36,6 +36,9 @@ ion-input {
   // border-radius: 10px;
   --border-radius: 10px !important;
 }
+
+$font-family-md-base: “Roboto”;
+$font-family-ios-base: “Roboto”;
 
 ion-button {
   text-transform: none;
