@@ -82,6 +82,7 @@ export class ItemCreationComponent implements OnInit {
   UploadStatusEnum = UploadStatusEnum;
   productImages: ProductImageFileI[] = [];
   heroImage: ProductImageFileI | string | undefined;
+  isLoading = false;
   constructor(
     private modalController: ModalController,
     private formBuilder: FormBuilder,
@@ -146,6 +147,19 @@ export class ItemCreationComponent implements OnInit {
     if (this.editProduct?.discounts) {
       this.discounts = this.editProduct?.discounts;
     }
+  }
+
+  resetForm() {
+    this.productForm.reset();
+    this.productForm.patchValue({ taxIncluded: true });
+    this.selectedCategoryIds = [];
+    this.selectedCategories = [];
+    this.selectedCategoriesString = '';
+    this.sameUnits = true;
+    this.variants = [];
+    this.discounts = [];
+    this.productImages = [];
+    this.isLoading = false;
   }
   removeImage(image: ProductImageFileI) {
     if (this.heroImage === image) {
@@ -449,23 +463,48 @@ export class ItemCreationComponent implements OnInit {
   }
 
   async createProduct(createProductPayload: CreateProductRequestI) {
+    this.isLoading = true;
     this.productsService.createStoreProduct(createProductPayload).subscribe(
       (response) => {
         console.log(response);
+        //@ts-ignore
+        if (response.message === 'Success') {
+          toastAlert(
+            this.toastController,
+            `${this.type} created successfully`,
+            'success'
+          );
+        }
       },
       (error) => {
-        toastAlert(this.toastController, error.error.message);
+        toastAlert(this.toastController, error.error.message, 'danger');
+      },
+      () => {
+        this.isLoading = false;
+        this.resetForm();
       }
     );
   }
 
   async updateProduct(updateProductPayload: UpdateProductRequestI) {
+    this.isLoading = true;
     this.productsService.updateStoreProduct(updateProductPayload).subscribe(
       (response) => {
         console.log(response);
+        //@ts-ignore
+        if (response.message === 'Success') {
+          toastAlert(
+            this.toastController,
+            `${this.type} updated successfully`,
+            'success'
+          );
+        }
       },
       (error) => {
-        toastAlert(this.toastController, error.error.message);
+        toastAlert(this.toastController, error.error.message, 'danger');
+      },
+      () => {
+        this.isLoading = false;
       }
     );
   }
