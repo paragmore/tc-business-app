@@ -133,7 +133,7 @@
         <ion-col size-md="6" size-xs="12">
           <ion-input
             label="{{ type }} Name"
-            label-placement="floating"
+            label-placement="stacked"
             fill="outline"
             formControlName="name"
           ></ion-input>
@@ -142,7 +142,7 @@
           <ion-input
             (click)="openCreateCategoryModal()"
             label="{{ type }} Category"
-            label-placement="floating"
+            label-placement="stacked"
             fill="outline"
             [value]="selectedCategoriesString"
           ></ion-input>
@@ -161,7 +161,7 @@
         <ion-col size-md="12" size-xs="12">
           <ion-input
             label="Unit"
-            label-placement="floating"
+            label-placement="stacked"
             fill="outline"
             formControlName="unit"
           ></ion-input>
@@ -171,7 +171,7 @@
         <ion-col size-md="6" size-xs="12">
           <ion-input
             label="Purchase Unit"
-            label-placement="floating"
+            label-placement="stacked"
             fill="outline"
             formControlName="purchaseUnitName"
           ></ion-input>
@@ -179,7 +179,7 @@
         <ion-col size-md="6" size-xs="12">
           <ion-input
             label="Conversion factor"
-            label-placement="floating"
+            label-placement="stacked"
             fill="outline"
             formControlName="purchaseUnitConversion"
           ></ion-input>
@@ -192,7 +192,7 @@
         <ion-col size-xs="6" size-md="4">
           <ion-input
             label="Sells price"
-            label-placement="floating"
+            label-placement="stacked"
             fill="outline"
             formControlName="sellsPrice"
           ></ion-input>
@@ -200,7 +200,7 @@
         <ion-col size-xs="6" size-md="4">
           <ion-input
             label="Purchase price"
-            label-placement="floating"
+            label-placement="stacked"
             fill="outline"
             formControlName="purchasePrice"
           ></ion-input>
@@ -218,7 +218,7 @@
         <ion-col size-md="6" size-xs="12">
           <ion-input
             label="Opening stock"
-            label-placement="floating"
+            label-placement="stacked"
             fill="outline"
             formControlName="quantity"
           ></ion-input>
@@ -226,7 +226,7 @@
         <ion-col size-md="6" size-xs="12">
           <ion-input
             label="Low stock"
-            label-placement="floating"
+            label-placement="stacked"
             fill="outline"
             formControlName="lowStock"
           ></ion-input>
@@ -238,7 +238,7 @@
         <ion-col size-md="6" size-xs="12">
           <ion-input
             label="Tax %"
-            label-placement="floating"
+            label-placement="stacked"
             fill="outline"
             (click)="showTaxPopover($event)"
             [value]="gstPercentage"
@@ -254,7 +254,7 @@
                 ? 'SAC'
                 : ''
             "
-            label-placement="floating"
+            label-placement="stacked"
             fill="outline"
             (click)="openHSNCodeModal($event)"
             formControlName="hsnCode"

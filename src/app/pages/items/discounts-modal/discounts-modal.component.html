@@ -29,7 +29,7 @@
       <form [formGroup]="discountForm">
         <ion-row>
           <ion-input
-            label-placement="floating"
+            label-placement="stacked"
             fill="outline"
             label="Discount Code"
             formControlName="code"
@@ -55,7 +55,7 @@
           <ion-col *ngIf="discountForm.get('minType')?.value === 'orderValue'">
             <ion-input
               type="number"
-              label-placement="floating"
+              label-placement="stacked"
               fill="outline"
               label="Minimum order value"
               formControlName="minimum"
@@ -70,7 +70,7 @@
           >
             <ion-input
               type="number"
-              label-placement="floating"
+              label-placement="stacked"
               fill="outline"
               label="Minimum order quantity"
               formControlName="minimum"
@@ -82,7 +82,7 @@
           <ion-row>
             <ion-input
               type="number"
-              label-placement="floating"
+              label-placement="stacked"
               fill="outline"
               label="Discount percent"
               formControlName="value"
@@ -92,7 +92,7 @@
           <ion-row>
             <ion-input
               type="number"
-              label-placement="floating"
+              label-placement="stacked"
               fill="outline"
               label="Maximum discount"
               formControlName="maxDiscount"
@@ -103,7 +103,7 @@
         <ion-row *ngIf="discountForm.value.type === 'amount'">
           <ion-input
             type="number"
-            label-placement="floating"
+            label-placement="stacked"
             fill="outline"
             label="Discount amount"
             formControlName="value"
