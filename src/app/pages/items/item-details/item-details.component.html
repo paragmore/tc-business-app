@@ -10,158 +10,230 @@
     <div>
       <ion-grid>
         <ion-row>
-          <ion-title> {{ productDetails?.name }} </ion-title>
-          <ion-button (click)="openEditProductModal()">
-            Edit {{ this.type }}
-          </ion-button>
-        </ion-row>
-        <ion-row>
-          <ion-col size-lg="4" size-xs="12">
-            <ion-row class="product-hero-image-container">
-              <div>
-                <ion-card
-                  style="width: 170px; height: 170px; border-radius: 5px"
-                >
-                  <ion-img
-                    [src]="
-                      productDetails?.heroImage
-                        ? productDetails?.heroImage
-                        : 'https://www.chanchao.com.tw/images/default.jpg'
-                    "
-                  >
-                  </ion-img>
-                </ion-card>
+          <div style="width: 100%; display: flex; justify-content: flex-end">
+            <ion-button fill="outline" (click)="openEditProductModal()">
+              <ion-icon name="pencil"></ion-icon>
+            </ion-button>
+          </div>
+          <ion-accordion-group
+            [multiple]="true"
+            [value]="['first']"
+            style="width: 100%"
+          >
+            <ion-accordion value="first">
+              <ion-item slot="header">
+                <ion-title>
+                  {{ productDetails?.name }} | {{ productDetails?.hsnCode }}
+                </ion-title>
+              </ion-item>
+              <div class="ion-padding" slot="content">
+                <ion-row>
+                  <ion-col class="ion-hide-md-up" size-lg="4" size-xs="12">
+                    <ion-row class="product-hero-image-container">
+                      <div>
+                        <ion-card
+                          style="
+                            width: 170px;
+                            height: 170px;
+                            border-radius: 5px;
+                          "
+                        >
+                          <ion-img
+                            [src]="
+                              productDetails?.heroImage
+                                ? productDetails?.heroImage
+                                : 'https://www.chanchao.com.tw/images/default.jpg'
+                            "
+                          >
+                          </ion-img>
+                        </ion-card>
+                      </div>
+                    </ion-row>
+                    <ion-row
+                      *ngIf="
+                        productDetails &&
+                        productDetails.images &&
+                        productDetails.images.length > 0
+                      "
+                      style="
+                        display: flex;
+                        overflow-x: scroll;
+                        height: 100px;
+                        gap: 10px;
+                      "
+                    >
+                      <div
+                        *ngFor="
+                          let image of productDetails?.images;
+                          let i = index
+                        "
+                        style="width: 50px; height: 50px"
+                      >
+                        <ion-card style="width: 50px; height: 50px">
+                          <ion-img
+                            style="width: 50px; height: 50px"
+                            [src]="image"
+                          >
+                          </ion-img>
+                        </ion-card>
+                      </div>
+                    </ion-row>
+                  </ion-col>
+                  <ion-col size-lg="8" size-xs="12">
+                    <ion-row class="item-detail-row">
+                      <ion-col>
+                        <p class="bodySecondary">Sales Price</p>
+                      </ion-col>
+                      <ion-col>
+                        <p class="bodyPrimary">
+                          ₹ {{ productDetails?.sellsPrice }}
+                        </p>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row class="item-detail-row">
+                      <ion-col>
+                        <p class="bodySecondary">Purchase Price</p>
+                      </ion-col>
+                      <ion-col>
+                        <p class="bodyPrimary">
+                          ₹ {{ productDetails?.purchasePrice | hyphen }}
+                        </p>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row class="item-detail-row">
+                      <ion-col>
+                        <p class="bodySecondary">Stock Quantity</p>
+                      </ion-col>
+                      <ion-col>
+                        <p
+                          [class]="
+                            productDetails &&
+                            productDetails.quantity &&
+                            productDetails.lowStock &&
+                            productDetails.quantity <= productDetails.lowStock
+                              ? 'danger'
+                              : ''
+                          "
+                          class="bodyPrimary"
+                        >
+                          {{ productDetails?.quantity }}
+                        </p>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row class="item-detail-row">
+                      <ion-col>
+                        <p class="bodySecondary">Stock Value</p>
+                      </ion-col>
+                      <ion-col>
+                        <p class="bodyPrimary">
+                          {{ productDetails?.purchasePrice | hyphen }}
+                        </p>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row class="item-detail-row">
+                      <ion-col>
+                        <p class="bodySecondary">Unit</p>
+                      </ion-col>
+                      <ion-col>
+                        <p class="bodyPrimary">
+                          {{ productDetails?.unit?.name | hyphen }}
+                        </p>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row class="item-detail-row">
+                      <ion-col>
+                        <p class="bodySecondary">Low Stock</p>
+                      </ion-col>
+                      <ion-col>
+                        <p class="bodyPrimary">
+                          {{ productDetails?.lowStock | hyphen }}
+                        </p>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row class="item-detail-row">
+                      <ion-col>
+                        <p class="bodySecondary">HSN Code</p>
+                      </ion-col>
+                      <ion-col>
+                        <p class="bodyPrimary">
+                          {{ productDetails?.hsnCode | hyphen }}
+                        </p>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row class="item-detail-row">
+                      <ion-col>
+                        <p class="bodySecondary">GST %</p>
+                      </ion-col>
+                      <ion-col>
+                        <p class="bodyPrimary">
+                          {{ productDetails?.gstPercentage | hyphen }} %
+                        </p>
+                      </ion-col>
+                    </ion-row>
+                  </ion-col>
+                  <ion-col class="ion-hide-md-down" size-lg="4" size-xs="12">
+                    <ion-row class="product-hero-image-container">
+                      <div>
+                        <ion-card
+                          style="
+                            width: 170px;
+                            height: 170px;
+                            border-radius: 5px;
+                          "
+                        >
+                          <ion-img
+                            [src]="
+                              productDetails?.heroImage
+                                ? productDetails?.heroImage
+                                : 'https://www.chanchao.com.tw/images/default.jpg'
+                            "
+                          >
+                          </ion-img>
+                        </ion-card>
+                      </div>
+                    </ion-row>
+                    <ion-row
+                      *ngIf="
+                        productDetails &&
+                        productDetails.images &&
+                        productDetails.images.length > 0
+                      "
+                      style="
+                        display: flex;
+                        overflow-x: scroll;
+                        height: 100px;
+                        gap: 10px;
+                      "
+                    >
+                      <div
+                        *ngFor="
+                          let image of productDetails?.images;
+                          let i = index
+                        "
+                        style="width: 50px; height: 50px"
+                      >
+                        <ion-card style="width: 50px; height: 50px">
+                          <ion-img
+                            style="width: 50px; height: 50px"
+                            [src]="image"
+                          >
+                          </ion-img>
+                        </ion-card>
+                      </div>
+                    </ion-row>
+                  </ion-col>
+                </ion-row>
               </div>
-            </ion-row>
-            <ion-row
+            </ion-accordion>
+            <ion-accordion
               *ngIf="
                 productDetails &&
-                productDetails.images &&
-                productDetails.images.length > 0
+                productDetails?.discounts &&
+                productDetails.discounts.length > 0
               "
-              style="
-                display: flex;
-                overflow-x: scroll;
-                height: 100px;
-                gap: 10px;
-              "
+              value="second"
             >
-              <div
-                *ngFor="let image of productDetails?.images; let i = index"
-                style="width: 50px; height: 50px"
-              >
-                <ion-card style="width: 50px; height: 50px">
-                  <ion-img style="width: 50px; height: 50px" [src]="image">
-                  </ion-img>
-                </ion-card>
-              </div>
-            </ion-row>
-          </ion-col>
-          <ion-col size-lg="8" size-xs="12">
-            <ion-card class="details-card">
-              <ion-row>
-                <ion-col>
-                  <ion-row>
-                    <p>Sales Price</p>
-                  </ion-row>
-                  <ion-row>
-                    <p class="titleMedium">{{ productDetails?.sellsPrice }}</p>
-                  </ion-row>
-                </ion-col>
-                <ion-col>
-                  <ion-row>
-                    <p>Purchase Price</p>
-                  </ion-row>
-                  <ion-row>
-                    <p class="titleMedium">
-                      {{ productDetails?.purchasePrice | hyphen }}
-                    </p>
-                  </ion-row>
-                </ion-col>
-                <ion-col>
-                  <ion-row>
-                    <p>Stock Quantity</p>
-                  </ion-row>
-                  <ion-row>
-                    <p
-                      [class]="
-                        productDetails &&
-                        productDetails.quantity &&
-                        productDetails.lowStock &&
-                        productDetails.quantity <= productDetails.lowStock
-                          ? 'danger'
-                          : ''
-                      "
-                      class="titleMedium"
-                    >
-                      {{ productDetails?.quantity }}
-                    </p>
-                  </ion-row>
-                </ion-col>
-                <ion-col>
-                  <ion-row>
-                    <p>Stock Value</p>
-                  </ion-row>
-                  <ion-row>
-                    <p class="titleMedium">
-                      {{ productDetails?.purchasePrice | hyphen }}
-                    </p>
-                  </ion-row>
-                </ion-col>
-                <ion-col>
-                  <ion-row>
-                    <p>Unit</p>
-                  </ion-row>
-                  <ion-row>
-                    <p class="titleMedium">
-                      {{ productDetails?.unit?.name | hyphen }}
-                    </p>
-                  </ion-row>
-                </ion-col>
-                <ion-col>
-                  <ion-row>
-                    <p>Low Stock</p>
-                  </ion-row>
-                  <ion-row>
-                    <p class="titleMedium">
-                      {{ productDetails?.lowStock | hyphen }}
-                    </p>
-                  </ion-row>
-                </ion-col>
-                <ion-col>
-                  <ion-row>
-                    <p>HSN Code</p>
-                  </ion-row>
-                  <ion-row>
-                    <p class="titleMedium">
-                      {{ productDetails?.hsnCode | hyphen }}
-                    </p>
-                  </ion-row>
-                </ion-col>
-                <ion-col>
-                  <ion-row>
-                    <p>GST %</p>
-                  </ion-row>
-                  <ion-row>
-                    <p class="titleMedium">
-                      {{ productDetails?.gstPercentage | hyphen }}
-                    </p>
-                  </ion-row>
-                </ion-col></ion-row
-              >
-            </ion-card>
-          </ion-col>
-        </ion-row>
-        <ion-row
-          *ngIf="
-            productDetails &&
-            productDetails?.discounts &&
-            productDetails.discounts.length > 0
-          "
-        >
-          <ion-accordion-group style="width: 100%">
-            <ion-accordion value="first">
-              <ion-item slot="header" color="light">
+              <ion-item slot="header">
                 <p style="color: var(--ion-color-primary)" class="titleSmall">
                   Discounts
                 </p>
@@ -183,18 +255,15 @@
                 ></app-discounts-list>
               </div>
             </ion-accordion>
-          </ion-accordion-group>
-        </ion-row>
-        <ion-row
-          *ngIf="
-            productDetails &&
-            productDetails?.variants &&
-            productDetails.variants.length > 0
-          "
-        >
-          <ion-accordion-group style="width: 100%">
-            <ion-accordion value="first">
-              <ion-item slot="header" color="light">
+            <ion-accordion
+              *ngIf="
+                productDetails &&
+                productDetails?.variants &&
+                productDetails.variants.length > 0
+              "
+              value="third"
+            >
+              <ion-item slot="header">
                 <p style="color: var(--ion-color-primary)" class="titleSmall">
                   Variants
                 </p>
