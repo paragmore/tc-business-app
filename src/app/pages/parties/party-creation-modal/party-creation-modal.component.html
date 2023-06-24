@@ -16,169 +16,200 @@
   "
 >
   <form [formGroup]="partyForm">
-    <ion-grid>
-      <ion-row>
-        <ion-col>
-          <ion-input
-            style="width: 100%"
-            fill="outline"
-            id="gst-type-popover-button"
-            formControlName="gstTypeTitle"
-            placeholder="Select GST Type"
-            label="GST Type"
-            label-placement="stacked"
-          >
-          </ion-input>
-        </ion-col>
-        <ion-popover
-          size="cover"
-          trigger="gst-type-popover-button"
-          [dismissOnSelect]="true"
-        >
-          <ng-template>
-            <ion-content>
-              <ion-list
-                style="max-height: 350px; overflow-y: scroll"
-                class="scrollbar"
-                id="style-1"
-              >
-                <ion-item
-                  *ngFor="let gstType of gstTypeList; let i = index"
-                  [button]="true"
-                  [detail]="false"
-                  (click)="selectGSTType(gstType)"
-                  ><div
-                    style="display: flex; flex-direction: column; padding: 10px"
-                  >
-                    <p>{{ gstType.title }}</p>
-                    <p class="caption">{{ gstType.subtitle }}</p>
-                  </div></ion-item
-                >
-              </ion-list>
-            </ion-content>
-          </ng-template>
-        </ion-popover>
-      </ion-row>
-      <ion-row *ngIf="selectedGSTType?.isGstin">
-        <ion-col>
-          <ion-input
-            label="GSTIN"
-            label-placement="stacked"
-            fill="outline"
-            placeholder="Add GSTIN"
-            formControlName="gstin"
-          ></ion-input>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col>
-          <ion-input
-            [label]="partyText + ' Name'"
-            label-placement="stacked"
-            fill="outline"
-            [placeholder]="'Enter ' + partyText + ' Name'"
-            formControlName="name"
-          ></ion-input>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col>
-          <ion-input
-            label="Phone Number"
-            label-placement="stacked"
-            fill="outline"
-            placeholder="Enter Phone Number"
-            formControlName="phoneNumber"
-          ></ion-input>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col>
-          <ion-input
-            label="Email"
-            label-placement="stacked"
-            fill="outline"
-            placeholder="Enter Email"
-            formControlName="email"
-          ></ion-input>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col size="9">
-          <ion-input
-            label="Opening Balance"
-            label-placement="stacked"
-            fill="outline"
-            placeholder="Enter amount"
-            formControlName="balance"
-          ></ion-input>
-        </ion-col>
-        <ion-col>
-          <ion-list>
-            <ion-item>
-              <ion-select interface="popover">
-                <ion-select-option value="gave">You Gave</ion-select-option>
-                <ion-select-option value="got">You Got</ion-select-option>
-              </ion-select>
-            </ion-item>
-          </ion-list>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
     <br />
-    <ion-accordion-group>
+    <ion-accordion-group [multiple]="true" [value]="['first']">
       <ion-accordion value="first">
-        <ion-button slot="header" color="light">
-          <ion-label>Address (Optional)</ion-label>
-        </ion-button>
+        <ion-item slot="header"
+          ><p class="titleRegular">Basic information</p>
+        </ion-item>
+        <div class="ion-padding" slot="content">
+          <ion-grid>
+            <ion-row>
+              <ion-col>
+                <ion-input
+                  style="width: 100%"
+                  fill="outline"
+                  id="gst-type-popover-button"
+                  formControlName="gstTypeTitle"
+                  placeholder="Select GST Type"
+                  label="GST Type"
+                  label-placement="stacked"
+                >
+                </ion-input>
+              </ion-col>
+              <ion-popover
+                size="cover"
+                trigger="gst-type-popover-button"
+                [dismissOnSelect]="true"
+              >
+                <ng-template>
+                  <ion-content>
+                    <ion-list
+                      style="max-height: 350px; overflow-y: scroll"
+                      class="scrollbar"
+                      id="style-1"
+                    >
+                      <ion-item
+                        *ngFor="let gstType of gstTypeList; let i = index"
+                        [button]="true"
+                        [detail]="false"
+                        (click)="selectGSTType(gstType)"
+                        ><div
+                          style="
+                            display: flex;
+                            flex-direction: column;
+                            padding: 10px;
+                          "
+                        >
+                          <p>{{ gstType.title }}</p>
+                          <p class="caption">{{ gstType.subtitle }}</p>
+                        </div></ion-item
+                      >
+                    </ion-list>
+                  </ion-content>
+                </ng-template>
+              </ion-popover>
+            </ion-row>
+            <ion-row *ngIf="selectedGSTType?.isGstin">
+              <ion-col>
+                <ion-input
+                  label="GSTIN"
+                  label-placement="stacked"
+                  fill="outline"
+                  placeholder="Add GSTIN"
+                  formControlName="gstin"
+                ></ion-input>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-input
+                  [label]="partyText + ' Name'"
+                  label-placement="stacked"
+                  fill="outline"
+                  [placeholder]="'Enter ' + partyText + ' Name'"
+                  formControlName="name"
+                ></ion-input>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-input
+                  label="Phone Number"
+                  label-placement="stacked"
+                  fill="outline"
+                  placeholder="Enter Phone Number"
+                  formControlName="phoneNumber"
+                ></ion-input>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-input
+                  label="Email"
+                  label-placement="stacked"
+                  fill="outline"
+                  placeholder="Enter Email"
+                  formControlName="email"
+                ></ion-input>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="9">
+                <ion-input
+                  label="Opening Balance"
+                  label-placement="stacked"
+                  fill="outline"
+                  type="number"
+                  placeholder="Enter amount"
+                  (ionInput)="updatePositiveBalance($event)"
+                  value="{{ partyForm.value.balance | absValue }}"
+                ></ion-input>
+              </ion-col>
+              <ion-col>
+                <ion-list>
+                  <ion-item>
+                    <ion-select
+                      [value]="balanceType"
+                      interface="popover"
+                      (ionChange)="onBalanceTypeChange($event)"
+                    >
+                      <ion-select-option value="give"
+                        >You'll Give</ion-select-option
+                      >
+                      <ion-select-option value="get"
+                        >You'll Get</ion-select-option
+                      >
+                    </ion-select>
+                  </ion-item>
+                </ion-list>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </div>
+      </ion-accordion>
+      <ion-accordion value="second">
+        <ion-item slot="header">
+          <p class="titleRegular">Address (Optional)</p>
+        </ion-item>
         <div class="ion-padding" slot="content">
           <ion-grid>
             <div formGroupName="address">
               <ion-row formGroupName="shipping">
                 <ion-grid>
                   <ion-row>
-                    <h5>Shipping Address</h5>
+                    <p class="titleRegular">Shipping Address</p>
                   </ion-row>
                   <ion-row>
-                    <ion-input
-                      label="Flat, House no., Building, Company, Apartment"
-                      label-placement="stacked"
-                      fill="outline"
-                      formControlName="line1"
-                    ></ion-input>
+                    <ion-col>
+                      <ion-input
+                        label="Flat, House no., Building, Company, Apartment"
+                        label-placement="stacked"
+                        fill="outline"
+                        formControlName="line1"
+                      ></ion-input>
+                    </ion-col>
                   </ion-row>
                   <ion-row>
-                    <ion-input
-                      label="Area, Street, Sector, Village"
-                      label-placement="stacked"
-                      fill="outline"
-                      formControlName="line2"
-                    ></ion-input
-                  ></ion-row>
-                  <ion-row>
-                    <ion-input
-                      label="PIN Code"
-                      label-placement="stacked"
-                      fill="outline"
-                      formControlName="pinCode"
-                    ></ion-input
-                  ></ion-row>
-                  <ion-row>
-                    <ion-input
-                      label="City"
-                      label-placement="stacked"
-                      fill="outline"
-                      formControlName="city"
-                    ></ion-input>
+                    <ion-col>
+                      <ion-input
+                        label="Area, Street, Sector, Village"
+                        label-placement="stacked"
+                        fill="outline"
+                        formControlName="line2"
+                      ></ion-input>
+                    </ion-col>
                   </ion-row>
                   <ion-row>
-                    <ion-input
-                      label="State"
-                      label-placement="stacked"
-                      fill="outline"
-                      formControlName="state"
-                    ></ion-input
-                  ></ion-row>
+                    <ion-col>
+                      <ion-input
+                        label="PIN Code"
+                        label-placement="stacked"
+                        fill="outline"
+                        formControlName="pinCode"
+                      ></ion-input>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row>
+                    <ion-col>
+                      <ion-input
+                        label="City"
+                        label-placement="stacked"
+                        fill="outline"
+                        formControlName="city"
+                      ></ion-input>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row>
+                    <ion-col>
+                      <ion-input
+                        label="State"
+                        label-placement="stacked"
+                        fill="outline"
+                        formControlName="state"
+                      ></ion-input>
+                    </ion-col>
+                  </ion-row>
                 </ion-grid>
               </ion-row>
               <ion-row>
@@ -195,7 +226,7 @@
               >
                 <ion-grid>
                   <ion-row>
-                    <h5>Billing Address</h5>
+                    <p class="titleRegular">Billing Address</p>
                   </ion-row>
                   <ion-row>
                     <ion-input

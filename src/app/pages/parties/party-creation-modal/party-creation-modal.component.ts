@@ -23,6 +23,7 @@ import {
 } from 'src/app/core/services/parties/parties.service';
 import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
 import { toastAlert } from 'src/app/core/utils/toastAlert';
+import { AbsValuePipe } from 'src/app/core/pipes/absolute.pipe';
 
 @Component({
   selector: 'app-party-creation-modal',
@@ -35,6 +36,7 @@ import { toastAlert } from 'src/app/core/utils/toastAlert';
     DialogHeaderComponent,
     FormsModule,
     ReactiveFormsModule,
+    AbsValuePipe,
   ],
 })
 export class PartyCreationModalComponent implements OnInit {
@@ -46,6 +48,7 @@ export class PartyCreationModalComponent implements OnInit {
   partyText = '';
   selectedGSTType: GSTTypeI | undefined;
   gstTypeList: Array<GSTTypeI> = gstTypeList;
+  balanceType = 'give';
   constructor(
     private modalController: ModalController,
     private formBuilder: FormBuilder,
@@ -84,6 +87,20 @@ export class PartyCreationModalComponent implements OnInit {
           this.editParty?._id
         : '';
     if (this.editParty && 'customer' in this.editParty) {
+      if (
+        this.editParty &&
+        this.editParty.customerStoreInfo.balance &&
+        this.editParty.customerStoreInfo.balance > 0
+      ) {
+        this.balanceType = 'get';
+      }
+      if (
+        this.editParty &&
+        this.editParty.customerStoreInfo.balance &&
+        this.editParty.customerStoreInfo.balance < 0
+      ) {
+        this.balanceType = 'give';
+      }
       this.partyForm.patchValue({
         ...this.editParty.customerStoreInfo,
         phoneNumber: this.editParty.customer.phoneNumber,
@@ -94,6 +111,21 @@ export class PartyCreationModalComponent implements OnInit {
       this.selectGSTTypeByEnum(this.editParty.customerStoreInfo.gstType);
     }
     if (this.editParty && '_id' in this.editParty) {
+      console.log('VALUEE', this.editParty);
+      if (
+        this.editParty &&
+        this.editParty.balance &&
+        this.editParty.balance > 0
+      ) {
+        this.balanceType = 'get';
+      }
+      if (
+        this.editParty &&
+        this.editParty.balance &&
+        this.editParty.balance < 0
+      ) {
+        this.balanceType = 'give';
+      }
       this.partyForm.patchValue({ ...this.editParty });
       this.selectGSTTypeByEnum(this.editParty.gstType);
     }
@@ -132,6 +164,10 @@ export class PartyCreationModalComponent implements OnInit {
         type: this.partyType,
         partyId: this.partyId,
         gstType: this.selectedGSTType?.enumValue,
+        balance:
+          this.balanceType === 'give'
+            ? -Math.abs(this.partyForm.value.balance)
+            : Math.abs(this.partyForm.value.balance),
       };
       this.updateProduct(updatePartyPayload);
     } else {
@@ -140,6 +176,10 @@ export class PartyCreationModalComponent implements OnInit {
         storeId: this.currentStoreInfo._id,
         type: this.partyType,
         gstType: this.selectedGSTType?.enumValue,
+        balance:
+          this.balanceType === 'give'
+            ? -Math.abs(this.partyForm.value.balance)
+            : Math.abs(this.partyForm.value.balance),
       };
       this.createProduct(createProductPayload);
     }
@@ -165,6 +205,15 @@ export class PartyCreationModalComponent implements OnInit {
         toastAlert(this.toastController, error.error.message);
       }
     );
+  }
+
+  onBalanceTypeChange(event: any) {
+    this.balanceType = event.detail.value;
+  }
+
+  updatePositiveBalance(event: any) {
+    console.log(event);
+    this.partyForm.patchValue({ balance: event.detail.value });
   }
 
   onClosePartyCreationModal = () => {
