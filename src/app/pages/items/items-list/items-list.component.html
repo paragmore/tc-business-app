@@ -44,21 +44,11 @@
 
             <ion-button
               (click)="toggleSort('name', sortOrder === 'asc' ? 'desc' : 'asc')"
-              fill="tertiary"
+              fill="clear"
               [disabled]="isProductsLoading"
             >
               <p color="primary">{{ selectedTab }}</p>
             </ion-button>
-            <ng-container *ngIf="sortBy !== 'name'">
-              <button
-                [disabled]="isProductsLoading"
-                ion-button
-                icon-only
-                (click)="toggleSort('name', 'asc')"
-              >
-                <ion-icon name="swap-vertical-outline"></ion-icon>
-              </button>
-            </ng-container>
             <ng-container *ngIf="sortBy === 'name'">
               <button
                 ion-button
@@ -79,7 +69,7 @@
             [size]="isMobile ? 4 : 3"
           >
             <ion-button
-              fill="tertiary"
+              fill="clear"
               [disabled]="isProductsLoading"
               (click)="
                 toggleSort('sellsPrice', sortOrder === 'asc' ? 'desc' : 'asc')
@@ -87,16 +77,6 @@
             >
               <p color="primary">Sells Price</p>
             </ion-button>
-            <ng-container *ngIf="sortBy !== 'sellsPrice'">
-              <button
-                ion-button
-                icon-only
-                [disabled]="isProductsLoading"
-                (click)="toggleSort('sellsPrice', 'asc')"
-              >
-                <ion-icon name="swap-vertical-outline"></ion-icon>
-              </button>
-            </ng-container>
             <ng-container *ngIf="sortBy === 'sellsPrice'">
               <button
                 ion-button
@@ -119,23 +99,13 @@
           >
             <ion-button
               [disabled]="isProductsLoading"
-              fill="tertiary"
+              fill="clear"
               (click)="
                 toggleSort('quantity', sortOrder === 'asc' ? 'desc' : 'asc')
               "
             >
               <p color="primary">Stock</p>
             </ion-button>
-            <ng-container *ngIf="sortBy !== 'quantity'">
-              <button
-                [disabled]="isProductsLoading"
-                ion-button
-                icon-only
-                (click)="toggleSort('quantity', 'asc')"
-              >
-                <ion-icon name="swap-vertical-outline"></ion-icon>
-              </button>
-            </ng-container>
             <ng-container *ngIf="sortBy === 'quantity'">
               <button
                 [disabled]="isProductsLoading"
@@ -187,8 +157,10 @@
                 </ion-segment-button>
               </ion-segment>
             </div>
-            <div *ngIf="products.length <= 0">
-              <app-item-not-found></app-item-not-found>
+            <div *ngIf="!isProductsLoading && products.length <= 0">
+              <app-item-not-found
+                [notfoundInput]="getNotFoundInput()"
+              ></app-item-not-found>
             </div>
             <ion-row
               *ngIf="!this.isMobile && isProductsLoading"
@@ -343,7 +315,7 @@
 
                 <ion-col size="1" *ngIf="!isMobile">
                   <ion-button
-                    fill="tertiary"
+                    fill="clear"
                     (click)="openItemDetailsPage(product)"
                   >
                     <ion-icon name="open-outline"></ion-icon>
