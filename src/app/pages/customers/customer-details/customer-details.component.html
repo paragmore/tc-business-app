@@ -1,83 +1,89 @@
 <div style="background-color: white">
-  <app-basic-party-details
-    *ngIf="basicPartyDetails"
-    [partyDetails]="basicPartyDetails"
-  >
-  </app-basic-party-details>
-  <ion-grid>
-    <ion-row>
-      <ion-col>
-        <ion-card style="height: 70px">
-          Number of orders
-          <p class="titleLarge">10</p>
-        </ion-card>
-      </ion-col>
-      <ion-col>
-        <ion-card style="height: 70px">
-          Pending invoices
-          <p class="titleLarge">10</p>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-  <div style="display: flex; flex-direction: row"></div>
-  <ion-accordion-group [multiple]="true">
-    <ion-accordion
-      *ngIf="partyDetails && addresses && addresses.length > 0"
-      value="first"
+  <ion-row class="header-row">
+    <app-right-header style="width: 100%"></app-right-header>
+  </ion-row>
+  <div class="main-page-styles">
+    <app-basic-party-details
+      style="width: 100%"
+      *ngIf="basicPartyDetails"
+      [partyDetails]="basicPartyDetails"
     >
-      <ion-item slot="header" color="light">
-        <ion-label>Addresses</ion-label>
-      </ion-item>
-      <div
-        style="
-          border: 1px solid var(--ion-color-primary);
-          margin: 10px;
-          border-radius: 10px;
-        "
-        *ngFor="let address of addresses"
-        class="ion-padding"
-        slot="content"
+    </app-basic-party-details>
+    <ion-grid style="width: 100%">
+      <ion-row>
+        <ion-col>
+          <ion-card style="height: 70px">
+            Number of orders
+            <p class="titleLarge">10</p>
+          </ion-card>
+        </ion-col>
+        <ion-col>
+          <ion-card style="height: 70px">
+            Pending invoices
+            <p class="titleLarge">10</p>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <div style="display: flex; flex-direction: row"></div>
+    <ion-accordion-group [multiple]="true">
+      <ion-accordion
+        *ngIf="partyDetails && addresses && addresses.length > 0"
+        value="first"
       >
-        <div *ngIf="address.shipping">
-          <p class="bodySecondary">{{ address.shipping.line1 }}</p>
-          <p class="bodySecondary">{{ address.shipping.line2 }}</p>
-          <p class="bodySecondary">
-            {{ address.shipping.city }}
-            {{ address.shipping.state }}
-            {{ address.shipping.pinCode }}
-          </p>
-        </div>
-        <ion-checkbox
-          labelPlacement="end"
-          [checked]="address.billingSameAsShipping"
-          disabled="true"
-          ><p class="tiny">
-            Shipping address same as billing address
-          </p></ion-checkbox
+        <ion-item slot="header">
+          <ion-label>Addresses</ion-label>
+        </ion-item>
+        <div
+          style="
+            border: 1px solid var(--ion-color-primary);
+            margin: 10px;
+            border-radius: 10px;
+          "
+          *ngFor="let address of addresses"
+          class="ion-padding"
+          slot="content"
         >
-        <div *ngIf="address.billing && !address.billingSameAsShipping">
-          <p class="bodySecondary">{{ address.billing.line1 }}</p>
-          <p class="bodySecondary">{{ address.billing.line2 }}</p>
-          <p class="bodySecondary">
-            {{ address.billing.city }}
-            {{ address.billing.state }}
-            {{ address.billing.pinCode }}
-          </p>
+          <div *ngIf="address.shipping">
+            <p class="bodyPrimary">{{ address.shipping.line1 }}</p>
+            <p class="bodyPrimary">{{ address.shipping.line2 }}</p>
+            <p class="bodyPrimary">
+              {{ address.shipping.city }}
+              {{ address.shipping.state }}
+              {{ address.shipping.pinCode }}
+            </p>
+          </div>
+          <ion-checkbox
+            labelPlacement="end"
+            [checked]="address.billingSameAsShipping"
+            disabled="true"
+            ><p class="tiny">
+              Shipping address same as billing address
+            </p></ion-checkbox
+          >
+          <div *ngIf="address.billing && !address.billingSameAsShipping">
+            <p class="bodyPrimary">{{ address.billing.line1 }}</p>
+            <p class="bodyPrimary">{{ address.billing.line2 }}</p>
+            <p class="bodyPrimary">
+              {{ address.billing.city }}
+              {{ address.billing.state }}
+              {{ address.billing.pinCode }}
+            </p>
+          </div>
         </div>
-      </div>
-    </ion-accordion>
-    <ion-accordion
-      *ngIf="partyDetails && parsedPartyDetails?.gstType"
-      value="second"
-    >
-      <ion-item slot="header" color="light">
-        <ion-label>GSTIN</ion-label>
-      </ion-item>
-      <div class="ion-padding" slot="content">
-        {{ parsedPartyDetails?.gstType }}:{{ parsedPartyDetails?.gstin }}
-      </div>
-    </ion-accordion>
-  </ion-accordion-group>
-  <app-entries-ledger-list [ledgerData]="dummyData"></app-entries-ledger-list>
+      </ion-accordion>
+      <ion-accordion
+        *ngIf="partyDetails && parsedPartyDetails?.gstType"
+        value="second"
+      >
+        <ion-item slot="header">
+          <ion-label>GSTIN</ion-label>
+        </ion-item>
+        <div class="ion-padding" slot="content">
+          {{ parsedPartyDetails?.gstType }}:{{ parsedPartyDetails?.gstin }}
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+    <app-entries-ledger-list [ledgerData]="dummyData"></app-entries-ledger-list>
+  </div>
 </div>

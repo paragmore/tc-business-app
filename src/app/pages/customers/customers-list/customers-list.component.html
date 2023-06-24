@@ -8,29 +8,33 @@
       (onSearchSortFilter)="onSearchSortFilter($event)"
     ></app-search-filter-sort>
   </ion-row>
-  <ion-segment
-    *ngIf="!isMobile"
-    (ionChange)="updateSelectedTab($event)"
-    [value]="selectedTab"
-  >
-    <ion-segment-button [value]="PartyTypeEnum.CUSTOMER">
-      <ion-label>Customers</ion-label>
-    </ion-segment-button>
-    <ion-segment-button [value]="PartyTypeEnum.SUPPLIER">
-      <ion-label>Suppliers</ion-label>
-    </ion-segment-button>
-  </ion-segment>
-  <app-credit-debit-summary-card
-    *ngIf="creditDebitSummaryData && !isMobile"
-    [creditDebitInput]="creditDebitSummaryData"
-  >
-  </app-credit-debit-summary-card>
-  <app-credit-debit-ledger-list
-    class="list-height"
-    [ledgerData]="ledgerData"
-    (onloadMoreData)="loadMoreData($event)"
-    [mobileListHeaderComponent]="MobilePartiesListHeaderComponent"
-    [injector]="partiesInjector"
-  ></app-credit-debit-ledger-list>
-  <ion-button (click)="openAddPartyModal()">Add {{ selectedTab }}</ion-button>
+  <div style="display: flex; flex-direction: column" class="item-list-body">
+    <ion-segment
+      *ngIf="!isMobile"
+      (ionChange)="updateSelectedTab($event)"
+      [value]="selectedTab"
+    >
+      <ion-segment-button [value]="PartyTypeEnum.CUSTOMER">
+        <ion-label>Customers</ion-label>
+      </ion-segment-button>
+      <ion-segment-button [value]="PartyTypeEnum.SUPPLIER">
+        <ion-label>Suppliers</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+    <app-credit-debit-summary-card
+      *ngIf="creditDebitSummaryData && !isMobile"
+      [creditDebitInput]="creditDebitSummaryData"
+    >
+    </app-credit-debit-summary-card>
+    <app-credit-debit-ledger-list
+      class="list-height"
+      [ledgerData]="ledgerData"
+      (onloadMoreData)="loadMoreData($event)"
+      [mobileListHeaderComponent]="MobilePartiesListHeaderComponent"
+      [injector]="partiesInjector"
+    ></app-credit-debit-ledger-list>
+    <ion-button style="width: 100%" (click)="openAddPartyModal()"
+      >Add {{ selectedTab }}</ion-button
+    >
+  </div>
 </div>

@@ -29,6 +29,7 @@ import {
 } from 'src/app/core/services/parties/parties.service';
 import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
 import { PartyCreationModalComponent } from '../../parties/party-creation-modal/party-creation-modal.component';
+import { RightHeaderComponent } from 'src/app/right-header/right-header.component';
 
 @Component({
   selector: 'app-customer-details',
@@ -40,6 +41,7 @@ import { PartyCreationModalComponent } from '../../parties/party-creation-modal/
     IonicModule,
     BasicPartyDetailsComponent,
     EntriesLedgerListComponent,
+    RightHeaderComponent,
   ],
 })
 export class CustomerDetailsComponent implements OnInit {

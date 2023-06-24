@@ -130,6 +130,21 @@ ion-menu::part(container) {
   margin: auto;
 }
 
+.item-list-body {
+  height: 100%;
+  @media only screen and (min-width: 768px) {
+    padding-left: 10px;
+    padding-right: 10px;
+    border-right: 1px solid lightgrey;
+  }
+}
+
+.header-row {
+  background-color: var(--ion-color-secondary);
+  padding: 6px;
+  margin-right: 0px;
+}
+
 /*
  *  STYLE 1
  */

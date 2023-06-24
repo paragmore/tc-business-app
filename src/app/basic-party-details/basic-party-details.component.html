@@ -1,5 +1,5 @@
 <ion-grid>
-  <ion-row class="header-row" style="display: flex">
+  <ion-row style="display: flex">
     <div style="flex: 1; display: flex">
       <div style="width: 40px; height: 40px">
         <ion-avatar style="width: fit-content; height: fit-content">
@@ -23,10 +23,11 @@
     </div>
     <div>
       <ion-button
+        fill="outline"
         (click)="partyDetails.onEditClick()"
         *ngIf="partyDetails.onEditClick"
       >
-        Edit
+        <ion-icon name="pencil"></ion-icon>
       </ion-button>
     </div>
   </ion-row>
