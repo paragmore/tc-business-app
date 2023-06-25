@@ -1,7 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { getAuthHeaders } from '../../utils/authHeaders';
-import { VerifyGSTINResponseI } from '../../components/onboarding-modal/onboarding-modal.component';
 import { environment } from 'src/environments/environment';
 
 export interface OnboardStoreRequestI {
@@ -55,4 +54,45 @@ export class OnboardingService {
     };
     return this.httpClient.post(url, body, { headers: headers });
   }
+}
+
+export interface VerifyGSTINResponseI {
+  ntcrbs: string;
+  adhrVFlag: string;
+  lgnm: string;
+  stj: string;
+  dty: string;
+  cxdt: string;
+  gstin: string;
+  nba: string[];
+  ekycVFlag: string;
+  cmpRt: string;
+  rgdt: string;
+  ctb: string;
+  pradr: {
+    adr: string;
+    addr: {
+      flno: string;
+      lg: string;
+      loc: string;
+      pncd: string;
+      bnm: string;
+      city: string;
+      lt: string;
+      stcd: string;
+      bno: string;
+      dst: string;
+      st: string;
+    };
+  };
+  sts: string;
+  tradeNam: string;
+  isFieldVisitConducted: string;
+  ctj: string;
+  einvoiceStatus: string;
+  lstupdt: string;
+  adadr: any[];
+  ctjCd: string;
+  errorMsg: null | string;
+  stjCd: string;
 }

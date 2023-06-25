@@ -148,15 +148,21 @@
                     </ion-avatar>
                   </div>
                   <div style="display: flex; flex-direction: column">
-                    <p class="titleRegular" style="overflow-wrap: anywhere">
+                    <p
+                      class="titleRegular"
+                      style="overflow-wrap: anywhere; text-align: start"
+                    >
                       {{ ledger.title }}
                     </p>
                     <ion-chip *ngIf="ledger.chipText" fill="outline">
-                      <p class="caption">
+                      <p style="text-align: start" class="caption">
                         {{ ledger.chipText }}
                       </p>
                     </ion-chip>
-                    <p class="caption" style="overflow-wrap: anywhere">
+                    <p
+                      class="caption"
+                      style="overflow-wrap: anywhere; text-align: start"
+                    >
                       {{ ledger.subTitle }}
                     </p>
                   </div>

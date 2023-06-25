@@ -9,7 +9,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { IonicModule, ModalController, ToastController } from '@ionic/angular';
-import { OnboardingService } from '../../services/onboarding/onboarding.service';
+import {
+  OnboardingService,
+  VerifyGSTINResponseI,
+} from '../../services/onboarding/onboarding.service';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../../store/models/state.model';
 import {
@@ -22,47 +25,7 @@ import { CameraService } from '../../services/camera/camera.service';
 import { ScreenModel } from 'src/app/store/models/screen.models';
 import * as Tesseract from 'tesseract.js';
 import { createWorker } from 'tesseract.js';
-
-export interface VerifyGSTINResponseI {
-  ntcrbs: string;
-  adhrVFlag: string;
-  lgnm: string;
-  stj: string;
-  dty: string;
-  cxdt: string;
-  gstin: string;
-  nba: string[];
-  ekycVFlag: string;
-  cmpRt: string;
-  rgdt: string;
-  ctb: string;
-  pradr: {
-    adr: string;
-    addr: {
-      flno: string;
-      lg: string;
-      loc: string;
-      pncd: string;
-      bnm: string;
-      city: string;
-      lt: string;
-      stcd: string;
-      bno: string;
-      dst: string;
-      st: string;
-    };
-  };
-  sts: string;
-  tradeNam: string;
-  isFieldVisitConducted: string;
-  ctj: string;
-  einvoiceStatus: string;
-  lstupdt: string;
-  adadr: any[];
-  ctjCd: string;
-  errorMsg: null | string;
-  stjCd: string;
-}
+import { toastAlert } from '../../utils/toastAlert';
 @Component({
   selector: 'app-onboarding-modal',
   templateUrl: './onboarding-modal.component.html',
@@ -157,7 +120,11 @@ export class OnboardingModalComponent implements OnInit {
     if (matches && matches.length > 0) {
       return matches[0];
     } else {
-      this.alert('Could not recognize GST number correctly', 'top', 1500);
+      toastAlert(
+        this.toastController,
+        'Could not recognize GST number correctly',
+        'danger'
+      );
       return '';
     }
   }
@@ -270,7 +237,7 @@ export class OnboardingModalComponent implements OnInit {
             console.log(error.error.message);
             const errors: ValidationErrors = { error: error.error.message };
             this.gstinForm.setErrors(errors);
-            this.alert(error.error.message, 'top', 1500);
+            toastAlert(this.toastController, error.error.message, 'danger');
           }
         );
       this.gstinForm.reset();

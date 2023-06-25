@@ -71,7 +71,7 @@
               </ion-popover>
             </ion-row>
             <ion-row *ngIf="selectedGSTType?.isGstin">
-              <ion-col>
+              <ion-col size="8">
                 <ion-input
                   label="GSTIN"
                   label-placement="stacked"
@@ -79,6 +79,18 @@
                   placeholder="Add GSTIN"
                   formControlName="gstin"
                 ></ion-input>
+              </ion-col>
+              <ion-col>
+                <ion-button
+                  [disabled]="isGSTLoading"
+                  fill="clear"
+                  (click)="onVerifyAndLoadGstInfo()"
+                >
+                  <p class="buttonRegular">
+                    <ion-spinner *ngIf="isGSTLoading"></ion-spinner> Verify and
+                    Load
+                  </p>
+                </ion-button>
               </ion-col>
             </ion-row>
             <ion-row>
@@ -292,5 +304,6 @@
   class="btn btn-primary"
   (click)="createOrUpdateParty()"
   [disabled]="partyForm.invalid"
+  ><ion-spinner *ngIf="isLoading"></ion-spinner
   >{{ this.partyId ? "Update " + partyText : "Add " + partyText }}</ion-button
 >

@@ -5,6 +5,7 @@ import {
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
+  ValidationErrors,
   Validators,
 } from '@angular/forms';
 import { IonicModule, ModalController, ToastController } from '@ionic/angular';
@@ -24,6 +25,10 @@ import {
 import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
 import { toastAlert } from 'src/app/core/utils/toastAlert';
 import { AbsValuePipe } from 'src/app/core/pipes/absolute.pipe';
+import {
+  OnboardingService,
+  VerifyGSTINResponseI,
+} from 'src/app/core/services/onboarding/onboarding.service';
 
 @Component({
   selector: 'app-party-creation-modal',
@@ -49,13 +54,17 @@ export class PartyCreationModalComponent implements OnInit {
   selectedGSTType: GSTTypeI | undefined;
   gstTypeList: Array<GSTTypeI> = gstTypeList;
   balanceType = 'give';
+  verifygstinResponse: VerifyGSTINResponseI | undefined;
+  isLoading = false;
+  isGSTLoading = false;
   constructor(
     private modalController: ModalController,
     private formBuilder: FormBuilder,
     private store: Store<AppState>,
     private currentStoreInfoService: CurrentStoreInfoService,
     private partiesService: PartiesService,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private onboardingService: OnboardingService
   ) {
     this.partyForm = this.formBuilder.group({
       gstTypeTitle: ['', Validators.required],
@@ -185,24 +194,104 @@ export class PartyCreationModalComponent implements OnInit {
     }
   }
 
+  async onVerifyAndLoadGstInfo() {
+    if (!this.currentStoreInfo?._id) {
+      return;
+    }
+    this.isGSTLoading = true;
+    this.onboardingService
+      .verifyGSTIN(
+        this.currentStoreInfo._id,
+        this.partyForm.get('gstin')?.value
+      )
+      .subscribe(
+        (response) => {
+          console.log(response);
+          //@ts-ignore
+          this.verifygstinResponse = response.body;
+
+          this.partyForm.patchValue({
+            name: this.verifygstinResponse?.lgnm,
+            address: {
+              shipping: {
+                line1: this.verifygstinResponse?.pradr.addr.bnm,
+                line2: this.verifygstinResponse?.pradr.adr,
+                city:
+                  this.verifygstinResponse?.pradr.addr.city +
+                  ' ' +
+                  this.verifygstinResponse?.pradr.addr.dst,
+                state: this.verifygstinResponse?.pradr.addr.stcd,
+                pinCode: this.verifygstinResponse?.pradr.addr.pncd,
+              },
+              billingSameAsShipping: true,
+              billing: {
+                line1: this.verifygstinResponse?.pradr.addr.bnm,
+                line2: this.verifygstinResponse?.pradr.adr,
+                city:
+                  this.verifygstinResponse?.pradr.addr.city +
+                  ' ' +
+                  this.verifygstinResponse?.pradr.addr.dst,
+                state: this.verifygstinResponse?.pradr.addr.stcd,
+                pinCode: this.verifygstinResponse?.pradr.addr.pncd,
+              },
+            },
+          });
+        },
+        (error) => {
+          console.log(error.error.message);
+          const errors: ValidationErrors = { error: error.error.message };
+          this.partyForm.setErrors(errors);
+          toastAlert(this.toastController, error.error.message, 'danger');
+        },
+        () => {
+          this.isGSTLoading = false;
+        }
+      );
+  }
+
   async createProduct(createProductPayload: CreatePartyRequestI) {
+    this.isLoading = true;
     this.partiesService.createParty(createProductPayload).subscribe(
       (response) => {
         console.log(response);
+        //@ts-ignore
+        if (response.message === 'Success') {
+          toastAlert(
+            this.toastController,
+            `${this.partyType} created successfully`,
+            'success'
+          );
+        }
       },
       (error) => {
-        toastAlert(this.toastController, error.error.message);
+        toastAlert(this.toastController, error.error.message, 'danger');
+      },
+      () => {
+        this.isLoading = false;
       }
     );
   }
 
   async updateProduct(updatePartyPayload: UpdatePartyRequestI) {
+    this.isLoading = true;
+
     this.partiesService.updateParty(updatePartyPayload).subscribe(
       (response) => {
         console.log(response);
+        //@ts-ignore
+        if (response.message === 'Success') {
+          toastAlert(
+            this.toastController,
+            `${this.partyType} updated successfully`,
+            'success'
+          );
+        }
       },
       (error) => {
-        toastAlert(this.toastController, error.error.message);
+        toastAlert(this.toastController, error.error.message, 'danger');
+      },
+      () => {
+        this.isLoading = false;
       }
     );
   }

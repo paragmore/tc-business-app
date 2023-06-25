@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
 })
 export class ProductsService {
   constructor(private httpClient: HttpClient) {}
-  baseUrl = environment.production
+  baseUrl = false
     ? 'https://products-api.taxpayercorner.com'
     : 'http://localhost:8015';
 
