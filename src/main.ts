@@ -13,6 +13,7 @@ import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { userStoreInfoReducer } from './app/store/reducers/userStoreInfo.reducer';
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { selectedProductReducer } from './app/store/reducers/selectedProduct.reducer';
+import { itemsReducer } from './app/store/reducers/items.reducer';
 
 if (environment.production) {
   enableProdMode();
@@ -28,6 +29,7 @@ bootstrapApplication(AppComponent, {
         screen: screenReducer,
         userStoreInfo: userStoreInfoReducer,
         selectedProduct: selectedProductReducer,
+        items: itemsReducer,
       })
     ),
     importProvidersFrom(HttpClientModule),
