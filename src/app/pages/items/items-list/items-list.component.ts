@@ -32,6 +32,7 @@ import {
   ItemNotFoundComponent,
   ItemNotFoundComponentInputI,
 } from 'src/app/core/components/item-not-found/item-not-found.component';
+import { setItemsList } from 'src/app/store/actions/items.action';
 
 @Component({
   selector: 'app-items-list',
@@ -121,6 +122,9 @@ export class ItemsListComponent implements OnInit {
     this.selectedProductState$.subscribe((productState) => {
       this.selectedProductState = productState;
     });
+    this.store
+      .select((store) => store.items)
+      .subscribe((items) => (this.products = items.itemsList));
   }
 
   resetPagination() {
@@ -185,10 +189,17 @@ export class ItemsListComponent implements OnInit {
     this.enableMultiSelect = true;
   }
 
+  onItemAddOrUpdate = (data: any) => {
+    console.log('data', data);
+  };
+
   async openAddProductModal() {
     const modal = await this.modalController.create({
       component: ItemCreationComponent,
-      componentProps: { type: this.selectedTab },
+      componentProps: {
+        type: this.selectedTab,
+        onItemAddOrUpdate: this.onItemAddOrUpdate,
+      },
       backdropDismiss: true,
       cssClass: 'side-modal',
     });
@@ -359,13 +370,13 @@ export class ItemsListComponent implements OnInit {
             //@ts-ignore
             console.log(response.body.products);
             //@ts-ignore
-            this.products =
+            let newProducts =
               this.isMobile && !isReload
                 ? //@ts-ignore
                   [...this.products, ...response.body.products]
                 : //@ts-ignore
-
                   [...response.body.products];
+            this.store.dispatch(setItemsList({ itemsList: newProducts }));
             !this.isMobile &&
               !this.selectedProductState?.selectedProductId &&
               this.openProductDetails(this.products[0]);

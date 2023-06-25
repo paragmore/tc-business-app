@@ -41,6 +41,11 @@ import { DiscountsListComponent } from '../discounts-list/discounts-list.compone
 import { VariantsListComponent } from '../variants-list/variants-list.component';
 import { MediaService } from 'src/app/core/services/media/media.service';
 import { HsnCodeModalComponent } from '../hsn-code-modal/hsn-code-modal.component';
+import {
+  setItems,
+  setSelectedItem,
+  updateItemInList,
+} from 'src/app/store/actions/items.action';
 
 @Component({
   selector: 'app-item-creation',
@@ -63,6 +68,7 @@ import { HsnCodeModalComponent } from '../hsn-code-modal/hsn-code-modal.componen
 export class ItemCreationComponent implements OnInit {
   @Input() editProduct: ProductI | undefined;
   @Input() type!: ItemTypeEnum;
+  @Input() onItemAddOrUpdate: ((data: any) => void) | undefined;
   ItemTypeEnum = ItemTypeEnum;
   canDismiss = false;
   presentingElement: Element | null = null;
@@ -83,6 +89,7 @@ export class ItemCreationComponent implements OnInit {
   productImages: ProductImageFileI[] = [];
   heroImage: ProductImageFileI | string | undefined;
   isLoading = false;
+  dataChanges: [] = [];
   constructor(
     private modalController: ModalController,
     private formBuilder: FormBuilder,
@@ -498,6 +505,19 @@ export class ItemCreationComponent implements OnInit {
             `${this.type} updated successfully`,
             'success'
           );
+          console.log('heasdas', this.onItemAddOrUpdate);
+          this.store.dispatch(
+            setSelectedItem({
+              //@ts-ignore
+              selectedItem: { ...response.body },
+            })
+          );
+          //@ts-ignore
+          this.store.dispatch(updateItemInList({ item: response.body }));
+          if (this.onItemAddOrUpdate) {
+            console.log(this.onItemAddOrUpdate);
+            this.onItemAddOrUpdate(updateProductPayload);
+          }
         }
       },
       (error) => {

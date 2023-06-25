@@ -18,6 +18,7 @@ import { VariantSeperatorPipe } from 'src/app/core/pipes/variant-seperator.pipe'
 import { VariantsListComponent } from '../variants-list/variants-list.component';
 import { DiscountsListComponent } from '../discounts-list/discounts-list.component';
 import { RightHeaderComponent } from 'src/app/right-header/right-header.component';
+import { setSelectedItem } from 'src/app/store/actions/items.action';
 
 @Component({
   selector: 'app-item-details',
@@ -53,6 +54,10 @@ export class ItemDetailsComponent implements OnInit {
     this.selectedProductState$ = this.store.select(
       (store) => store.selectedProduct
     );
+
+    this.store
+      .select((store) => store.items)
+      .subscribe((items) => (this.productDetails = items.selectedItem));
     const screenState$ = this.store.select((store) => store.screen);
     screenState$.subscribe((screen) => {
       this.isMobile = screen.isMobile;
@@ -81,8 +86,11 @@ export class ItemDetailsComponent implements OnInit {
             console.log(response);
             //@ts-ignore
             if (response.message === 'Success') {
-              //@ts-ignore
-              this.productDetails = response.body;
+              this.store.dispatch(
+                //@ts-ignore
+                setSelectedItem({ selectedItem: response.body })
+              );
+
               this.type = this.productDetails?.isService
                 ? ItemTypeEnum.SERVICE
                 : ItemTypeEnum.PRODUCT;
