@@ -204,8 +204,8 @@ export class PartyCreationModalComponent implements OnInit {
         this.currentStoreInfo._id,
         this.partyForm.get('gstin')?.value
       )
-      .subscribe(
-        (response) => {
+      .subscribe({
+        next: (response) => {
           console.log(response);
           //@ts-ignore
           this.verifygstinResponse = response.body;
@@ -237,16 +237,17 @@ export class PartyCreationModalComponent implements OnInit {
             },
           });
         },
-        (error) => {
+        error: (error) => {
           console.log(error.error.message);
           const errors: ValidationErrors = { error: error.error.message };
           this.partyForm.setErrors(errors);
           toastAlert(this.toastController, error.error.message, 'danger');
-        },
-        () => {
           this.isGSTLoading = false;
-        }
-      );
+        },
+        complete: () => {
+          this.isGSTLoading = false;
+        },
+      });
   }
 
   async createProduct(createProductPayload: CreatePartyRequestI) {
