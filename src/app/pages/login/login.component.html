@@ -1,5 +1,122 @@
-<ion-content class="ion-padding">
-  <ion-button *ngIf="!(screenState$ | async)?.isMobile" expand="block" (click)="setOpen(true)">Open</ion-button>
-  <div *ngIf="(screenState$ | async)?.isMobile" id="login-inner-html-div" [innerHTML]="loginHtml">
-  </div>
-</ion-content>
+<div style="overflow-y: scroll">
+  <header>
+    <nav>
+      <div class="container">
+        <h1 class="logo">TaxPayer Corner</h1>
+        <ul class="nav-links">
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Features</a></li>
+          <li><a href="#">Pricing</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </nav>
+    <div class="hero">
+      <div class="container">
+        <h1>Manage Your Finances<br />with Ease</h1>
+        <p>
+          Powerful tools for finance management, GST accounting, and ecommerce
+          analytics.
+        </p>
+        <a expand="block" (click)="setOpen(true)" class="btn">Login / Signup</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="features">
+    <div class="container">
+      <h2>Key Features</h2>
+      <div class="feature-card">
+        <div class="card-icon">
+          <img src="finance-icon.png" alt="Finance Icon" />
+        </div>
+        <h3>Finance Management</h3>
+        <p>
+          Track your income, expenses, and budgets easily with our intuitive
+          interface.
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="card-icon">
+          <img src="gst-icon.png" alt="GST Icon" />
+        </div>
+        <h3>GST Accounting</h3>
+        <p>
+          Effortlessly manage your GST calculations, invoices, and tax filings.
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="card-icon">
+          <img src="ecommerce-icon.png" alt="Ecommerce Icon" />
+        </div>
+        <h3>Ecommerce Analytics</h3>
+        <p>
+          Get detailed insights into your online store's performance and sales
+          trends.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="pricing">
+    <div class="container">
+      <h2>Pricing</h2>
+      <div class="price-card">
+        <h3>Basic</h3>
+        <p class="price">$9.99/month</p>
+        <ul>
+          <li>Finance Management</li>
+          <li>Basic GST Accounting</li>
+          <li>Limited Ecommerce Analytics</li>
+          <li>Email Support</li>
+        </ul>
+        <a href="#" class="btn">Choose Plan</a>
+      </div>
+      <div class="price-card">
+        <h3>Pro</h3>
+        <p class="price">$19.99/month</p>
+        <ul>
+          <li>Finance Management</li>
+          <li>Advanced GST Accounting</li>
+          <li>Comprehensive Ecommerce Analytics</li>
+          <li>Priority Email & Phone Support</li>
+        </ul>
+        <a href="#" class="btn">Choose Plan</a>
+      </div>
+      <div class="price-card">
+        <h3>Enterprise</h3>
+        <p class="price">Contact Us</p>
+        <ul>
+          <li>Finance Management</li>
+          <li>Customized GST Accounting</li>
+          <li>Advanced Ecommerce Analytics</li>
+          <li>24/7 Support</li>
+        </ul>
+        <a href="#" class="btn">Contact Us</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2023 Finance Dashboard App. All rights reserved.</p>
+      <ul class="footer-links">
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Service</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+  </footer>
+</div>
+
+<!-- <ion-button
+    *ngIf="!(screenState$ | async)?.isMobile"
+    expand="block"
+    (click)="setOpen(true)"
+    >Open</ion-button
+  > -->
+<!-- <div
+    *ngIf="(screenState$ | async)?.isMobile"
+    id="login-inner-html-div"
+    [innerHTML]="loginHtml"
+  ></div> -->

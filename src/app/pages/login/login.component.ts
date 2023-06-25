@@ -24,6 +24,7 @@ import { LoginService } from 'src/app/core/services/login/login.service';
 export class LoginComponent implements OnInit {
   loginHtml: SafeHtml | undefined;
   modelData: any;
+  isMobile = false;
   public screenState$: Observable<ScreenModel> | undefined;
 
   constructor(
@@ -82,7 +83,12 @@ export class LoginComponent implements OnInit {
         }
       }
       this.screenState$ = this.store.select((store) => store.screen);
-
+      this.screenState$.subscribe((screen) => {
+        this.isMobile = screen.isMobile;
+        if (screen.isMobile) {
+          this.setOpen(true);
+        }
+      });
       document.body.appendChild(script);
     });
 
