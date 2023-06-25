@@ -7,6 +7,7 @@ export enum ItemsActionType {
   SET_ITEMS_LIST = '[SET_ITEMS_LIST] Set items list',
   UPDATE_ITEMS = '[UPDATE_ITEMS] Update items',
   UPDATE_ITEM_IN_LIST = '[UPDATE_ITEM_IN_LIST] Update item in list',
+  DELETE_ITEM_IN_LIST = '[DELETE_ITEM_IN_LIST] Delete item in list',
 }
 export const setSelectedItem = createAction(
   ItemsActionType.UPDATE_SELECTED_ITEM,
@@ -25,5 +26,10 @@ export const setItems = createAction(
 
 export const updateItemInList = createAction(
   ItemsActionType.UPDATE_ITEM_IN_LIST,
+  props<{ item: ProductI }>()
+);
+
+export const deleteItemInList = createAction(
+  ItemsActionType.DELETE_ITEM_IN_LIST,
   props<{ item: ProductI }>()
 );

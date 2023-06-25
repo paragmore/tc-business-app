@@ -32,7 +32,10 @@ import {
   ItemNotFoundComponent,
   ItemNotFoundComponentInputI,
 } from 'src/app/core/components/item-not-found/item-not-found.component';
-import { setItemsList } from 'src/app/store/actions/items.action';
+import {
+  deleteItemInList,
+  setItemsList,
+} from 'src/app/store/actions/items.action';
 
 @Component({
   selector: 'app-items-list',
@@ -333,6 +336,10 @@ export class ItemsListComponent implements OnInit {
           console.log(response?.body);
           if (onDeleteSuccessful) {
             onDeleteSuccessful();
+            this.selectedProducts.map((prod) =>
+              this.store.dispatch(deleteItemInList({ item: prod }))
+            );
+            this.selectedProducts = [];
           }
           toastAlert(this.toastContoller, 'Products deleted successfully');
         },
