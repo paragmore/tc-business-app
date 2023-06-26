@@ -86,11 +86,23 @@
                       </ion-col>
                       <ion-col>
                         <p class="bodyPrimary">
-                          ₹ {{ productDetails?.sellsPrice }}
+                          ₹
+                          {{
+                            productDetails &&
+                            productDetails.margin &&
+                            productDetails.purchasePrice
+                              ? ((productDetails.margin + 100) *
+                                  productDetails.purchasePrice) /
+                                100
+                              : productDetails?.sellsPrice
+                          }}
                         </p>
                       </ion-col>
                     </ion-row>
-                    <ion-row class="item-detail-row">
+                    <ion-row
+                      *ngIf="type === ItemTypeEnum.PRODUCT"
+                      class="item-detail-row"
+                    >
                       <ion-col>
                         <p class="bodySecondary">Purchase Price</p>
                       </ion-col>
@@ -100,7 +112,23 @@
                         </p>
                       </ion-col>
                     </ion-row>
-                    <ion-row class="item-detail-row">
+                    <ion-row
+                      *ngIf="type === ItemTypeEnum.PRODUCT"
+                      class="item-detail-row"
+                    >
+                      <ion-col>
+                        <p class="bodySecondary">Sells margin</p>
+                      </ion-col>
+                      <ion-col>
+                        <p class="bodyPrimary">
+                          {{ productDetails?.margin | hyphen }} %
+                        </p>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row
+                      *ngIf="type === ItemTypeEnum.PRODUCT"
+                      class="item-detail-row"
+                    >
                       <ion-col>
                         <p class="bodySecondary">Stock Quantity</p>
                       </ion-col>
@@ -120,7 +148,10 @@
                         </p>
                       </ion-col>
                     </ion-row>
-                    <ion-row class="item-detail-row">
+                    <ion-row
+                      *ngIf="type === ItemTypeEnum.PRODUCT"
+                      class="item-detail-row"
+                    >
                       <ion-col>
                         <p class="bodySecondary">Stock Value</p>
                       </ion-col>
@@ -140,7 +171,10 @@
                         </p>
                       </ion-col>
                     </ion-row>
-                    <ion-row class="item-detail-row">
+                    <ion-row
+                      *ngIf="type === ItemTypeEnum.PRODUCT"
+                      class="item-detail-row"
+                    >
                       <ion-col>
                         <p class="bodySecondary">Low Stock</p>
                       </ion-col>

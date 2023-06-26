@@ -43,6 +43,7 @@ export class ItemDetailsComponent implements OnInit {
   public productDetails: ProductI | undefined;
   isMobile = false;
   type: ItemTypeEnum | undefined;
+  ItemTypeEnum = ItemTypeEnum;
   constructor(
     private modalController: ModalController,
     private store: Store<AppState>,
