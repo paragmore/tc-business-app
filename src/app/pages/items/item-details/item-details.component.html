@@ -82,7 +82,7 @@
                   <ion-col size-lg="8" size-xs="12">
                     <ion-row class="item-detail-row">
                       <ion-col>
-                        <p class="bodySecondary">Sales Price</p>
+                        <p class="bodySecondary">Sells Price</p>
                       </ion-col>
                       <ion-col>
                         <p class="bodyPrimary">
@@ -186,7 +186,10 @@
                     </ion-row>
                     <ion-row class="item-detail-row">
                       <ion-col>
-                        <p class="bodySecondary">HSN Code</p>
+                        <p class="bodySecondary">
+                          {{ type === ItemTypeEnum.PRODUCT ? "HSN" : "SAC" }}
+                          Code
+                        </p>
                       </ion-col>
                       <ion-col>
                         <p class="bodyPrimary">

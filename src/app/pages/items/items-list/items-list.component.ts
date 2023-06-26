@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { IonicModule, ModalController, ToastController } from '@ionic/angular';
 import { ItemCreationComponent } from '../item-creation/item-creation.component';
 import {
@@ -320,6 +320,16 @@ export class ItemsListComponent implements OnInit {
 
     modal.onDidDismiss().then((modalData) => {});
     return await modal.present();
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent) {
+    if (event.ctrlKey && event.shiftKey && event.key === 'P') {
+      event.preventDefault(); // Prevents the default behavior of the shortcut keys
+      // Perform the action you want to trigger with the shortcut
+      // For example, call a method that handles the button click
+      this.openAddProductModal();
+    }
   }
 
   deleteProducts = (onDeleteSuccessful?: () => {}) => {
