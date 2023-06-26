@@ -36,6 +36,7 @@ import {
   deleteItemInList,
   setItemsList,
 } from 'src/app/store/actions/items.action';
+import { ExcelService } from 'src/app/core/services/excel/excel.service';
 
 @Component({
   selector: 'app-items-list',
@@ -95,7 +96,8 @@ export class ItemsListComponent implements OnInit {
     private router: Router,
     private _location: Location,
     private activatedRoute: ActivatedRoute,
-    private toastContoller: ToastController
+    private toastContoller: ToastController,
+    private excelService: ExcelService
   ) {}
 
   ngOnInit() {
@@ -329,6 +331,28 @@ export class ItemsListComponent implements OnInit {
       // Perform the action you want to trigger with the shortcut
       // For example, call a method that handles the button click
       this.openAddProductModal();
+    }
+  }
+
+  async handleFileInput(event: any) {
+    const files: FileList = event.target.files;
+    console.log(files);
+    if (files.length > 1) {
+      toastAlert(this.toastContoller, 'Please select only 1 file');
+      console.log('Please select up to 5 files');
+      return;
+    }
+    const file: File | null = files.item(0);
+    if (!file) {
+      return;
+    }
+    if (file.size <= 5 * 1024 * 1024) {
+      console.log(file);
+      const jsonData = await this.excelService.convertToJson(file);
+      console.log(jsonData);
+    } else {
+      toastAlert(this.toastContoller, 'File size exceeds the limit of 5 MB');
+      return;
     }
   }
 
