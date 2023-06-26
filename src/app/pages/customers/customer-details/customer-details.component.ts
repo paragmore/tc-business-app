@@ -30,6 +30,9 @@ import {
 import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
 import { PartyCreationModalComponent } from '../../parties/party-creation-modal/party-creation-modal.component';
 import { RightHeaderComponent } from 'src/app/right-header/right-header.component';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/store/models/state.model';
+import { setSelectedParty } from 'src/app/store/actions/parties.action';
 
 @Component({
   selector: 'app-customer-details',
@@ -109,7 +112,8 @@ export class CustomerDetailsComponent implements OnInit {
     private partiesService: PartiesService,
     private currentStoreInfoService: CurrentStoreInfoService,
     private activatedRoute: ActivatedRoute,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private store: Store<AppState>
   ) {}
   ngOnInit() {
     this._location.onUrlChange((url, state) => {
@@ -139,7 +143,9 @@ export class CustomerDetailsComponent implements OnInit {
       complete: () => console.info('complete'),
     });
     this.getInitialStoreCustomer();
-
+    this.store
+      .select((store) => store.parties)
+      .subscribe((parties) => (this.partyDetails = parties.selectedParty));
     console.log('kss', this.currentPartyId);
   }
 
@@ -181,7 +187,10 @@ export class CustomerDetailsComponent implements OnInit {
         //@ts-ignore
         if (response.message === 'Success') {
           //@ts-ignore
-          this.partyDetails = response.body;
+          const newPartyDetails = response.body;
+          this.store.dispatch(
+            setSelectedParty({ selectedParty: newPartyDetails })
+          );
           let subtitle = '';
           if (this.partyDetails && 'customer' in this.partyDetails) {
             const email = this.partyDetails?.customerStoreInfo?.email;
