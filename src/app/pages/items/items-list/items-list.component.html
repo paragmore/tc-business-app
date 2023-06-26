@@ -6,18 +6,26 @@
     [filterSortLists]="filterSortOptions"
     (onSearchSortFilter)="onSearchSortFilter($event)"
   ></app-search-filter-sort>
-  <ion-col>
-    <div style="padding: 10px; margin: 10px">
-      <input type="file" (change)="handleFileInput($event)" id="fileInput" />
-      <label for="fileInput">
-        <ion-button>
-          <div>
-            <ion-icon name="cloud-upload-outline"></ion-icon>
-          </div>
-        </ion-button>
-      </label>
-    </div>
-  </ion-col>
+  <div
+    style="
+      margin-left: 10px;
+      justify-content: center;
+      display: flex;
+      align-items: center;
+    "
+  >
+    <input type="file" (change)="handleFileInput($event)" id="fileInput" />
+    <label for="fileInput">
+      <ion-button fill="clear">
+        <div>
+          <ion-icon
+            style="font-size: 32 !important"
+            name="cloud-upload-outline"
+          ></ion-icon>
+        </div>
+      </ion-button>
+    </label>
+  </div>
 </ion-row>
 <div class="item-list-body">
   <ion-segment
