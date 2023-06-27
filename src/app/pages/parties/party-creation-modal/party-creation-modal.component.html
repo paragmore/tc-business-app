@@ -107,6 +107,8 @@
             <ion-row>
               <ion-col>
                 <ion-input
+                  [readonly]="!!editParty"
+                  [disabled]="!!editParty"
                   label="Phone Number"
                   label-placement="stacked"
                   fill="outline"
