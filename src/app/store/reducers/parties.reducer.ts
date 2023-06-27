@@ -63,13 +63,13 @@ export const partiesReducer = createReducer(
 
 function deletePartyInListFn(
   partiesList: Array<GetAllCustomersResponseI | SupplierI>,
-  party: GetAllCustomersResponseI | SupplierI
+  party: string
 ) {
   const deleteIndex = partiesList.findIndex((listParty) => {
-    if ('customer' in listParty && 'customer' in party) {
-      return listParty.customer._id === party.customer._id;
-    } else if ('_id' in listParty && '_id' in party) {
-      return listParty._id === party._id;
+    if ('_id' in listParty) {
+      return listParty._id === party;
+    } else if ('customer' in partiesList) {
+      return listParty.customer._id === party;
     } else {
       return false;
     }

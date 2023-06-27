@@ -34,5 +34,5 @@ export const updatePartyInList = createAction(
 
 export const deletePartyInList = createAction(
   PartiesActionType.DELETE_PARTY_IN_LIST,
-  props<{ party: GetAllCustomersResponseI | SupplierI }>()
+  props<{ party: string }>()
 );
