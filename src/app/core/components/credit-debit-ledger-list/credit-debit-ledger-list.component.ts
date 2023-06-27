@@ -14,13 +14,19 @@ import { ScreenModel } from 'src/app/store/models/screen.models';
 import { AppState } from 'src/app/store/models/state.model';
 import { PaginationComponentComponent } from '../pagination-component/pagination-component.component';
 import { SortOrder } from '../../services/products/products.service';
+import { LongPressDirective } from '../../directives/long-press.directive';
 
 @Component({
   selector: 'app-credit-debit-ledger-list',
   templateUrl: './credit-debit-ledger-list.component.html',
   styleUrls: ['./credit-debit-ledger-list.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, PaginationComponentComponent],
+  imports: [
+    CommonModule,
+    IonicModule,
+    PaginationComponentComponent,
+    LongPressDirective,
+  ],
 })
 export class CreditDebitLedgerListComponent implements OnInit {
   @Output() onloadMoreData: EventEmitter<any> = new EventEmitter<any>();

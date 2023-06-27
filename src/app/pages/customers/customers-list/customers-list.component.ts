@@ -343,6 +343,9 @@ export class CustomersListComponent implements OnInit, DoCheck {
   };
 
   openPartyDetails = (customerId: string) => {
+    if (this.enableMultiSelect && this.isMobile) {
+      return;
+    }
     this._location.replaceState(
       `parties/${customerId}?type=${this.selectedTab}`
     );
@@ -355,8 +358,10 @@ export class CustomersListComponent implements OnInit, DoCheck {
   };
 
   onOpenDetailsPage = (ledger: LedgerItemI) => {
-    console.log('onOpenDetailsPage');
-
+    console.log('onOpenDetailsPage', this.isMobile, this.enableMultiSelect);
+    if (this.enableMultiSelect && this.isMobile) {
+      return;
+    }
     this.openPartyDetailsPage(ledger.id);
   };
 

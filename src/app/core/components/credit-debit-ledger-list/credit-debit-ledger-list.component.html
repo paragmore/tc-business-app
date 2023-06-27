@@ -124,6 +124,9 @@
                 padding-top: 10px;
                 padding-bottom: 10px;
               "
+              ion-button
+              long-press
+              (press)="ledgerData.onLongPress()"
               (click)="ledger.onClick(ledger)"
             >
               <ion-col [size]="(screenState$ | async)?.isMobile ? 9 : 8">
