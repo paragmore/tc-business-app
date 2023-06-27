@@ -10,7 +10,7 @@ import { GSTTypeEnum } from 'src/app/pages/parties/party-creation-modal/party-cr
 })
 export class PartiesService {
   constructor(private httpClient: HttpClient) {}
-  baseUrl = false
+  baseUrl = environment.production
     ? 'https://parties-api.taxpayercorner.com'
     : 'http://localhost:8020';
 
