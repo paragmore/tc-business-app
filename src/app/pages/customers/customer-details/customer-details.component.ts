@@ -145,8 +145,93 @@ export class CustomerDetailsComponent implements OnInit {
     this.getInitialStoreCustomer();
     this.store
       .select((store) => store.parties)
-      .subscribe((parties) => (this.partyDetails = parties.selectedParty));
+      .subscribe((parties) => {
+        this.partyDetails = parties.selectedParty;
+        this.updateBasicPartyDetails();
+      });
     console.log('kss', this.currentPartyId);
+  }
+
+  updateBasicPartyDetails() {
+    let subtitle = '';
+    if (this.partyDetails && 'customer' in this.partyDetails) {
+      const email = this.partyDetails?.customerStoreInfo?.email;
+      const phNumber = this.partyDetails?.customer?.phoneNumber;
+      this.addresses = this.partyDetails.customerStoreInfo?.addresses;
+      this.gstin = this.partyDetails.customerStoreInfo?.gstin;
+      this.parsedPartyDetails = this.partyDetails.customerStoreInfo;
+      if (phNumber && email) {
+        subtitle = `${phNumber} | ${email}`;
+      } else if (phNumber) {
+        subtitle = phNumber;
+      } else if (email) {
+        subtitle = email;
+      }
+
+      this.basicPartyDetails = {
+        // avatarUrl: 'https://example.com/avatar.jpg',
+        name: this.partyDetails?.customerStoreInfo.name || '',
+        subtitle: subtitle,
+        amount: {
+          title: 'Total Amount',
+          value: Math.abs(this.partyDetails?.customerStoreInfo.balance || 0),
+          color:
+            this.partyDetails &&
+            this.partyDetails.customerStoreInfo &&
+            this.partyDetails.customerStoreInfo.balance
+              ? this.partyDetails.customerStoreInfo.balance < 0
+                ? 'success'
+                : 'danger'
+              : '',
+          prefix:
+            this.partyDetails &&
+            this.partyDetails.customerStoreInfo &&
+            this.partyDetails.customerStoreInfo.balance
+              ? this.partyDetails.customerStoreInfo.balance < 0
+                ? "You'll give"
+                : "You'll get"
+              : '',
+        },
+        onEditClick: this.openEditCustomerModal,
+      };
+    } else {
+      const email = this.partyDetails?.email;
+      const phNumber = this.partyDetails?.phoneNumber;
+      this.addresses = this.partyDetails?.addresses;
+      this.gstin = this.partyDetails?.gstin;
+      this.parsedPartyDetails = this.partyDetails;
+
+      if (phNumber && email) {
+        subtitle = `${phNumber} | ${email}`;
+      } else if (phNumber) {
+        subtitle = phNumber;
+      } else if (email) {
+        subtitle = email;
+      }
+
+      this.basicPartyDetails = {
+        // avatarUrl: 'https://example.com/avatar.jpg',
+        name: this.partyDetails?.name || '',
+        subtitle: subtitle,
+        amount: {
+          title: 'Total Amount',
+          value: Math.abs(this.partyDetails?.balance || 0),
+          color:
+            this.partyDetails && this.partyDetails && this.partyDetails.balance
+              ? this.partyDetails.balance < 0
+                ? 'success'
+                : 'danger'
+              : '',
+          prefix:
+            this.partyDetails && this.partyDetails && this.partyDetails.balance
+              ? this.partyDetails.balance < 0
+                ? "You'll give"
+                : "You'll get"
+              : '',
+        },
+        onEditClick: this.openEditCustomerModal,
+      };
+    }
   }
 
   openEditCustomerModal = async () => {
@@ -191,91 +276,6 @@ export class CustomerDetailsComponent implements OnInit {
           this.store.dispatch(
             setSelectedParty({ selectedParty: newPartyDetails })
           );
-          let subtitle = '';
-          if (this.partyDetails && 'customer' in this.partyDetails) {
-            const email = this.partyDetails?.customerStoreInfo?.email;
-            const phNumber = this.partyDetails?.customer?.phoneNumber;
-            this.addresses = this.partyDetails.customerStoreInfo?.addresses;
-            this.gstin = this.partyDetails.customerStoreInfo?.gstin;
-            this.parsedPartyDetails = this.partyDetails.customerStoreInfo;
-            if (phNumber && email) {
-              subtitle = `${phNumber} | ${email}`;
-            } else if (phNumber) {
-              subtitle = phNumber;
-            } else if (email) {
-              subtitle = email;
-            }
-
-            this.basicPartyDetails = {
-              // avatarUrl: 'https://example.com/avatar.jpg',
-              name: this.partyDetails?.customerStoreInfo.name || '',
-              subtitle: subtitle,
-              amount: {
-                title: 'Total Amount',
-                value: Math.abs(
-                  this.partyDetails?.customerStoreInfo.balance || 0
-                ),
-                color:
-                  this.partyDetails &&
-                  this.partyDetails.customerStoreInfo &&
-                  this.partyDetails.customerStoreInfo.balance
-                    ? this.partyDetails.customerStoreInfo.balance < 0
-                      ? 'success'
-                      : 'danger'
-                    : '',
-                prefix:
-                  this.partyDetails &&
-                  this.partyDetails.customerStoreInfo &&
-                  this.partyDetails.customerStoreInfo.balance
-                    ? this.partyDetails.customerStoreInfo.balance < 0
-                      ? "You'll give"
-                      : "You'll get"
-                    : '',
-              },
-              onEditClick: this.openEditCustomerModal,
-            };
-          } else {
-            const email = this.partyDetails?.email;
-            const phNumber = this.partyDetails?.phoneNumber;
-            this.addresses = this.partyDetails?.addresses;
-            this.gstin = this.partyDetails?.gstin;
-            this.parsedPartyDetails = this.partyDetails;
-
-            if (phNumber && email) {
-              subtitle = `${phNumber} | ${email}`;
-            } else if (phNumber) {
-              subtitle = phNumber;
-            } else if (email) {
-              subtitle = email;
-            }
-
-            this.basicPartyDetails = {
-              // avatarUrl: 'https://example.com/avatar.jpg',
-              name: this.partyDetails?.name || '',
-              subtitle: subtitle,
-              amount: {
-                title: 'Total Amount',
-                value: Math.abs(this.partyDetails?.balance || 0),
-                color:
-                  this.partyDetails &&
-                  this.partyDetails &&
-                  this.partyDetails.balance
-                    ? this.partyDetails.balance < 0
-                      ? 'success'
-                      : 'danger'
-                    : '',
-                prefix:
-                  this.partyDetails &&
-                  this.partyDetails &&
-                  this.partyDetails.balance
-                    ? this.partyDetails.balance < 0
-                      ? "You'll give"
-                      : "You'll get"
-                    : '',
-              },
-              onEditClick: this.openEditCustomerModal,
-            };
-          }
         }
       });
   }

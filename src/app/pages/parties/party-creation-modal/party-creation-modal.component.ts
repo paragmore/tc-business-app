@@ -29,6 +29,10 @@ import {
   OnboardingService,
   VerifyGSTINResponseI,
 } from 'src/app/core/services/onboarding/onboarding.service';
+import {
+  setSelectedParty,
+  updatePartyInList,
+} from 'src/app/store/actions/parties.action';
 
 @Component({
   selector: 'app-party-creation-modal',
@@ -178,9 +182,9 @@ export class PartyCreationModalComponent implements OnInit {
             ? -Math.abs(this.partyForm.value.balance)
             : Math.abs(this.partyForm.value.balance),
       };
-      this.updateProduct(updatePartyPayload);
+      this.updateParty(updatePartyPayload);
     } else {
-      const createProductPayload: CreatePartyRequestI = {
+      const createPartyPayload: CreatePartyRequestI = {
         ...partyFormValue,
         storeId: this.currentStoreInfo._id,
         type: this.partyType,
@@ -190,7 +194,7 @@ export class PartyCreationModalComponent implements OnInit {
             ? -Math.abs(this.partyForm.value.balance)
             : Math.abs(this.partyForm.value.balance),
       };
-      this.createProduct(createProductPayload);
+      this.createParty(createPartyPayload);
     }
   }
 
@@ -250,9 +254,9 @@ export class PartyCreationModalComponent implements OnInit {
       });
   }
 
-  async createProduct(createProductPayload: CreatePartyRequestI) {
+  async createParty(createPartyPayload: CreatePartyRequestI) {
     this.isLoading = true;
-    this.partiesService.createParty(createProductPayload).subscribe(
+    this.partiesService.createParty(createPartyPayload).subscribe(
       (response) => {
         console.log(response);
         //@ts-ignore
@@ -273,7 +277,7 @@ export class PartyCreationModalComponent implements OnInit {
     );
   }
 
-  async updateProduct(updatePartyPayload: UpdatePartyRequestI) {
+  async updateParty(updatePartyPayload: UpdatePartyRequestI) {
     this.isLoading = true;
 
     this.partiesService.updateParty(updatePartyPayload).subscribe(
@@ -281,6 +285,25 @@ export class PartyCreationModalComponent implements OnInit {
         console.log(response);
         //@ts-ignore
         if (response.message === 'Success') {
+          //@ts-ignore
+          const newParty = response.body;
+          if (this.editParty && 'customer' in this.editParty) {
+            this.store.dispatch(
+              updatePartyInList({
+                party: {
+                  customerStoreInfo: newParty,
+                  customer: this.editParty.customer,
+                },
+              })
+            );
+          } else if (this.editParty && '_id' in this.editParty) {
+            this.store.dispatch(
+              updatePartyInList({
+                party: newParty,
+              })
+            );
+          }
+          this.store.dispatch(setSelectedParty({ selectedParty: newParty }));
           toastAlert(
             this.toastController,
             `${this.partyType} updated successfully`,

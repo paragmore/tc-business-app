@@ -31,6 +31,15 @@ export class ProductsService {
     return this.httpClient.post(url, body, { headers: headers });
   }
 
+  bulkProductsUpload(bulkProductsUploadRequest: BulkProductsUploadRequestI) {
+    const url = `${this.baseUrl}/products/bulk/create`;
+    const headers = getAuthHeaders();
+    const body = {
+      ...bulkProductsUploadRequest,
+    };
+    return this.httpClient.post(url, body, { headers: headers });
+  }
+
   updateStoreProduct(createProductRequest: UpdateProductRequestI) {
     const url = `${this.baseUrl}/products/update`;
     const headers = getAuthHeaders();
@@ -209,6 +218,8 @@ export interface ProductI {
   lowStock?: number;
   _id: string;
   isService?: boolean;
+  margin?: number;
+  asPerMargin: boolean;
 }
 
 export interface InventoryProductI {
@@ -257,6 +268,8 @@ export interface UpdateProductRequestI {
   deliveryTime?: string;
   isInventory?: boolean;
   inventoryProducts?: InventoryProductI[];
+  margin?: number;
+  asPerMargin: boolean;
 }
 
 export interface CreateProductRequestI {
@@ -281,6 +294,39 @@ export interface CreateProductRequestI {
   isInventory?: boolean;
   inventoryProducts?: InventoryProductI[];
   isService: boolean;
+  margin?: number;
+  asPerMargin: boolean;
+}
+
+export interface BulkProductsUploadRequestI {
+  storeId: string;
+  products: BulkProductUploadSingleRequestI[];
+}
+
+export interface BulkProductUploadSingleRequestI {
+  name: string;
+  description?: string;
+  sellsPrice: number;
+  purchasePrice?: number;
+  category?: string[];
+  variants?: VariantI[];
+  heroImage?: string;
+  images?: string[];
+  quantity: number;
+  discounts?: DiscountI[];
+  hsnCode?: string;
+  taxIncluded?: boolean;
+  unit: string;
+  purchaseUnitName?: string;
+  purchaseUnitConversion?: number;
+  gstPercentage?: number;
+  deliveryTime?: string;
+  isInventory?: boolean;
+  inventoryProducts?: InventoryProductI[];
+  lowStock?: number;
+  isService: boolean;
+  margin?: number;
+  asPerMargin: boolean;
 }
 
 export interface GetProductsQueryParamsI

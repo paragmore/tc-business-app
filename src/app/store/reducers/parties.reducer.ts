@@ -33,26 +33,28 @@ export const partiesReducer = createReducer(
   on(setParties, (state, { parties }) => ({
     ...parties,
   })),
-  on(updatePartyInList, (state, { party }) => ({
-    ...state,
-    partiesList: state.partiesList.map((listParty) => {
-      if ('customer' in listParty && 'customer' in party) {
-        if (listParty.customer._id === party.customer._id) {
-          return party;
-        } else {
-          return listParty;
+  on(updatePartyInList, (state, { party }) => {
+    return {
+      ...state,
+      partiesList: state.partiesList.map((listParty) => {
+        if ('customer' in listParty && 'customer' in party) {
+          if (listParty.customer._id === party.customer._id) {
+            return party;
+          } else {
+            return listParty;
+          }
         }
-      }
-      if ('_id' in listParty && '_id' in party) {
-        if (listParty._id === party._id) {
-          return party;
-        } else {
-          return listParty;
+        if ('_id' in listParty && '_id' in party) {
+          if (listParty._id === party._id) {
+            return party;
+          } else {
+            return listParty;
+          }
         }
-      }
-      return listParty;
-    }),
-  })),
+        return listParty;
+      }),
+    };
+  }),
   on(deletePartyInList, (state, { party }) => ({
     ...state,
     partiesList: deletePartyInListFn(state.partiesList, party),

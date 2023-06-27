@@ -209,11 +209,13 @@ export class CustomersListComponent implements OnInit, DoCheck {
     });
     this.store
       .select((store) => store.parties)
-      .subscribe((parties) => (this.parties = parties.partiesList));
+      .subscribe((parties) => {
+        this.parties = parties.partiesList;
+        this.updateLedgerData();
+      });
   }
 
   ngDoCheck() {
-    console.log('hhheer');
     this.ledgerData = {
       ledgerItems: this.ledgerData.ledgerItems,
       onSort: this.toggleSort,
@@ -324,6 +326,60 @@ export class CustomersListComponent implements OnInit, DoCheck {
       });
   }
 
+  updateLedgerData() {
+    this.ledgerData.ledgerItems = this.parties.map((party) => {
+      let ledgerItem: LedgerItemI;
+      if ('customer' in party) {
+        const customerData = party.customer;
+        const customerInfoData = party.customerStoreInfo;
+        ledgerItem = {
+          id: customerInfoData.customerId,
+          title: customerInfoData.name || '',
+          amount: {
+            text: Math.abs(customerInfoData.balance || 0)?.toString(),
+            color:
+              customerInfoData &&
+              customerInfoData.balance &&
+              customerInfoData.balance > 0
+                ? 'danger'
+                : customerInfoData &&
+                  customerInfoData.balance &&
+                  customerInfoData.balance < 0
+                ? 'success'
+                : '',
+          },
+          subTitle: customerData.phoneNumber,
+          imageUrl: customerData.photoUrl,
+          onClick: this.onCustomerLedgerCardClicked,
+          openDetailsPage: this.onOpenDetailsPage,
+        };
+        return ledgerItem;
+      } else {
+        const supplierData = party;
+        ledgerItem = {
+          id: supplierData._id,
+          title: supplierData.name || '',
+          amount: {
+            text: Math.abs(supplierData.balance || 0)?.toString(),
+            color:
+              supplierData && supplierData.balance && supplierData.balance > 0
+                ? 'danger'
+                : supplierData &&
+                  supplierData.balance &&
+                  supplierData.balance < 0
+                ? 'success'
+                : '',
+          },
+          subTitle: supplierData.phoneNumber,
+          imageUrl: supplierData.photoUrl,
+          onClick: this.onCustomerLedgerCardClicked,
+          openDetailsPage: this.onOpenDetailsPage,
+        };
+        return ledgerItem;
+      }
+    });
+  }
+
   loadCustomers(onLoadingFinished?: () => void, isReload?: boolean) {
     if (isReload) {
       this.resetPagination();
@@ -361,59 +417,7 @@ export class CustomersListComponent implements OnInit, DoCheck {
                   [...response.body.parties];
             this.store.dispatch(setPartiesList({ partiesList: newParties }));
             //@ts-ignore
-            this.ledgerData.ledgerItems = this.parties.map((party) => {
-              let ledgerItem: LedgerItemI;
-              if ('customer' in party) {
-                const customerData = party.customer;
-                const customerInfoData = party.customerStoreInfo;
-                ledgerItem = {
-                  id: customerInfoData.customerId,
-                  title: customerInfoData.name || '',
-                  amount: {
-                    text: Math.abs(customerInfoData.balance || 0)?.toString(),
-                    color:
-                      customerInfoData &&
-                      customerInfoData.balance &&
-                      customerInfoData.balance > 0
-                        ? 'danger'
-                        : customerInfoData &&
-                          customerInfoData.balance &&
-                          customerInfoData.balance < 0
-                        ? 'success'
-                        : '',
-                  },
-                  subTitle: customerData.phoneNumber,
-                  imageUrl: customerData.photoUrl,
-                  onClick: this.onCustomerLedgerCardClicked,
-                  openDetailsPage: this.onOpenDetailsPage,
-                };
-                return ledgerItem;
-              } else {
-                const supplierData = party;
-                ledgerItem = {
-                  id: supplierData._id,
-                  title: supplierData.name || '',
-                  amount: {
-                    text: Math.abs(supplierData.balance || 0)?.toString(),
-                    color:
-                      supplierData &&
-                      supplierData.balance &&
-                      supplierData.balance > 0
-                        ? 'danger'
-                        : supplierData &&
-                          supplierData.balance &&
-                          supplierData.balance < 0
-                        ? 'success'
-                        : '',
-                  },
-                  subTitle: supplierData.phoneNumber,
-                  imageUrl: supplierData.photoUrl,
-                  onClick: this.onCustomerLedgerCardClicked,
-                  openDetailsPage: this.onOpenDetailsPage,
-                };
-                return ledgerItem;
-              }
-            });
+
             !this.isMobile &&
             !this.currentPartyId &&
             'customer' in this.parties[0]
