@@ -14,7 +14,6 @@ import { ScreenModel } from 'src/app/store/models/screen.models';
 import { AppState } from 'src/app/store/models/state.model';
 import { PaginationComponentComponent } from '../pagination-component/pagination-component.component';
 import { SortOrder } from '../../services/products/products.service';
-import { CustomerI, SupplierI } from '../../services/parties/parties.service';
 
 @Component({
   selector: 'app-credit-debit-ledger-list',

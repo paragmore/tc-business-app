@@ -79,7 +79,6 @@ export class CustomersListComponent implements OnInit, DoCheck {
   MobilePartiesListHeaderComponent = MobilePartiesListHeaderComponent;
   selectedTab: PartyTypeEnum = PartyTypeEnum.CUSTOMER;
   PartyTypeEnum = PartyTypeEnum;
-  party: PartyTypeEnum = PartyTypeEnum.CUSTOMER;
   currentPartyId: string | undefined;
   private activatedRoute = inject(ActivatedRoute);
   parties: Array<GetAllCustomersResponseI | SupplierI> = [];
@@ -281,7 +280,7 @@ export class CustomersListComponent implements OnInit, DoCheck {
       return;
     }
     return this.partiesService
-      .deleteStoreParties(storeId, this.party, partyIds)
+      .deleteStoreParties(storeId, this.selectedTab, partyIds)
       .subscribe({
         next: (response) => {
           //@ts-ignore

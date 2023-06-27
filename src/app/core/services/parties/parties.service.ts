@@ -32,6 +32,17 @@ export class PartiesService {
     return this.httpClient.put(url, body, { headers: headers });
   }
 
+  deleteStoreParties(storeId: string, type: PartyTypeEnum, partyIds: string[]) {
+    const url = `${this.baseUrl}/parties/delete`;
+    const headers = getAuthHeaders();
+    const body = {
+      storeId,
+      type,
+      partyIds,
+    };
+    return this.httpClient.post(url, body, { headers: headers });
+  }
+
   getAllStoreParties(
     storeId: string,
     type: PartyTypeEnum,
