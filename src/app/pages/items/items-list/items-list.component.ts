@@ -2,6 +2,7 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { IonicModule, ModalController, ToastController } from '@ionic/angular';
 import { ItemCreationComponent } from '../item-creation/item-creation.component';
 import {
+  BulkProductsUploadRequestI,
   ItemTypeEnum,
   ProductI,
   ProductsService,
@@ -37,6 +38,10 @@ import {
   setItemsList,
 } from 'src/app/store/actions/items.action';
 import { ExcelService } from 'src/app/core/services/excel/excel.service';
+import {
+  ExcelUploadModalComponent,
+  ExcelUploadModalInputI,
+} from 'src/app/core/components/excel-upload-modal/excel-upload-modal.component';
 
 @Component({
   selector: 'app-items-list',
@@ -53,6 +58,7 @@ import { ExcelService } from 'src/app/core/services/excel/excel.service';
     LongPressDirective,
     HyphenPipe,
     ItemNotFoundComponent,
+    ExcelUploadModalComponent,
   ],
 })
 export class ItemsListComponent implements OnInit {
@@ -87,6 +93,18 @@ export class ItemsListComponent implements OnInit {
       { type: 'quantity', text: 'Stock High to Low', value: 'desc' },
     ],
     searchPlaceholder: 'Search by product name',
+  };
+
+  excelUploadModalInput: ExcelUploadModalInputI = {
+    header: 'Bulk products upload',
+    cta: {
+      text: 'Upload products',
+      onFileInput: (jsonData) => {
+        this.handleExcelProductsUpload(jsonData);
+      },
+    },
+    icon: 'pricetags-outline',
+    title: 'Add an excel file of your products',
   };
   constructor(
     private productsService: ProductsService,
@@ -137,6 +155,33 @@ export class ItemsListComponent implements OnInit {
     this.totalPages = 1;
     this.pageSize = 10;
   }
+
+  handleExcelProductsUpload = (data: any) => {
+    if (!this.currentStoreInfo?._id) {
+      return;
+    }
+    const uploadRequest: BulkProductsUploadRequestI = {
+      storeId: this.currentStoreInfo?._id,
+      products: data,
+    };
+    this.productsService.bulkProductsUpload(uploadRequest).subscribe({
+      next: (response) => {
+        console.log('res', response);
+        //@ts-ignore
+        if (response.message === 'Success') {
+          toastAlert(
+            this.toastContoller,
+            'Products added successfully',
+            'success'
+          );
+        }
+      },
+      error: (error) => {
+        toastAlert(this.toastContoller, error.error.message, 'danger');
+      },
+      complete: () => {},
+    });
+  };
 
   navigateWithQuery(queryParams: any, replace?: boolean) {
     this.router.navigate([], {
@@ -332,6 +377,26 @@ export class ItemsListComponent implements OnInit {
       // For example, call a method that handles the button click
       this.openAddProductModal();
     }
+  }
+
+  async openExcelUploadModal() {
+    const modal = await this.modalController.create({
+      component: ExcelUploadModalComponent,
+      componentProps: {
+        excelUploadModalInput: this.excelUploadModalInput,
+      },
+      backdropDismiss: true,
+      cssClass: 'login-modal',
+    });
+
+    modal.onDidDismiss().then((event) => {
+      if (event && event.data) {
+        console.log('Modal dismissed with data:', event.data);
+      }
+    });
+
+    modal.onDidDismiss().then((modalData) => {});
+    return await modal.present();
   }
 
   async handleFileInput(event: any) {

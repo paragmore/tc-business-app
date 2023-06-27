@@ -14,17 +14,14 @@
       align-items: center;
     "
   >
-    <input type="file" (change)="handleFileInput($event)" id="fileInput" />
-    <label for="fileInput">
-      <ion-button fill="clear">
-        <div>
-          <ion-icon
-            style="font-size: 24px !important"
-            name="cloud-upload-outline"
-          ></ion-icon>
-        </div>
-      </ion-button>
-    </label>
+    <ion-button (click)="openExcelUploadModal()" fill="clear">
+      <div>
+        <ion-icon
+          style="font-size: 24px !important"
+          name="cloud-upload-outline"
+        ></ion-icon>
+      </div>
+    </ion-button>
   </div>
 </ion-row>
 <div class="item-list-body">
