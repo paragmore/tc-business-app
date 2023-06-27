@@ -40,8 +40,10 @@ export class LoginComponent implements OnInit {
   isModalOpen = false;
 
   setOpen(isOpen: boolean) {
+    if (!this.isModalOpen) {
+      this.openLoginModal();
+    }
     this.isModalOpen = isOpen;
-    this.openLoginModal();
   }
   async openLoginModal() {
     const modal = await this.modalController.create({
