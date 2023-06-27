@@ -16,10 +16,14 @@ export class BasicPartyDetailsComponent implements OnInit {
   ngOnInit() {}
   getInitials(): string {
     const name = this.partyDetails.name;
-    const initials = name
-      .split(' ')
-      .map((word) => word.charAt(0).toUpperCase())
-      .join('');
+    const words = name.split(' ');
+
+    let initials = '';
+    for (let i = 0; i < Math.min(2, words.length); i++) {
+      const word = words[i];
+      initials += word.charAt(0).toUpperCase();
+    }
+
     return initials;
   }
 }
