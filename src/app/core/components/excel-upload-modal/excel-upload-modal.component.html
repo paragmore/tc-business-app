@@ -1,0 +1,41 @@
+<ion-header>
+  <ion-toolbar>
+    <app-dialog-header
+      style="width: 100%"
+      [headerTitle]="
+        excelUploadModalInput.header
+          ? excelUploadModalInput.header
+          : 'Bulk upload'
+      "
+      [onClose]="onCloseExcelUploadModal"
+    >
+    </app-dialog-header>
+  </ion-toolbar>
+</ion-header>
+<div class="outer-excel-modal-container">
+  <div class="icon-container">
+    <ion-icon [name]="excelUploadModalInput.icon"> </ion-icon>
+  </div>
+  <p style="margin-top: 20px; margin-bottom: 20px" class="titleMedium">
+    {{ excelUploadModalInput.title }}
+  </p>
+  <div
+    style="
+      margin-left: 10px;
+      justify-content: center;
+      display: flex;
+      align-items: center;
+    "
+  >
+    <input type="file" (change)="handleFileInput($event)" id="fileInput" />
+    <label for="fileInput">
+      <ion-button>
+        <ion-icon
+          style="font-size: 24px !important"
+          name="cloud-upload-outline"
+        ></ion-icon>
+        <p class="buttonPrimary">{{ excelUploadModalInput.cta.text }}</p>
+      </ion-button>
+    </label>
+  </div>
+</div>

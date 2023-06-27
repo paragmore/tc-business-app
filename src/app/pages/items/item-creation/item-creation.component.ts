@@ -90,6 +90,7 @@ export class ItemCreationComponent implements OnInit {
   heroImage: ProductImageFileI | string | undefined;
   isLoading = false;
   dataChanges: [] = [];
+  asPerMargin = false;
   constructor(
     private modalController: ModalController,
     private formBuilder: FormBuilder,
@@ -103,22 +104,21 @@ export class ItemCreationComponent implements OnInit {
     this.productForm = this.formBuilder.group({
       name: ['', Validators.required],
       description: [''],
-      category: ['', Validators.required],
+      category: [''],
       unit: ['', Validators.required],
       sellsPrice: ['', Validators.required],
       purchasePrice: [''],
       taxIncluded: [true, Validators.required],
+      asPerMargin: [false, Validators.required],
       hsnCode: [''],
       lowStock: [''],
       gstPercentage: [''],
+      margin: [''],
     });
   }
   ngOnInit() {
     if (this.type === ItemTypeEnum.PRODUCT) {
-      this.productForm.addControl(
-        'quantity',
-        this.formBuilder.control('', Validators.required)
-      );
+      this.productForm.addControl('quantity', this.formBuilder.control(''));
     }
     this.currentStoreInfoService.getCurrentStoreInfo().subscribe((response) => {
       this.currentStoreInfo = response;
@@ -137,6 +137,9 @@ export class ItemCreationComponent implements OnInit {
     const categoriesIdStr = this.editProduct?.category
       .map((cat) => cat._id)
       .join(',');
+    if (this.editProduct) {
+      this.asPerMargin = this.editProduct.asPerMargin;
+    }
     this.productForm.patchValue({
       ...this.editProduct,
       unit: this.editProduct?.unit.name,
@@ -204,6 +207,19 @@ export class ItemCreationComponent implements OnInit {
   onCloseProductCreationModal = () => {
     this.modalController.dismiss();
   };
+
+  asPerMarginToggled(event: any) {
+    this.asPerMargin = event.detail.checked;
+    if (this.asPerMargin) {
+      this.productForm.addControl(
+        'margin',
+        this.formBuilder.control('', Validators.required)
+      );
+    } else {
+      this.productForm.removeControl('margin');
+    }
+    console.log(event.detail);
+  }
 
   onSameUnitsToggled(event: any) {
     this.sameUnits = event.detail.checked;
@@ -599,6 +615,7 @@ interface ProductFormValueI {
   quantity: number;
   lowStock: number;
   gstPercentage: string;
+  asPerMargin: boolean;
 }
 
 export enum UploadStatusEnum {

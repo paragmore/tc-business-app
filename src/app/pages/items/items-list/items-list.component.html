@@ -6,6 +6,23 @@
     [filterSortLists]="filterSortOptions"
     (onSearchSortFilter)="onSearchSortFilter($event)"
   ></app-search-filter-sort>
+  <div
+    style="
+      margin-left: 10px;
+      justify-content: center;
+      display: flex;
+      align-items: center;
+    "
+  >
+    <ion-button (click)="openExcelUploadModal()" fill="clear">
+      <div>
+        <ion-icon
+          style="font-size: 24px !important"
+          name="cloud-upload-outline"
+        ></ion-icon>
+      </div>
+    </ion-button>
+  </div>
 </ion-row>
 <div class="item-list-body">
   <ion-segment

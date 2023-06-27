@@ -1,4 +1,5 @@
 import { ItemsModel } from './items.model';
+import { PartiesModel } from './parties.model';
 import { ScreenModel } from './screen.models';
 import { SelectedProductModel } from './selectedProduct.models';
 import { UserStoreInfoModel } from './userStoreInfo.models';
@@ -8,4 +9,5 @@ export interface AppState {
   readonly userStoreInfo: UserStoreInfoModel;
   readonly selectedProduct: SelectedProductModel;
   readonly items: ItemsModel;
+  readonly parties: PartiesModel;
 }

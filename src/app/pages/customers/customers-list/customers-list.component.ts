@@ -42,6 +42,7 @@ import { AppState } from 'src/app/store/models/state.model';
 import { Store } from '@ngrx/store';
 import { CommonModule, Location } from '@angular/common';
 import { MobilePartiesListHeaderComponent } from '../../parties/mobile-parties-list-header/mobile-parties-list-header.component';
+import { setPartiesList } from 'src/app/store/actions/parties.action';
 
 @Component({
   selector: 'app-customers-list',
@@ -206,6 +207,9 @@ export class CustomersListComponent implements OnInit, DoCheck {
       this.loadCustomers();
       this.loadStorePartiesTotalBalance();
     });
+    this.store
+      .select((store) => store.parties)
+      .subscribe((parties) => (this.parties = parties.partiesList));
   }
 
   ngDoCheck() {
@@ -349,12 +353,13 @@ export class CustomersListComponent implements OnInit, DoCheck {
             //@ts-ignore
             console.log(response.body.parties);
             //@ts-ignore
-            this.parties =
+            const newParties =
               this.isMobile && !isReload
                 ? //@ts-ignore
                   [...this.parties, ...response.body.parties]
                 : //@ts-ignore
                   [...response.body.parties];
+            this.store.dispatch(setPartiesList({ partiesList: newParties }));
             //@ts-ignore
             this.ledgerData.ledgerItems = this.parties.map((party) => {
               let ledgerItem: LedgerItemI;

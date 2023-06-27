@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { IonicModule, ModalController, ToastController } from '@ionic/angular';
 import { ItemCreationComponent } from '../item-creation/item-creation.component';
 import {
+  BulkProductsUploadRequestI,
   ItemTypeEnum,
   ProductI,
   ProductsService,
@@ -36,6 +37,11 @@ import {
   deleteItemInList,
   setItemsList,
 } from 'src/app/store/actions/items.action';
+import { ExcelService } from 'src/app/core/services/excel/excel.service';
+import {
+  ExcelUploadModalComponent,
+  ExcelUploadModalInputI,
+} from 'src/app/core/components/excel-upload-modal/excel-upload-modal.component';
 
 @Component({
   selector: 'app-items-list',
@@ -52,6 +58,7 @@ import {
     LongPressDirective,
     HyphenPipe,
     ItemNotFoundComponent,
+    ExcelUploadModalComponent,
   ],
 })
 export class ItemsListComponent implements OnInit {
@@ -87,6 +94,18 @@ export class ItemsListComponent implements OnInit {
     ],
     searchPlaceholder: 'Search by product name',
   };
+
+  excelUploadModalInput: ExcelUploadModalInputI = {
+    header: 'Bulk products upload',
+    cta: {
+      text: 'Upload products',
+      onFileInput: (jsonData) => {
+        this.handleExcelProductsUpload(jsonData);
+      },
+    },
+    icon: 'pricetags-outline',
+    title: 'Add an excel file of your products',
+  };
   constructor(
     private productsService: ProductsService,
     private currentStoreInfoService: CurrentStoreInfoService,
@@ -95,7 +114,8 @@ export class ItemsListComponent implements OnInit {
     private router: Router,
     private _location: Location,
     private activatedRoute: ActivatedRoute,
-    private toastContoller: ToastController
+    private toastContoller: ToastController,
+    private excelService: ExcelService
   ) {}
 
   ngOnInit() {
@@ -135,6 +155,33 @@ export class ItemsListComponent implements OnInit {
     this.totalPages = 1;
     this.pageSize = 10;
   }
+
+  handleExcelProductsUpload = (data: any) => {
+    if (!this.currentStoreInfo?._id) {
+      return;
+    }
+    const uploadRequest: BulkProductsUploadRequestI = {
+      storeId: this.currentStoreInfo?._id,
+      products: data,
+    };
+    this.productsService.bulkProductsUpload(uploadRequest).subscribe({
+      next: (response) => {
+        console.log('res', response);
+        //@ts-ignore
+        if (response.message === 'Success') {
+          toastAlert(
+            this.toastContoller,
+            'Products added successfully',
+            'success'
+          );
+        }
+      },
+      error: (error) => {
+        toastAlert(this.toastContoller, error.error.message, 'danger');
+      },
+      complete: () => {},
+    });
+  };
 
   navigateWithQuery(queryParams: any, replace?: boolean) {
     this.router.navigate([], {
@@ -320,6 +367,58 @@ export class ItemsListComponent implements OnInit {
 
     modal.onDidDismiss().then((modalData) => {});
     return await modal.present();
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent) {
+    if (event.ctrlKey && event.shiftKey && event.key === 'P') {
+      event.preventDefault(); // Prevents the default behavior of the shortcut keys
+      // Perform the action you want to trigger with the shortcut
+      // For example, call a method that handles the button click
+      this.openAddProductModal();
+    }
+  }
+
+  async openExcelUploadModal() {
+    const modal = await this.modalController.create({
+      component: ExcelUploadModalComponent,
+      componentProps: {
+        excelUploadModalInput: this.excelUploadModalInput,
+      },
+      backdropDismiss: true,
+      cssClass: 'login-modal',
+    });
+
+    modal.onDidDismiss().then((event) => {
+      if (event && event.data) {
+        console.log('Modal dismissed with data:', event.data);
+      }
+    });
+
+    modal.onDidDismiss().then((modalData) => {});
+    return await modal.present();
+  }
+
+  async handleFileInput(event: any) {
+    const files: FileList = event.target.files;
+    console.log(files);
+    if (files.length > 1) {
+      toastAlert(this.toastContoller, 'Please select only 1 file');
+      console.log('Please select up to 5 files');
+      return;
+    }
+    const file: File | null = files.item(0);
+    if (!file) {
+      return;
+    }
+    if (file.size <= 5 * 1024 * 1024) {
+      console.log(file);
+      const jsonData = await this.excelService.convertToJson(file);
+      console.log(jsonData);
+    } else {
+      toastAlert(this.toastContoller, 'File size exceeds the limit of 5 MB');
+      return;
+    }
   }
 
   deleteProducts = (onDeleteSuccessful?: () => {}) => {

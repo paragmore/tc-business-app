@@ -14,6 +14,7 @@ import { userStoreInfoReducer } from './app/store/reducers/userStoreInfo.reducer
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { selectedProductReducer } from './app/store/reducers/selectedProduct.reducer';
 import { itemsReducer } from './app/store/reducers/items.reducer';
+import { partiesReducer } from './app/store/reducers/parties.reducer';
 
 if (environment.production) {
   enableProdMode();
@@ -30,6 +31,7 @@ bootstrapApplication(AppComponent, {
         userStoreInfo: userStoreInfoReducer,
         selectedProduct: selectedProductReducer,
         items: itemsReducer,
+        parties: partiesReducer,
       })
     ),
     importProvidersFrom(HttpClientModule),
