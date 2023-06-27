@@ -125,7 +125,12 @@
             >
               <ion-col [size]="(screenState$ | async)?.isMobile ? 9 : 8">
                 <ion-row
-                  style="display: flex; align-items: center; text-align: center"
+                  style="
+                    display: flex;
+                    align-items: center;
+                    text-align: center;
+                    flex-wrap: nowrap;
+                  "
                 >
                   <ion-checkbox></ion-checkbox>
 
