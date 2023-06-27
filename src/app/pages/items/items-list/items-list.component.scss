@@ -22,6 +22,16 @@
   }
 }
 
+.add-button-styles {
+  display: flex;
+  position: sticky;
+  height: 60px;
+  align-items: center;
+  bottom: 0px;
+  justify-content: flex-end;
+  padding: 10px;
+}
+
 .list-height {
   @media only screen and (min-width: 768px) {
     height: 95%;
