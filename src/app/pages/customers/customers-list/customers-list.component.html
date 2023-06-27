@@ -33,8 +33,58 @@
       [mobileListHeaderComponent]="MobilePartiesListHeaderComponent"
       [injector]="partiesInjector"
     ></app-credit-debit-ledger-list>
-    <ion-button style="width: 100%" (click)="openAddPartyModal()"
-      >Add {{ selectedTab }}</ion-button
-    >
   </div>
 </div>
+
+<ion-row
+  style="
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    position: sticky;
+    height: 60px;
+    bottom: 0px;
+    padding: 10px;
+  "
+  *ngIf="
+    (isMobile && enableMultiSelect) || (!isMobile && selectedParties.length > 0)
+  "
+>
+  <ion-col size="5">
+    <ion-button
+      style="width: 100%"
+      color="danger"
+      (click)="openDeleteConfirmationModal()"
+      >Delete</ion-button
+    >
+  </ion-col>
+  <ion-col size="5">
+    <ion-button
+      color="light"
+      style="width: 100%"
+      (click)="onMultipleSelectCancel()"
+      >Cancel</ion-button
+    >
+  </ion-col>
+</ion-row>
+<ion-button
+  style="
+    display: flex;
+    position: sticky;
+    height: 60px;
+    align-items: center;
+    bottom: 0px;
+    justify-content: flex-end;
+    padding: 10px;
+  "
+  *ngIf="
+    (!isMobile && selectedParties.length <= 0) ||
+    (isMobile && !enableMultiSelect)
+  "
+  (click)="openAddPartyModal()"
+  type="submit"
+  class="btn btn-primary"
+  >Add {{ selectedTab }}</ion-button
+>

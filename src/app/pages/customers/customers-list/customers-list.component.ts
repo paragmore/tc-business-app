@@ -7,7 +7,7 @@ import {
   SimpleChanges,
   inject,
 } from '@angular/core';
-import { IonicModule, ModalController } from '@ionic/angular';
+import { IonicModule, ModalController, ToastController } from '@ionic/angular';
 import {
   CreditDebitLedgerListComponent,
   LedgerDataI,
@@ -42,7 +42,12 @@ import { AppState } from 'src/app/store/models/state.model';
 import { Store } from '@ngrx/store';
 import { CommonModule, Location } from '@angular/common';
 import { MobilePartiesListHeaderComponent } from '../../parties/mobile-parties-list-header/mobile-parties-list-header.component';
-import { setPartiesList } from 'src/app/store/actions/parties.action';
+import {
+  deletePartyInList,
+  setPartiesList,
+} from 'src/app/store/actions/parties.action';
+import { ConfirmationModalComponent } from 'src/app/core/components/confirmation-modal/confirmation-modal.component';
+import { toastAlert } from 'src/app/core/utils/toastAlert';
 
 @Component({
   selector: 'app-customers-list',
@@ -66,7 +71,8 @@ export class CustomersListComponent implements OnInit, DoCheck {
     private store: Store<AppState>,
     private router: Router,
     private _location: Location,
-    private injector: Injector
+    private injector: Injector,
+    private toastContoller: ToastController
   ) {
     this.createInjector();
   }
@@ -89,9 +95,11 @@ export class CustomersListComponent implements OnInit, DoCheck {
   isMobile = false;
   totalBalance: StorePartiesTotalBalanceI | undefined;
   creditDebitSummaryData: CreditDebitSummaryCardInputI | undefined;
-  selectedParties: Array<CustomerI | SupplierI> = [];
+  selectedParties: Array<string> = [];
   partiesInjector!: Injector;
   filters: PartiesFilterByQueryI = {};
+  enableMultiSelect = true;
+
   createInjector = () => {
     this.partiesInjector = Injector.create({
       providers: [
@@ -185,6 +193,19 @@ export class CustomersListComponent implements OnInit, DoCheck {
     changePageSize: this.changePageSize,
     col1Title: 'Name',
     col2Title: 'Amount',
+    onSelectionToggle: (event: any, partyId: string) => {
+      this.onPartySelectionToggle(event, partyId);
+    },
+    onLongPress: () => {
+      this.onLongPress();
+    },
+    selectAllToggle: (event) => {
+      this.selectAllToggle(event);
+    },
+    enableMultiSelect: this.enableMultiSelect,
+    isSelected: (id) => {
+      return this.isPartySelected(id);
+    },
   };
   ngOnInit() {
     this.currentPartyId = this.activatedRoute.snapshot.paramMap.get(
@@ -201,7 +222,10 @@ export class CustomersListComponent implements OnInit, DoCheck {
       }
     });
     this.screenState$ = this.store.select((store) => store.screen);
-    this.screenState$.subscribe((screen) => (this.isMobile = screen.isMobile));
+    this.screenState$.subscribe((screen) => {
+      this.isMobile = screen.isMobile;
+      this.enableMultiSelect = !this.isMobile;
+    });
     this.currentStoreInfoService.getCurrentStoreInfo().subscribe((response) => {
       this.currentStoreInfo = response;
       this.loadCustomers();
@@ -226,6 +250,19 @@ export class CustomersListComponent implements OnInit, DoCheck {
       changePageSize: this.changePageSize,
       col1Title: 'Name',
       col2Title: 'Amount',
+      onSelectionToggle: (event: any, partyId: string) => {
+        this.onPartySelectionToggle(event, partyId);
+      },
+      onLongPress: () => {
+        this.onLongPress();
+      },
+      selectAllToggle: (event) => {
+        this.selectAllToggle(event);
+      },
+      enableMultiSelect: this.enableMultiSelect,
+      isSelected: (id) => {
+        return this.isPartySelected(id);
+      },
     };
   }
   onViewReportsClicked = () => {};
@@ -235,6 +272,75 @@ export class CustomersListComponent implements OnInit, DoCheck {
     this.router.navigate([`party/${customerId}`], {
       queryParams: { type: this.selectedTab },
     });
+  };
+
+  deleteParties = (onDeleteSuccessful?: () => {}) => {
+    const partyIds = this.selectedParties;
+    const storeId = this.currentStoreInfo?._id;
+    if (!storeId) {
+      return;
+    }
+    return this.partiesService
+      .deleteStoreParties(storeId, this.party, partyIds)
+      .subscribe({
+        next: (response) => {
+          //@ts-ignore
+          console.log(response?.body);
+          if (onDeleteSuccessful) {
+            onDeleteSuccessful();
+            this.selectedParties.map((partyId) =>
+              this.store.dispatch(deletePartyInList({ party: partyId }))
+            );
+            this.selectedParties = [];
+          }
+          toastAlert(this.toastContoller, 'Parties deleted successfully');
+        },
+        error: (error) => {},
+        complete: () => {},
+      });
+  };
+
+  async openDeleteConfirmationModal() {
+    const modal = await this.modalController.create({
+      component: ConfirmationModalComponent,
+      componentProps: {
+        confirmationModalInput: {
+          headerTitle: 'Delete parties',
+          body: {
+            title: 'Are you sure?',
+            icon: {
+              name: 'close-circle-outline',
+              class: 'danger',
+            },
+            subText:
+              'Do you really want to delete these parties? This process cannot be undone',
+          },
+          ctaButton: {
+            text: 'Delete',
+            class: 'danger',
+            onClick: () => {
+              console.log('confirm clicked');
+              this.deleteParties(() => modal.dismiss());
+            },
+          },
+        },
+      },
+      backdropDismiss: true,
+      cssClass: 'login-modal',
+    });
+
+    modal.onDidDismiss().then((event) => {
+      if (event && event.data) {
+        console.log('Modal dismissed with data:', event.data);
+      }
+    });
+
+    modal.onDidDismiss().then((modalData) => {});
+    return await modal.present();
+  }
+  onLongPress = () => {
+    console.log('long');
+    this.enableMultiSelect = true;
   };
 
   openPartyDetails = (customerId: string) => {
@@ -255,25 +361,25 @@ export class CustomersListComponent implements OnInit, DoCheck {
     this.openPartyDetailsPage(ledger.id);
   };
 
-  onPartySelectionToggle(event: any, product: CustomerI | SupplierI) {
+  onPartySelectionToggle = (event: any, partyId: string) => {
     if (event.detail.checked) {
-      this.selectedParties.push(product);
+      this.selectedParties.push(partyId);
     }
     if (event.detail.checked === false) {
       const deleteIndex = this.selectedParties.findIndex(
-        (prod) => prod._id === product._id
+        (selectedPartyId) => selectedPartyId === partyId
       );
       this.selectedParties.splice(deleteIndex, 1);
     }
     console.log(this.selectedParties);
-  }
-  selectAllToggle(event: any) {
+  };
+  selectAllToggle = (event: any) => {
     if (event.detail.checked) {
       const selected = this.parties.map((resp) => {
         if ('customer' in resp) {
-          return resp.customer;
+          return resp.customer._id;
         } else {
-          return resp;
+          return resp._id;
         }
       });
       if (selected) {
@@ -283,7 +389,7 @@ export class CustomersListComponent implements OnInit, DoCheck {
     if (event.detail.checked === false) {
       this.selectedParties = [];
     }
-  }
+  };
 
   onMultipleSelectCancel() {
     this.selectedParties = [];
@@ -379,6 +485,12 @@ export class CustomersListComponent implements OnInit, DoCheck {
       }
     });
   }
+
+  isPartySelected = (partyId: string) => {
+    return !!this.selectedParties.find(
+      (selectedPartyId) => selectedPartyId === partyId
+    );
+  };
 
   loadCustomers(onLoadingFinished?: () => void, isReload?: boolean) {
     if (isReload) {
