@@ -35,7 +35,7 @@ import { OnboardingModalComponent } from './core/components/onboarding-modal/onb
 export class AppComponent {
   public appPages = [
     { title: 'Home', url: '/home', icon: 'home' },
-    { title: 'Transactions', url: '/transactions', icon: 'cash' },
+    { title: 'Transactions', url: '/transactions', icon: 'receipt' },
     { title: 'Items', url: '/items', icon: 'pricetags' },
     { title: 'Parties', url: '/parties', icon: 'people' },
     { title: 'Collections', url: '/folder/trash', icon: 'trash' },
