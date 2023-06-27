@@ -6,7 +6,10 @@
           style="display: flex; align-items: center"
           [size]="(screenState$ | async)?.isMobile ? 9 : 8"
         >
-          <ion-checkbox></ion-checkbox>
+          <ion-checkbox
+            (ionChange)="ledgerData.selectAllToggle($event)"
+            *ngIf="ledgerData.enableMultiSelect"
+          ></ion-checkbox>
 
           <ion-button fill="clear" [disabled]="ledgerData.isLoading">
             <p color="primary">{{ ledgerData.col1Title }}</p>
@@ -132,7 +135,13 @@
                     flex-wrap: nowrap;
                   "
                 >
-                  <ion-checkbox></ion-checkbox>
+                  <ion-checkbox
+                    [checked]="ledgerData.isSelected(ledger.id)"
+                    (ionChange)="
+                      ledgerData.onSelectionToggle($event, ledger.id)
+                    "
+                    *ngIf="ledgerData.enableMultiSelect"
+                  ></ion-checkbox>
 
                   <div
                     style="
@@ -180,7 +189,7 @@
                   <div style="display: flex; flex-direction: column">
                     <p
                       [class]="ledger.amount.color"
-                      class="title3"
+                      class="bodyPrimary"
                       style="overflow-wrap: anywhere"
                     >
                       ₹ {{ ledger.amount.text }}
