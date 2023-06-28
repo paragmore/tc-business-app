@@ -6,6 +6,6 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class HyphenPipe implements PipeTransform {
   transform(value: any): any {
-    return value ? value : '-';
+    return value !== null && value !== undefined && value !== '' ? value : '-';
   }
 }
