@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, HostListener, Input, OnInit } from '@angular/core';
 import {
   CheckboxCustomEvent,
   IonicModule,
@@ -9,8 +9,11 @@ import {
 import { CategorySelectionModalComponent } from '../category-selection-modal/category-selection-modal.component';
 import {
   CategoryI,
+  CostOfGoodsSoldAccountTypeEnum,
   CreateProductRequestI,
   DiscountI,
+  ExpenseAccountTypeEnum,
+  IncomeAccountTypeEnum,
   ItemTypeEnum,
   ProductI,
   ProductsService,
@@ -91,6 +94,11 @@ export class ItemCreationComponent implements OnInit {
   isLoading = false;
   dataChanges: [] = [];
   asPerMargin = false;
+  accountsList = {
+    income: Object.values(IncomeAccountTypeEnum),
+    expense: Object.values(ExpenseAccountTypeEnum),
+    cogs: Object.values(CostOfGoodsSoldAccountTypeEnum),
+  };
   constructor(
     private modalController: ModalController,
     private formBuilder: FormBuilder,
@@ -109,6 +117,7 @@ export class ItemCreationComponent implements OnInit {
       sellsPrice: ['', Validators.required],
       purchasePrice: [''],
       taxIncluded: [true, Validators.required],
+      cess: [''],
       asPerMargin: [false, Validators.required],
       hsnCode: [''],
       lowStock: [''],
@@ -144,6 +153,13 @@ export class ItemCreationComponent implements OnInit {
       ...this.editProduct,
       unit: this.editProduct?.unit.name,
       category: categoriesIdStr,
+      gstPercentage: this.editProduct?.gstPercentage
+        ? this.editProduct?.gstPercentage
+        : this.gstPercentage
+        ? this.gstPercentage
+        : this.type === ItemTypeEnum.SERVICE
+        ? '18'
+        : '',
     });
     if (this.editProduct?.category) {
       this.selectedCategories = this.editProduct?.category;

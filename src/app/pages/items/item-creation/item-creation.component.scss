@@ -77,3 +77,7 @@ ion-modal .ion-page .ion-content {
   right: 5px;
   z-index: 1;
 }
+
+ion-popover {
+  --min-height: 250px;
+}

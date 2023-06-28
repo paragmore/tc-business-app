@@ -155,15 +155,48 @@
               </ion-col>
               <ion-col size-md="6" size-xs="12">
                 <ion-input
-                  (click)="openCreateCategoryModal()"
-                  label="{{ type }} Category"
+                  [label]="
+                    type === ItemTypeEnum.PRODUCT
+                      ? 'HSN'
+                      : type === ItemTypeEnum.SERVICE
+                      ? 'SAC'
+                      : ''
+                  "
                   label-placement="stacked"
                   fill="outline"
-                  [value]="selectedCategoriesString"
+                  (click)="openHSNCodeModal($event)"
+                  formControlName="hsnCode"
                 ></ion-input>
               </ion-col>
             </ion-row>
-            <br /><br />
+            <ion-grid>
+              <ion-row>
+                <ion-toggle formControlName="taxIncluded" [checked]="true"
+                  ><p class="bodySecondary">Tax included</p></ion-toggle
+                ><br /><br />
+              </ion-row>
+              <ion-row>
+                <ion-col size-md="6" size-xs="12">
+                  <ion-input
+                    label="Tax %"
+                    label-placement="stacked"
+                    fill="outline"
+                    (click)="showTaxPopover($event)"
+                    [value]="gstPercentage"
+                    formControlName="gstPercentage"
+                  ></ion-input>
+                </ion-col>
+                <ion-col size-md="6" size-xs="12">
+                  <ion-input
+                    [label]="'Cess %'"
+                    label-placement="stacked"
+                    fill="outline"
+                    type="number"
+                    formControlName="cess"
+                  ></ion-input>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
             <ion-row>
               <ion-toggle
                 (ionChange)="onSameUnitsToggled($event)"
@@ -273,50 +306,56 @@
               </ion-col>
             </ion-row>
           </ion-grid>
-          <ion-grid>
-            <ion-row>
-              <ion-toggle formControlName="taxIncluded" [checked]="true"
-                ><p class="bodySecondary">Tax included</p></ion-toggle
-              ><br /><br />
-            </ion-row>
-            <ion-row>
-              <ion-col size-md="6" size-xs="12">
-                <ion-input
-                  label="Tax %"
-                  label-placement="stacked"
-                  fill="outline"
-                  (click)="showTaxPopover($event)"
-                  [value]="gstPercentage"
-                  formControlName="gstPercentage"
-                ></ion-input>
-              </ion-col>
-              <ion-col size-md="6" size-xs="12">
-                <ion-input
-                  [label]="
-                    type === ItemTypeEnum.PRODUCT
-                      ? 'HSN'
-                      : type === ItemTypeEnum.SERVICE
-                      ? 'SAC'
-                      : ''
-                  "
-                  label-placement="stacked"
-                  fill="outline"
-                  (click)="openHSNCodeModal($event)"
-                  formControlName="hsnCode"
-                ></ion-input>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
         </div>
       </ion-accordion>
-      <ion-accordion *ngIf="type === ItemTypeEnum.PRODUCT" value="second">
+      <ion-accordion value="fourth">
         <ion-item slot="header">
           <p style="color: var(--ion-color-primary)" class="titleRegular">
-            Inventory
+            Variants
+          </p>
+        </ion-item>
+        <div class="ion-padding" slot="content">
+          <ion-button fill="outline" (click)="openVariantCreationModal()">
+            <ion-icon name="add"></ion-icon> Add new Variant
+          </ion-button>
+          <app-variants-list [variants]="variants"></app-variants-list>
+        </div>
+      </ion-accordion>
+      <ion-accordion value="third">
+        <ion-item slot="header">
+          <p style="color: var(--ion-color-primary)" class="titleRegular">
+            Discounts
+          </p>
+        </ion-item>
+
+        <div class="ion-padding" slot="content">
+          <ion-button fill="outline" (click)="openDiscountsModal()">
+            <ion-icon name="add"></ion-icon> Add Discount
+          </ion-button>
+
+          <app-discounts-list [discounts]="discounts"> </app-discounts-list>
+        </div>
+      </ion-accordion>
+
+      <ion-accordion value="second">
+        <ion-item slot="header">
+          <p style="color: var(--ion-color-primary)" class="titleRegular">
+            Inventory & account
           </p>
         </ion-item>
         <div class="ion-padding" slot="content">
           <ion-grid>
+            <ion-row>
+              <ion-col size-md="6" size-xs="12">
+                <ion-input
+                  (click)="openCreateCategoryModal()"
+                  label="{{ type }} Category"
+                  label-placement="stacked"
+                  fill="outline"
+                  [value]="selectedCategoriesString"
+                ></ion-input>
+              </ion-col>
+            </ion-row>
             <ion-row *ngIf="type === ItemTypeEnum.PRODUCT">
               <ion-col size-md="6" size-xs="12">
                 <ion-input
@@ -337,36 +376,89 @@
                 ></ion-input>
               </ion-col>
             </ion-row>
+            <ion-row>
+              <ion-col size-md="6" size-xs="12">
+                <ion-input
+                  id="sales-account-trigger"
+                  label="Sales Account"
+                  label-placement="stacked"
+                  fill="outline"
+                  formControlName="lowStock"
+                  type="number"
+                ></ion-input>
+              </ion-col>
+              <ion-col size-md="6" size-xs="12">
+                <ion-input
+                  id="purchase-account-trigger"
+                  label="Purchase Account"
+                  label-placement="stacked"
+                  fill="outline"
+                  formControlName="lowStock"
+                  type="number"
+                ></ion-input>
+              </ion-col>
+            </ion-row>
+
+            <ion-popover
+              class="custom-popover"
+              trigger="sales-account-trigger"
+              triggerAction="click"
+              style="--height: 350px"
+            >
+              <ng-template>
+                <ion-content style="height: 250px" class="ion-padding">
+                  <ion-list
+                    style="max-height: 350px; overflow-y: scroll"
+                    class="scrollbar"
+                    id="style-1"
+                  >
+                    <ion-item
+                      [button]="true"
+                      *ngFor="let account of accountsList.income"
+                    >
+                      <p class="bodyRegularMobile">
+                        {{ account }}
+                      </p>
+                    </ion-item>
+                  </ion-list>
+                </ion-content>
+              </ng-template>
+            </ion-popover>
+
+            <ion-popover
+              class="custom-popover"
+              trigger="purchase-account-trigger"
+              triggerAction="click"
+              style="--height: 350px"
+            >
+              <ng-template>
+                <ion-content>
+                  <ion-list
+                    style="max-height: 350px; overflow-y: scroll"
+                    class="scrollbar"
+                    id="style-1"
+                  >
+                    <ion-item
+                      [button]="true"
+                      *ngFor="let account of accountsList.expense"
+                    >
+                      <p class="bodyRegularMobile">
+                        {{ account }}
+                      </p>
+                    </ion-item>
+                    <ion-item
+                      [button]="true"
+                      *ngFor="let account of accountsList.cogs"
+                    >
+                      <p class="bodyRegularMobile">
+                        {{ account }}
+                      </p>
+                    </ion-item>
+                  </ion-list>
+                </ion-content>
+              </ng-template>
+            </ion-popover>
           </ion-grid>
-        </div>
-      </ion-accordion>
-
-      <ion-accordion value="third">
-        <ion-item slot="header">
-          <p style="color: var(--ion-color-primary)" class="titleRegular">
-            Discounts
-          </p>
-        </ion-item>
-
-        <div class="ion-padding" slot="content">
-          <ion-button fill="outline" (click)="openDiscountsModal()">
-            <ion-icon name="add"></ion-icon> Add Discount
-          </ion-button>
-
-          <app-discounts-list [discounts]="discounts"> </app-discounts-list>
-        </div>
-      </ion-accordion>
-      <ion-accordion value="fourth">
-        <ion-item slot="header">
-          <p style="color: var(--ion-color-primary)" class="titleRegular">
-            Variants
-          </p>
-        </ion-item>
-        <div class="ion-padding" slot="content">
-          <ion-button fill="outline" (click)="openVariantCreationModal()">
-            <ion-icon name="add"></ion-icon> Add new Variant
-          </ion-button>
-          <app-variants-list [variants]="variants"></app-variants-list>
         </div>
       </ion-accordion>
     </ion-accordion-group>
