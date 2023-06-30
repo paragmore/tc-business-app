@@ -234,6 +234,8 @@ export interface ProductI {
   isService?: boolean;
   margin?: number;
   asPerMargin: boolean;
+  cess?: number;
+  account: ProductsAccountInterfaceI;
 }
 
 export interface InventoryProductI {
@@ -284,6 +286,8 @@ export interface UpdateProductRequestI {
   inventoryProducts?: InventoryProductI[];
   margin?: number;
   asPerMargin: boolean;
+  cess?: number;
+  account: ProductsAccountInterfaceI;
 }
 
 export interface CreateProductRequestI {
@@ -310,8 +314,14 @@ export interface CreateProductRequestI {
   isService: boolean;
   margin?: number;
   asPerMargin: boolean;
+  cess?: number;
+  account: ProductsAccountInterfaceI;
 }
 
+export interface ProductsAccountInterfaceI {
+  sales: string;
+  purchase: string;
+}
 export interface BulkProductsUploadRequestI {
   storeId: string;
   products: BulkProductUploadSingleRequestI[];

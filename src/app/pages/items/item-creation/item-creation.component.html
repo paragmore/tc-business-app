@@ -181,7 +181,7 @@
                     label="Tax %"
                     label-placement="stacked"
                     fill="outline"
-                    (click)="showTaxPopover($event)"
+                    (click)="openGSTTaxPopover($event)"
                     [value]="gstPercentage"
                     formControlName="gstPercentage"
                   ></ion-input>
@@ -191,7 +191,8 @@
                     [label]="'Cess %'"
                     label-placement="stacked"
                     fill="outline"
-                    type="number"
+                    (click)="openCessTaxPopover($event)"
+                    [value]="cess"
                     formControlName="cess"
                   ></ion-input>
                 </ion-col>
@@ -376,15 +377,14 @@
                 ></ion-input>
               </ion-col>
             </ion-row>
-            <ion-row>
+            <ion-row formGroupName="account">
               <ion-col size-md="6" size-xs="12">
                 <ion-input
                   id="sales-account-trigger"
                   label="Sales Account"
                   label-placement="stacked"
                   fill="outline"
-                  formControlName="lowStock"
-                  type="number"
+                  formControlName="sales"
                 ></ion-input>
               </ion-col>
               <ion-col size-md="6" size-xs="12">
@@ -393,8 +393,7 @@
                   label="Purchase Account"
                   label-placement="stacked"
                   fill="outline"
-                  formControlName="lowStock"
-                  type="number"
+                  formControlName="purchase"
                 ></ion-input>
               </ion-col>
             </ion-row>
@@ -404,6 +403,7 @@
               trigger="sales-account-trigger"
               triggerAction="click"
               style="--height: 350px"
+              #popoverRef
             >
               <ng-template>
                 <ion-content style="height: 250px" class="ion-padding">
@@ -415,6 +415,9 @@
                     <ion-item
                       [button]="true"
                       *ngFor="let account of accountsList.income"
+                      (click)="
+                        onSalesAccountChange(account); popoverRef.dismiss()
+                      "
                     >
                       <p class="bodyRegularMobile">
                         {{ account }}
@@ -430,6 +433,7 @@
               trigger="purchase-account-trigger"
               triggerAction="click"
               style="--height: 350px"
+              #popoverRef
             >
               <ng-template>
                 <ion-content>
@@ -441,6 +445,9 @@
                     <ion-item
                       [button]="true"
                       *ngFor="let account of accountsList.expense"
+                      (click)="
+                        onPurchaseAccountChange(account); popoverRef.dismiss()
+                      "
                     >
                       <p class="bodyRegularMobile">
                         {{ account }}
@@ -449,6 +456,9 @@
                     <ion-item
                       [button]="true"
                       *ngFor="let account of accountsList.cogs"
+                      (click)="
+                        onPurchaseAccountChange(account); popoverRef.dismiss()
+                      "
                     >
                       <p class="bodyRegularMobile">
                         {{ account }}

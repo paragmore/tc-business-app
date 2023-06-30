@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   IonicModule,
@@ -16,7 +16,10 @@ import { DialogHeaderComponent } from 'src/app/core/components/dialog-header/dia
   imports: [IonicModule, CommonModule, FormsModule, DialogHeaderComponent],
 })
 export class TaxPopoverComponent implements OnInit {
-  itemList: string[] = [
+  @Input() taxPopoverInput!: TaxPopoverComponentInputI;
+  itemList: string[] = [];
+
+  gstList: string[] = [
     'GST @ 0%',
     'GST @ 0.1%',
     'GST @ 0.25%',
@@ -28,11 +31,28 @@ export class TaxPopoverComponent implements OnInit {
     'GST @ 18%',
     'GST @ 28%',
   ];
+
+  cessList: string[] = [
+    'Cess @ 0%',
+    'Cess @ 0.5%',
+    'Cess @ 1%',
+    'Cess @ 3%',
+    'Cess @ 15%',
+    'Cess @ 20%',
+    'Cess @ 40%',
+  ];
   newItem: string | undefined;
 
   constructor(public popoverController: ModalController) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (this.taxPopoverInput.type === TaxTypeEnum.GST) {
+      this.itemList = this.gstList;
+    }
+    if (this.taxPopoverInput.type === TaxTypeEnum.CESS) {
+      this.itemList = this.cessList;
+    }
+  }
 
   onClosePopover = () => {
     this.popoverController.dismiss();
@@ -45,8 +65,22 @@ export class TaxPopoverComponent implements OnInit {
     if (this.newItem) {
       this.itemList.push(this.newItem);
       this.popoverController.dismiss({
-        selectedValue: `GST @ ${this.newItem} %`,
+        selectedValue:
+          this.taxPopoverInput.type === TaxTypeEnum.GST
+            ? `GST @ ${this.newItem} %`
+            : this.taxPopoverInput.type === TaxTypeEnum.CESS
+            ? `Cess @ ${this.newItem} %`
+            : ``,
       });
     }
   }
+}
+
+export enum TaxTypeEnum {
+  CESS = 'cess',
+  GST = 'GST',
+}
+
+export interface TaxPopoverComponentInputI {
+  type: TaxTypeEnum;
 }

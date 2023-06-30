@@ -16,6 +16,7 @@ import {
   IncomeAccountTypeEnum,
   ItemTypeEnum,
   ProductI,
+  ProductsAccountInterfaceI,
   ProductsService,
   UpdateProductRequestI,
   VariantI,
@@ -29,7 +30,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { TaxPopoverComponent } from '../tax-popover/tax-popover.component';
+import {
+  TaxPopoverComponent,
+  TaxTypeEnum,
+} from '../tax-popover/tax-popover.component';
 import { ScreenModel } from 'src/app/store/models/screen.models';
 import { Observable } from 'rxjs';
 import { AppState } from 'src/app/store/models/state.model';
@@ -82,6 +86,7 @@ export class ItemCreationComponent implements OnInit {
   sameUnits: boolean = true;
   isMobile: boolean = false;
   gstPercentage!: string;
+  cess!: string;
   hsnCode!: string;
   currentStoreInfo: StoreInfoModel | undefined;
   taxPopover: any;
@@ -117,12 +122,13 @@ export class ItemCreationComponent implements OnInit {
       sellsPrice: ['', Validators.required],
       purchasePrice: [''],
       taxIncluded: [true, Validators.required],
-      cess: [''],
       asPerMargin: [false, Validators.required],
       hsnCode: [''],
       lowStock: [''],
       gstPercentage: [''],
+      cess: [''],
       margin: [''],
+      account: this.createAccountFormGroup(),
     });
   }
   ngOnInit() {
@@ -160,6 +166,13 @@ export class ItemCreationComponent implements OnInit {
         : this.type === ItemTypeEnum.SERVICE
         ? '18'
         : '',
+      cess: this.editProduct?.cess
+        ? this.editProduct?.cess
+        : this.cess
+        ? this.cess
+        : this.type === ItemTypeEnum.SERVICE
+        ? ''
+        : '',
     });
     if (this.editProduct?.category) {
       this.selectedCategories = this.editProduct?.category;
@@ -173,6 +186,36 @@ export class ItemCreationComponent implements OnInit {
     if (this.editProduct?.discounts) {
       this.discounts = this.editProduct?.discounts;
     }
+  }
+
+  createAccountFormGroup() {
+    return this.formBuilder.group({
+      sales: [IncomeAccountTypeEnum.SALES, Validators.required],
+      purchase: [
+        CostOfGoodsSoldAccountTypeEnum.COST_OF_GOODS_SOLD,
+        Validators.required,
+      ],
+    });
+  }
+
+  onSalesAccountChange(accountType: IncomeAccountTypeEnum) {
+    this.productForm.patchValue({
+      account: {
+        ...this.productForm.value.account,
+        sales: accountType,
+      },
+    });
+  }
+
+  onPurchaseAccountChange(
+    accountType: ExpenseAccountTypeEnum | CostOfGoodsSoldAccountTypeEnum
+  ) {
+    this.productForm.patchValue({
+      account: {
+        ...this.productForm.value.account,
+        purchase: accountType,
+      },
+    });
   }
 
   resetForm() {
@@ -330,12 +373,21 @@ export class ItemCreationComponent implements OnInit {
     this.uploadProductImages(imagesArray);
   }
 
-  async showTaxPopover(event: any) {
+  async openGSTTaxPopover(event: any) {
+    this.showTaxPopover(event, TaxTypeEnum.GST);
+  }
+
+  async openCessTaxPopover(event: any) {
+    this.showTaxPopover(event, TaxTypeEnum.CESS);
+  }
+
+  async showTaxPopover(event: any, type: TaxTypeEnum) {
     console.log('s', this.isMobile);
     const taxPopoverOptions = {
       component: TaxPopoverComponent,
       componentProps: {
         selectedValue: this.gstPercentage,
+        taxPopoverInput: { type },
       },
       translucent: true,
       event: event,
@@ -349,8 +401,14 @@ export class ItemCreationComponent implements OnInit {
 
     const { data } = await this.taxPopover.onDidDismiss();
     if (data && data.selectedValue) {
-      this.gstPercentage = data.selectedValue;
-      this.productForm.patchValue({ gstPercentage: this.gstPercentage });
+      if (type === TaxTypeEnum.GST) {
+        this.gstPercentage = data.selectedValue;
+        this.productForm.patchValue({ gstPercentage: this.gstPercentage });
+      }
+      if (type === TaxTypeEnum.CESS) {
+        this.cess = data.selectedValue;
+        this.productForm.patchValue({ cess: this.cess });
+      }
     }
   }
 
@@ -458,11 +516,18 @@ export class ItemCreationComponent implements OnInit {
         ? productFormValue?.category?.split(',')
         : productFormValue?.category
       : [];
-    const match =
+
+    const taxRegex = /(\d+(\.\d+)?)/g;
+    const gstMatch =
       typeof productFormValue.gstPercentage === 'string'
-        ? productFormValue.gstPercentage.match(/(\d+(\.\d+)?)/g)
+        ? productFormValue.gstPercentage.match(taxRegex)
         : undefined;
-    const gstPercent = match ? parseFloat(match[0]) : undefined;
+    const cessMatch =
+      typeof productFormValue.cess === 'string'
+        ? productFormValue.cess.match(taxRegex)
+        : undefined;
+    const gstPercent = gstMatch ? parseFloat(gstMatch[0]) : undefined;
+    const cess = cessMatch ? parseFloat(cessMatch[0]) : undefined;
     if (this.editProduct?._id) {
       const updateProductPayload: UpdateProductRequestI = {
         productId: this.editProduct?._id,
@@ -471,6 +536,7 @@ export class ItemCreationComponent implements OnInit {
         variants: this.variants,
         discounts: this.discounts,
         gstPercentage: gstPercent,
+        cess: cess,
         images: this.productImages
           .filter((image) => image.uploadStatus === UploadStatusEnum.SUCCESSFUL)
           .map((img) => img.imageUrl),
@@ -488,6 +554,7 @@ export class ItemCreationComponent implements OnInit {
         variants: this.variants,
         discounts: this.discounts,
         gstPercentage: gstPercent,
+        cess: cess,
         images: this.productImages
           .filter((image) => image.uploadStatus === UploadStatusEnum.SUCCESSFUL)
           .map((img) => img.imageUrl),
@@ -632,6 +699,8 @@ interface ProductFormValueI {
   lowStock: number;
   gstPercentage: string;
   asPerMargin: boolean;
+  cess: string;
+  account: ProductsAccountInterfaceI;
 }
 
 export enum UploadStatusEnum {
