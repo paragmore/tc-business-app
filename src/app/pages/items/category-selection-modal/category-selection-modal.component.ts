@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
-import { IonicModule, ModalController } from '@ionic/angular';
+import { IonicModule, ModalController, ToastController } from '@ionic/angular';
 import { CategoryCreationModalComponent } from '../category-creation-modal/category-creation-modal.component';
 import { DialogHeaderComponent } from 'src/app/core/components/dialog-header/dialog-header.component';
 import {
@@ -9,6 +9,8 @@ import {
 } from 'src/app/core/services/products/products.service';
 import { CurrentStoreInfoService } from 'src/app/core/services/currentStore/current-store-info.service';
 import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
+import { toastAlert } from 'src/app/core/utils/toastAlert';
+import { ConfirmationModalComponent } from 'src/app/core/components/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-category-selection-modal',
@@ -25,14 +27,17 @@ export class CategorySelectionModalComponent implements OnInit {
   currentStoreInfo: StoreInfoModel | undefined;
 
   @Input() selectedCategories!: CategoryI[];
+  modalSelectedCategories: CategoryI[] = [];
   canDismiss = false;
 
   presentingElement: Element | null = null;
+  isDeleteMode = false;
 
   constructor(
     private modalController: ModalController,
     private productsService: ProductsService,
-    private currentStoreInfoService: CurrentStoreInfoService
+    private currentStoreInfoService: CurrentStoreInfoService,
+    private toastController: ToastController
   ) {}
   ngOnInit() {
     this.presentingElement = document.querySelector('.ion-page');
@@ -40,6 +45,7 @@ export class CategorySelectionModalComponent implements OnInit {
       this.currentStoreInfo = response;
     });
     this.loadCategories();
+    this.modalSelectedCategories = [...this.selectedCategories];
   }
 
   loadCategories() {
@@ -84,14 +90,17 @@ export class CategorySelectionModalComponent implements OnInit {
   }
 
   onCategoryChange(category: CategoryI, event: any) {
+    if (!this.isDeleteMode) {
+      this.modalSelectedCategories = [];
+    }
     if (event.detail.checked) {
-      this.selectedCategories.push(category);
+      this.modalSelectedCategories.push(category);
     } else {
-      const index = this.selectedCategories.findIndex(
+      const index = this.modalSelectedCategories.findIndex(
         (c) => c.name === category.name
       );
       if (index !== -1) {
-        this.selectedCategories.splice(index, 1);
+        this.modalSelectedCategories.splice(index, 1);
       }
     }
   }
@@ -100,7 +109,93 @@ export class CategorySelectionModalComponent implements OnInit {
     if (!this.categories) {
       return;
     }
+    this.selectedCategories = this.modalSelectedCategories;
     this.onCloseCategorySelectionModal({ selected: this.selectedCategories });
+  }
+
+  onDeleteModeToggle(isDeleteMode: boolean) {
+    this.isDeleteMode = isDeleteMode;
+    this.selectedCategories = [];
+    this.modalSelectedCategories = [];
+  }
+
+  onDeleteCategories(onDeleteSuccessful?: () => {}) {
+    if (!this.categories) {
+      return;
+    }
+    const categoryIds = this.modalSelectedCategories.map(
+      (category) => category._id
+    );
+    const storeId = this.currentStoreInfo?._id;
+    if (!storeId) {
+      return;
+    }
+    return this.productsService
+      .deleteStorecategory(storeId, categoryIds)
+      .subscribe({
+        next: (response) => {
+          //@ts-ignore
+          console.log(response?.body);
+          this.modalSelectedCategories.map((deletedCategory) =>
+            this.deleteItemInListFn(this.categories, deletedCategory)
+          );
+          if (onDeleteSuccessful) {
+            onDeleteSuccessful();
+          }
+          this.modalSelectedCategories = [];
+          toastAlert(this.toastController, 'Categories deleted successfully');
+        },
+        error: (error) => {},
+        complete: () => {},
+      });
+  }
+
+  deleteItemInListFn(itemsList: Array<CategoryI>, item: CategoryI) {
+    const deleteIndex = itemsList.findIndex(
+      (listItem) => listItem._id === item._id
+    );
+    if (deleteIndex) {
+      itemsList.splice(deleteIndex, 1);
+    }
+    return itemsList;
+  }
+
+  async openDeleteConfirmationModal() {
+    const modal = await this.modalController.create({
+      component: ConfirmationModalComponent,
+      componentProps: {
+        confirmationModalInput: {
+          headerTitle: 'Delete categories',
+          body: {
+            title: 'Are you sure?',
+            icon: {
+              name: 'close-circle-outline',
+              class: 'danger',
+            },
+            subText:
+              'Do you really want to delete these categories? This process cannot be undone',
+          },
+          ctaButton: {
+            text: 'Delete',
+            class: 'danger',
+            onClick: () => {
+              console.log('confirm clicked');
+              this.onDeleteCategories(() => modal.dismiss());
+            },
+          },
+        },
+      },
+      backdropDismiss: true,
+      cssClass: 'login-modal',
+    });
+    modal.onDidDismiss().then((event) => {
+      if (event && event.data) {
+        console.log('Modal dismissed with data:', event.data);
+      }
+    });
+
+    modal.onDidDismiss().then((modalData) => {});
+    return await modal.present();
   }
 
   onCloseCategorySelectionModal = (data?: { selected: CategoryI[] }) => {
@@ -108,7 +203,7 @@ export class CategorySelectionModalComponent implements OnInit {
   };
 
   isCategorySelected(category: CategoryI): boolean {
-    return this.selectedCategories.some((c) => c.name === category.name);
+    return this.modalSelectedCategories.some((c) => c.name === category.name);
   }
 
   addCategory(category: CategoryI) {

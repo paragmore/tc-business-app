@@ -128,6 +128,16 @@ export class ProductsService {
     return this.httpClient.post(url, body, { headers: headers });
   }
 
+  deleteStorecategory(storeId: string, categoryIds: string[]) {
+    const url = `${this.baseUrl}/products/delete/category`;
+    const headers = getAuthHeaders();
+    const body = {
+      storeId,
+      categoryIds,
+    };
+    return this.httpClient.post(url, body, { headers: headers });
+  }
+
   getHSNCodes(type: ItemTypeEnum, options?: GetHSNCodesQueryParamsI) {
     const queryParams = new URLSearchParams();
     if (options?.search) {

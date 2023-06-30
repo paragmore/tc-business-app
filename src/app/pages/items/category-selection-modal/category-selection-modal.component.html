@@ -35,15 +35,64 @@
       </ion-grid>
     </ion-row>
   </ion-grid>
-  <ion-button
-    (click)="openCreateCategoryModal()"
-    style="width: 100%"
-    fill="outline"
-  >
-    <ion-icon slot="start" name="add"></ion-icon> Add new category
-  </ion-button>
-
-  <ion-button (click)="onSelectCategories()" style="width: 100%">
-    Select
-  </ion-button>
+  <div *ngIf="!isDeleteMode">
+    <ion-row style="width: 100%">
+      <ion-col>
+        <ion-button
+          style="width: 100%"
+          (click)="onSelectCategories()"
+          style="width: 100%"
+          [disabled]="modalSelectedCategories.length <= 0"
+        >
+          Select
+        </ion-button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-button
+          (click)="openCreateCategoryModal()"
+          style="width: 100%"
+          fill="outline"
+        >
+          <ion-icon slot="start" name="add"></ion-icon> Add new category
+        </ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button
+          (click)="onDeleteModeToggle(true)"
+          style="width: 100%"
+          fill="outline"
+          color="danger"
+        >
+          <ion-icon slot="start" name="trash"></ion-icon> Delete categories
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </div>
+  <div style="width: 100%" *ngIf="isDeleteMode">
+    <ion-row style="width: 100%">
+      <ion-col>
+        <ion-button
+          style="width: 100%"
+          (click)="onDeleteModeToggle(false)"
+          style="width: 100%"
+          color="light"
+        >
+          Cancel
+        </ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button
+          style="width: 100%"
+          (click)="openDeleteConfirmationModal()"
+          style="width: 100%"
+          color="danger"
+          [disabled]="modalSelectedCategories.length <= 0"
+        >
+          Delete
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </div>
 </div>
