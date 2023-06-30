@@ -19,6 +19,7 @@ import {
   ProductI,
   ProductsAccountInterfaceI,
   ProductsService,
+  TaxPreferenceEnum,
   UpdateProductRequestI,
   VariantI,
 } from 'src/app/core/services/products/products.service';
@@ -103,6 +104,8 @@ export class ItemCreationComponent implements OnInit {
   isLoading = false;
   dataChanges: [] = [];
   asPerMargin = false;
+  taxPreferenceList = Object.values(TaxPreferenceEnum);
+  taxPreference: TaxPreferenceEnum = TaxPreferenceEnum.TAXABLE;
   accountsList = {
     income: Object.values(IncomeAccountTypeEnum),
     expense: Object.values(ExpenseAccountTypeEnum),
@@ -132,6 +135,7 @@ export class ItemCreationComponent implements OnInit {
       gstPercentage: [''],
       cess: [''],
       margin: [''],
+      taxPreference: [TaxPreferenceEnum.TAXABLE],
       account: this.createAccountFormGroup(),
     });
   }
@@ -193,6 +197,11 @@ export class ItemCreationComponent implements OnInit {
     if (this.editProduct?.additionalFields) {
       this.additionalFields = this.editProduct.additionalFields;
     }
+  }
+
+  selectTaxPreference(taxPreference: TaxPreferenceEnum) {
+    this.taxPreference = taxPreference;
+    this.productForm.patchValue({ taxPreference: this.taxPreference });
   }
 
   isAddUpdateProductDisabled() {
@@ -731,6 +740,7 @@ interface ProductFormValueI {
   asPerMargin: boolean;
   cess: string;
   account: ProductsAccountInterfaceI;
+  taxPreference: TaxPreferenceEnum;
 }
 
 export enum UploadStatusEnum {

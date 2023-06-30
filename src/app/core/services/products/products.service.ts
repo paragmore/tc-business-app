@@ -242,6 +242,7 @@ export interface ProductI {
   cess?: number;
   account: ProductsAccountInterfaceI;
   additionalFields?: AdditionalFieldI[];
+  taxPreference: TaxPreferenceEnum;
 }
 
 export interface InventoryProductI {
@@ -295,6 +296,7 @@ export interface UpdateProductRequestI {
   cess?: number;
   account: ProductsAccountInterfaceI;
   additionalFields?: AdditionalFieldI[];
+  taxPreference: TaxPreferenceEnum;
 }
 
 export interface CreateProductRequestI {
@@ -324,6 +326,7 @@ export interface CreateProductRequestI {
   cess?: number;
   account: ProductsAccountInterfaceI;
   additionalFields?: AdditionalFieldI[];
+  taxPreference: TaxPreferenceEnum;
 }
 
 export interface ProductsAccountInterfaceI {
@@ -359,6 +362,7 @@ export interface BulkProductUploadSingleRequestI {
   isService: boolean;
   margin?: number;
   asPerMargin: boolean;
+  taxPreference: TaxPreferenceEnum;
 }
 
 export interface GetProductsQueryParamsI
@@ -434,4 +438,12 @@ export enum ExpenseAccountTypeEnum {
   TRANSPORTATION_EXPENSE = 'Transportation Expense',
   TRAVEL_EXPENSE = 'Travel Expense',
   UNCATEGORIZED = 'Uncategorized',
+}
+
+export enum TaxPreferenceEnum {
+  TAXABLE = 'Taxable',
+  NON_TAXABLE = 'Non-Taxable',
+  NON_GST_SUPPLY = 'Non GST Supply',
+  NIL_RATED = 'Nil Rated',
+  EXEMPT = 'Exempt',
 }

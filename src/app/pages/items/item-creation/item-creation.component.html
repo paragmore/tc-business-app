@@ -176,6 +176,54 @@
                 ><br /><br />
               </ion-row>
               <ion-row>
+                <ion-col>
+                  <ion-input
+                    style="width: 100%"
+                    fill="outline"
+                    id="tax-preference-popover-button"
+                    formControlName="taxPreference"
+                    placeholder="Select Tax Preference Type"
+                    label="Tax Preference Type"
+                    label-placement="stacked"
+                  >
+                  </ion-input>
+                </ion-col>
+                <ion-popover
+                  size="cover"
+                  trigger="tax-preference-popover-button"
+                  [dismissOnSelect]="true"
+                >
+                  <ng-template>
+                    <ion-content>
+                      <ion-list
+                        style="max-height: 350px; overflow-y: scroll"
+                        class="scrollbar"
+                        id="style-1"
+                      >
+                        <ion-item
+                          *ngFor="
+                            let taxPreference of taxPreferenceList;
+                            let i = index
+                          "
+                          [button]="true"
+                          [detail]="false"
+                          (click)="selectTaxPreference(taxPreference)"
+                          ><div
+                            style="
+                              display: flex;
+                              flex-direction: column;
+                              padding: 10px;
+                            "
+                          >
+                            <p>{{ taxPreference }}</p>
+                          </div></ion-item
+                        >
+                      </ion-list>
+                    </ion-content>
+                  </ng-template>
+                </ion-popover>
+              </ion-row>
+              <ion-row>
                 <ion-col size-md="6" size-xs="12">
                   <ion-input
                     label="Tax %"
