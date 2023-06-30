@@ -88,6 +88,7 @@ export interface CreatePartyRequestI {
   type: PartyTypeEnum;
   storeId: string;
   name: string;
+  tradeName?: string;
   phoneNumber: string;
   email?: string;
   balance?: number;
@@ -120,6 +121,7 @@ export interface UpdatePartyRequestI {
   storeId: string;
   phoneNumber: string;
   name?: string;
+  tradeName?: string;
   email?: string;
   balance?: number;
   gstin?: string;
@@ -143,6 +145,7 @@ export interface PartiesFilterByQueryI {
 export interface CustomerI {
   phoneNumber: string;
   name?: string;
+  tradeName?: string;
   email?: string;
   gstin?: string;
   addresses?: Array<AdrressesI>;
@@ -163,6 +166,7 @@ export interface SupplierI {
   phoneNumber: string;
   email?: string;
   name?: string;
+  tradeName?: string;
   balance?: number;
   gstin?: string;
   addresses?: Array<AdrressesI>;
@@ -181,6 +185,7 @@ export interface CustomerStoreInfoI {
   balance?: number;
   email?: string;
   name?: string;
+  tradeName?: string;
   addresses?: Array<AdrressesI>;
   customerId: string;
   gstin?: string;

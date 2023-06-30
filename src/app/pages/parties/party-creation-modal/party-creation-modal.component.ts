@@ -73,6 +73,7 @@ export class PartyCreationModalComponent implements OnInit {
     this.partyForm = this.formBuilder.group({
       gstTypeTitle: ['', Validators.required],
       name: ['', Validators.required],
+      tradeName: [''],
       phoneNumber: [''],
       email: [''],
       balance: [''],
@@ -216,6 +217,7 @@ export class PartyCreationModalComponent implements OnInit {
 
           this.partyForm.patchValue({
             name: this.verifygstinResponse?.lgnm,
+            tradeName: this.verifygstinResponse?.tradeNam,
             address: {
               shipping: {
                 line1: this.verifygstinResponse?.pradr.addr.bnm,
@@ -353,6 +355,7 @@ export class PartyCreationModalComponent implements OnInit {
 
 export interface PartyFormValueI {
   name: string;
+  tradeName?: string;
   phoneNumber: string;
   email?: string;
   balance?: number;

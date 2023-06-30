@@ -107,6 +107,17 @@
             <ion-row>
               <ion-col>
                 <ion-input
+                  [label]="partyText + ' Trade Name'"
+                  label-placement="stacked"
+                  fill="outline"
+                  [placeholder]="'Enter ' + partyText + ' Trade Name'"
+                  formControlName="tradeName"
+                ></ion-input>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-input
                   [readonly]="!!editParty"
                   [disabled]="!!editParty"
                   label="Phone Number"
