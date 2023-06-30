@@ -270,6 +270,11 @@ export class ItemCreationComponent implements OnInit {
   asPerMarginToggled(event: any) {
     this.asPerMargin = event.detail.checked;
     if (this.asPerMargin) {
+      this.productForm.patchValue({
+        sellsPrice: this.productForm.value.sellsPrice
+          ? this.productForm.value.sellsPrice
+          : '0',
+      });
       this.productForm.addControl(
         'margin',
         this.formBuilder.control('', Validators.required)

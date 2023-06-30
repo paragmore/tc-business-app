@@ -309,7 +309,17 @@
                   </ion-row>
                 </ion-col>
                 <ion-col [size]="isMobile ? 5 : 3">
-                  <p class="title4">₹{{ product.sellsPrice }}</p>
+                  <p class="title4">
+                    ₹
+                    {{
+                      product &&
+                      product.margin &&
+                      product.asPerMargin &&
+                      product.purchasePrice
+                        ? ((product.margin + 100) * product.purchasePrice) / 100
+                        : product?.sellsPrice
+                    }}
+                  </p>
                 </ion-col>
 
                 <ion-col
