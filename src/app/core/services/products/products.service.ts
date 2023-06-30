@@ -49,8 +49,11 @@ export class ProductsService {
     return this.httpClient.put(url, body, { headers: headers });
   }
 
-  getAllStoreCategories(storeId: string, options?: PaginationQueryParamsI) {
+  getAllStoreCategories(storeId: string, options?: GetCategoriesQueryParamsI) {
     const queryParams = new URLSearchParams();
+    if (options?.search) {
+      queryParams.append('search', options.search);
+    }
     if (options?.pageSize) {
       queryParams.append('pageSize', options.pageSize);
     }
@@ -63,6 +66,7 @@ export class ProductsService {
     if (options?.sortOrder) {
       queryParams.append('sortOrder', options.sortOrder);
     }
+
     const url = `${
       this.baseUrl
     }/products/category/${storeId}?${queryParams.toString()}`;
@@ -353,6 +357,14 @@ export interface HSNCodesFilterByQueryI {
 }
 
 export interface HSNCodesFilterByI {
+  search: string;
+}
+
+export interface GetCategoriesQueryParamsI
+  extends PaginationQueryParamsI,
+    CategoriesFilterByI {}
+
+export interface CategoriesFilterByI {
   search: string;
 }
 export interface GetHSNCodesQueryParamsI

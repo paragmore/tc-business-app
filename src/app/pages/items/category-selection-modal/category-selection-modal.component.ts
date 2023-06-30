@@ -11,13 +11,22 @@ import { CurrentStoreInfoService } from 'src/app/core/services/currentStore/curr
 import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
 import { toastAlert } from 'src/app/core/utils/toastAlert';
 import { ConfirmationModalComponent } from 'src/app/core/components/confirmation-modal/confirmation-modal.component';
+import {
+  ItemNotFoundComponent,
+  ItemNotFoundComponentInputI,
+} from 'src/app/core/components/item-not-found/item-not-found.component';
 
 @Component({
   selector: 'app-category-selection-modal',
   templateUrl: './category-selection-modal.component.html',
   styleUrls: ['./category-selection-modal.component.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, DialogHeaderComponent],
+  imports: [
+    IonicModule,
+    CommonModule,
+    DialogHeaderComponent,
+    ItemNotFoundComponent,
+  ],
 })
 export class CategorySelectionModalComponent implements OnInit {
   categories: CategoryI[] = [];
@@ -25,6 +34,8 @@ export class CategorySelectionModalComponent implements OnInit {
   pageSize = 10;
   hasMoreCategories = true;
   currentStoreInfo: StoreInfoModel | undefined;
+  search: string = '';
+  isLoading = false;
 
   @Input() selectedCategories!: CategoryI[];
   modalSelectedCategories: CategoryI[] = [];
@@ -48,19 +59,40 @@ export class CategorySelectionModalComponent implements OnInit {
     this.modalSelectedCategories = [...this.selectedCategories];
   }
 
-  loadCategories() {
+  getNotFoundInput() {
+    const notfoundInput: ItemNotFoundComponentInputI = {
+      title: 'Categories not found',
+      subtitle: 'Please create new category',
+    };
+    return notfoundInput;
+  }
+  async handleSearch(event: any) {
+    this.search = event.detail.value;
+    this.loadCategories(true);
+  }
+
+  resetPagination() {
+    this.currentPage = 1;
+    this.pageSize = 10;
+  }
+
+  loadCategories(isReload?: boolean) {
     console.log('cat');
+    if (isReload) {
+      this.resetPagination();
+    }
     if (!this.currentStoreInfo?._id) {
       return;
     }
     console.log('caddt');
-
+    this.isLoading = true;
     this.productsService
       .getAllStoreCategories(this.currentStoreInfo?._id, {
         page: this.currentPage.toString(),
         pageSize: this.pageSize.toString(),
         sortBy: 'name',
         sortOrder: 'asc',
+        search: this.search,
       })
       .subscribe((response) => {
         console.log(response);
@@ -69,8 +101,12 @@ export class CategorySelectionModalComponent implements OnInit {
           //@ts-ignore
           console.log(response.body.categories);
           //@ts-ignore
-          this.categories = [...this.categories, ...response.body.categories];
+          const categoriesResponse = response.body.categories;
+          this.categories = !isReload
+            ? [...this.categories, ...categoriesResponse]
+            : categoriesResponse;
         }
+        this.isLoading = false;
       });
     // Make API request to fetch categories using the currentPage and pageSize variables
     // Update the 'categories' array with the response from the API
