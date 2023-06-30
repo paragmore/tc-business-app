@@ -199,6 +199,11 @@ export interface UnitI {
   conversion?: number;
 }
 
+export interface AdditionalFieldI {
+  key: string;
+  value: string;
+}
+
 export interface DiscountI {
   type: 'percentage' | 'amount';
   code: string;
@@ -236,6 +241,7 @@ export interface ProductI {
   asPerMargin: boolean;
   cess?: number;
   account: ProductsAccountInterfaceI;
+  additionalFields?: AdditionalFieldI[];
 }
 
 export interface InventoryProductI {
@@ -288,6 +294,7 @@ export interface UpdateProductRequestI {
   asPerMargin: boolean;
   cess?: number;
   account: ProductsAccountInterfaceI;
+  additionalFields?: AdditionalFieldI[];
 }
 
 export interface CreateProductRequestI {
@@ -316,6 +323,7 @@ export interface CreateProductRequestI {
   asPerMargin: boolean;
   cess?: number;
   account: ProductsAccountInterfaceI;
+  additionalFields?: AdditionalFieldI[];
 }
 
 export interface ProductsAccountInterfaceI {

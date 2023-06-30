@@ -334,6 +334,39 @@
                 </app-variants-list>
               </div>
             </ion-accordion>
+            <ion-accordion value="fourth">
+              <ion-item slot="header">
+                <p style="color: var(--ion-color-primary)" class="titleSmall">
+                  Additional Fields
+                </p>
+              </ion-item>
+
+              <div
+                *ngIf="
+                  productDetails &&
+                  productDetails.additionalFields &&
+                  productDetails.additionalFields.length > 0
+                "
+                class="ion-padding"
+                slot="content"
+              >
+                <ion-row
+                  *ngFor="
+                    let additionalField of productDetails.additionalFields
+                  "
+                  class="item-detail-row"
+                >
+                  <ion-col>
+                    <p class="bodySecondary">{{ additionalField.key }}</p>
+                  </ion-col>
+                  <ion-col>
+                    <p class="bodyPrimary">
+                      {{ additionalField.value }}
+                    </p>
+                  </ion-col>
+                </ion-row>
+              </div>
+            </ion-accordion>
           </ion-accordion-group>
         </ion-row>
       </ion-grid>

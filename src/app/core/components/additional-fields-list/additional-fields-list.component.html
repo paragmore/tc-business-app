@@ -1,0 +1,24 @@
+<div *ngFor="let additionalField of additionalFields; let i = index">
+  <ion-row>
+    <ion-col size-xs="6">
+      <ion-input
+        [readonly]="readonly"
+        label-placement="stacked"
+        fill="outline"
+        label="Key"
+        [required]="true"
+        [(ngModel)]="additionalField.key"
+      ></ion-input>
+    </ion-col>
+    <ion-col size-xs="6">
+      <ion-input
+        [readonly]="readonly"
+        label-placement="stacked"
+        fill="outline"
+        label="Value"
+        [required]="true"
+        [(ngModel)]="additionalField.value"
+      ></ion-input>
+    </ion-col>
+  </ion-row>
+</div>

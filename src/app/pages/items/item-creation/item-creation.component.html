@@ -17,7 +17,7 @@
   "
 >
   <form [formGroup]="productForm">
-    <ion-accordion-group [multiple]="true" [value]="['first', 'second']">
+    <ion-accordion-group [multiple]="true" [value]="['first', 'fourth']">
       <ion-accordion value="first">
         <ion-item slot="header">
           <p style="color: var(--ion-color-primary)" class="titleRegular">
@@ -309,7 +309,7 @@
           </ion-grid>
         </div>
       </ion-accordion>
-      <ion-accordion value="fourth">
+      <ion-accordion value="second">
         <ion-item slot="header">
           <p style="color: var(--ion-color-primary)" class="titleRegular">
             Variants
@@ -338,7 +338,7 @@
         </div>
       </ion-accordion>
 
-      <ion-accordion value="second">
+      <ion-accordion value="fourth">
         <ion-item slot="header">
           <p style="color: var(--ion-color-primary)" class="titleRegular">
             Inventory & account
@@ -471,6 +471,23 @@
           </ion-grid>
         </div>
       </ion-accordion>
+
+      <ion-accordion value="fifth">
+        <ion-item slot="header">
+          <p style="color: var(--ion-color-primary)" class="titleRegular">
+            Additional Fields
+          </p>
+        </ion-item>
+
+        <div class="ion-padding" slot="content">
+          <app-additional-fields-list
+            [additionalFields]="additionalFields"
+          ></app-additional-fields-list>
+          <ion-button fill="outline" (click)="onAddAdditionalField()">
+            <ion-icon name="add"></ion-icon> Add Additional Fields
+          </ion-button>
+        </div>
+      </ion-accordion>
     </ion-accordion-group>
   </form>
 </div>
@@ -488,7 +505,7 @@
   type="submit"
   class="btn btn-primary"
   (click)="createOrUpdateProduct()"
-  [disabled]="productForm.invalid || isLoading"
+  [disabled]="isAddUpdateProductDisabled()"
   ><ion-spinner *ngIf="isLoading"></ion-spinner
   >{{ this.editProduct?._id ? "Update " + type : "Add " + type }}</ion-button
 >

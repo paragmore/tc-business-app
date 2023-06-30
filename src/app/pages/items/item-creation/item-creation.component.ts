@@ -8,6 +8,7 @@ import {
 } from '@ionic/angular';
 import { CategorySelectionModalComponent } from '../category-selection-modal/category-selection-modal.component';
 import {
+  AdditionalFieldI,
   CategoryI,
   CostOfGoodsSoldAccountTypeEnum,
   CreateProductRequestI,
@@ -53,6 +54,7 @@ import {
   setSelectedItem,
   updateItemInList,
 } from 'src/app/store/actions/items.action';
+import { AdditionalFieldsListComponent } from 'src/app/core/components/additional-fields-list/additional-fields-list.component';
 
 @Component({
   selector: 'app-item-creation',
@@ -70,6 +72,7 @@ import {
     VariantSeperatorPipe,
     DiscountsListComponent,
     VariantsListComponent,
+    AdditionalFieldsListComponent,
   ],
 })
 export class ItemCreationComponent implements OnInit {
@@ -93,6 +96,7 @@ export class ItemCreationComponent implements OnInit {
   public screenState$: Observable<ScreenModel> | undefined;
   variants: VariantI[] = [];
   discounts: DiscountI[] = [];
+  additionalFields: AdditionalFieldI[] = [];
   UploadStatusEnum = UploadStatusEnum;
   productImages: ProductImageFileI[] = [];
   heroImage: ProductImageFileI | string | undefined;
@@ -186,6 +190,24 @@ export class ItemCreationComponent implements OnInit {
     if (this.editProduct?.discounts) {
       this.discounts = this.editProduct?.discounts;
     }
+    if (this.editProduct?.additionalFields) {
+      this.additionalFields = this.editProduct.additionalFields;
+    }
+  }
+
+  isAddUpdateProductDisabled() {
+    const invalidAdittionalField = this.additionalFields.find(
+      (field) => !field.key || !field.value
+    );
+    console.log('invalidAdittionalField', invalidAdittionalField);
+    if (invalidAdittionalField) {
+      return true;
+    }
+    return this.productForm.invalid || this.isLoading;
+  }
+
+  onAddAdditionalField() {
+    this.additionalFields.push({ key: '', value: '' });
   }
 
   createAccountFormGroup() {
@@ -227,6 +249,7 @@ export class ItemCreationComponent implements OnInit {
     this.sameUnits = true;
     this.variants = [];
     this.discounts = [];
+    this.additionalFields = [];
     this.productImages = [];
     this.isLoading = false;
   }
@@ -540,6 +563,7 @@ export class ItemCreationComponent implements OnInit {
         category,
         variants: this.variants,
         discounts: this.discounts,
+        additionalFields: this.additionalFields,
         gstPercentage: gstPercent,
         cess: cess,
         images: this.productImages
@@ -558,6 +582,7 @@ export class ItemCreationComponent implements OnInit {
         category,
         variants: this.variants,
         discounts: this.discounts,
+        additionalFields: this.additionalFields,
         gstPercentage: gstPercent,
         cess: cess,
         images: this.productImages
