@@ -335,7 +335,7 @@
                   *ngIf="selectedTab === ItemTypeEnum.PRODUCT"
                 >
                   <p class="title4">
-                    {{ product.quantity }}
+                    {{ product.quantity | hyphen }}
                   </p>
                   <p class="captionMobile">{{ product.unit.name }} left</p>
                 </ion-col>
