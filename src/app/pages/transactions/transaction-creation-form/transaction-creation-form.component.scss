@@ -17,6 +17,7 @@
 
 .item-form-input {
   --border-color: transparent;
+  font-size: 14px;
 }
 
 .item-form-col {
@@ -35,4 +36,8 @@
 
 .item-form-input:hover {
   --border-color: var(--ion-color-primary);
+}
+
+.invoice-form ion-row {
+  padding: 10px;
 }

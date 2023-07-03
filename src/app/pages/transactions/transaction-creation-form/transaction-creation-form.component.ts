@@ -53,9 +53,9 @@ export class TransactionCreationFormComponent {
   parties: Array<GetAllCustomersResponseI | SupplierI> = [];
   currentStoreInfo: StoreInfoModel | undefined;
   selectedTab: PartyTypeEnum = PartyTypeEnum.CUSTOMER;
-  selectedParty: CustomerStoreInfoI | SupplierI | undefined;
+  selectedParty: GetAllCustomersResponseI | SupplierI | undefined;
   products: ProductI[] = [];
-
+  selectedItems: ProductI[] = [];
   constructor(
     private fb: FormBuilder,
     private store: Store<AppState>,
@@ -91,7 +91,7 @@ export class TransactionCreationFormComponent {
     // Handle sale creation logic here
   }
 
-  selectTransactionParty(party: CustomerStoreInfoI | SupplierI) {
+  selectTransactionParty(party: GetAllCustomersResponseI | SupplierI) {
     this.selectedParty = party;
   }
 
@@ -194,12 +194,36 @@ export class TransactionCreationFormComponent {
     return party;
   }
 
+  getCustomerDetails(party: GetAllCustomersResponseI | SupplierI) {
+    if ('customer' in party) {
+      return party.customer;
+    }
+    return party;
+  }
   onSelectItem(item: ProductI, index: number) {
     const salesItemsForm = this.salesForm.get('salesItems') as FormArray;
     if (salesItemsForm) {
-      salesItemsForm.at(index).patchValue({ sellsPrice: item.sellsPrice });
+      salesItemsForm
+        .at(index)
+        .patchValue({ sellsPrice: item.sellsPrice, item: item._id });
+
+      this.selectedItems[index] = item;
       console.log('FORM', salesItemsForm.at(index));
     }
+  }
+
+  getRemainingProducts() {
+    return this.products.filter(
+      (product) =>
+        !this.selectedItems?.find(
+          (selectedProd) => selectedProd?._id === product?._id
+        )
+    );
+  }
+
+  getItemDetails(index: number) {
+    console.log('getIt', index);
+    return this.selectedItems[index];
   }
 
   // createPartyFormGroup(): FormGroup {
