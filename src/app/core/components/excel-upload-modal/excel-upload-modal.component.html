@@ -13,29 +13,50 @@
   </ion-toolbar>
 </ion-header>
 <div class="outer-excel-modal-container">
-  <div class="icon-container">
-    <ion-icon [name]="excelUploadModalInput.icon"> </ion-icon>
+  <div style="width: 100%; display: flex; justify-content: flex-end">
+    <ion-button (click)="downloadFile()" fill="outline">
+      <ion-icon
+        style="font-size: 24px !important"
+        name="download-outline"
+      ></ion-icon>
+      <p class="buttonPrimary">Sample file</p>
+    </ion-button>
   </div>
-  <p style="margin-top: 20px; margin-bottom: 20px" class="titleMedium">
-    {{ excelUploadModalInput.title }}
-  </p>
   <div
     style="
-      margin-left: 10px;
-      justify-content: center;
       display: flex;
+      flex-direction: column;
       align-items: center;
+      justify-content: center;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-bottom: 50px;
     "
   >
-    <input type="file" (change)="handleFileInput($event)" id="fileInput" />
-    <label for="fileInput">
-      <ion-button>
-        <ion-icon
-          style="font-size: 24px !important"
-          name="cloud-upload-outline"
-        ></ion-icon>
-        <p class="buttonPrimary">{{ excelUploadModalInput.cta.text }}</p>
-      </ion-button>
-    </label>
+    <div class="icon-container">
+      <ion-icon [name]="excelUploadModalInput.icon"> </ion-icon>
+    </div>
+    <p style="margin-top: 20px; margin-bottom: 20px" class="titleMedium">
+      {{ excelUploadModalInput.title }}
+    </p>
+    <div
+      style="
+        margin-left: 10px;
+        justify-content: center;
+        display: flex;
+        align-items: center;
+      "
+    >
+      <input type="file" (change)="handleFileInput($event)" id="fileInput" />
+      <label for="fileInput">
+        <ion-button>
+          <ion-icon
+            style="font-size: 24px !important"
+            name="cloud-upload-outline"
+          ></ion-icon>
+          <p class="buttonPrimary">{{ excelUploadModalInput.cta.text }}</p>
+        </ion-button>
+      </label>
+    </div>
   </div>
 </div>

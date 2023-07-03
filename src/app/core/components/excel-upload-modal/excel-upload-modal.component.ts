@@ -25,6 +25,19 @@ export class ExcelUploadModalComponent implements OnInit {
     this.modalController.dismiss();
   }
 
+  downloadFile() {
+    const downloadLink =
+      'https://firebasestorage.googleapis.com/v0/b/taxcorner-9d897.appspot.com/o/sampleFiles%2FproductUploadSampleFile.xlsx?alt=media&token=5b4a4dd9-2f77-4977-aee1-ecab5176d241'; // Replace with your actual download link
+
+    const anchor = document.createElement('a');
+    anchor.href = downloadLink;
+    anchor.download = 'sample-file.csv';
+    anchor.style.display = 'none';
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+  }
+
   async handleFileInput(event: any) {
     const files: FileList = event.target.files;
     console.log(files);
