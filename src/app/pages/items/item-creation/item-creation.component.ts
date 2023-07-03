@@ -181,13 +181,17 @@ export class ItemCreationComponent implements OnInit {
       ...this.editProduct,
       unit: this.editProduct?.unit.name,
       category: categoriesIdStr,
-      gstPercentage: this.editProduct?.gstPercentage
-        ? this.editProduct?.gstPercentage
-        : this.gstPercentage
-        ? this.gstPercentage
-        : this.type === ItemTypeEnum.SERVICE
-        ? '18'
-        : '',
+      gstPercentage:
+        this.editProduct?.taxPreference &&
+        this.editProduct.taxPreference !== TaxPreferenceEnum.TAXABLE
+          ? this.editProduct?.taxPreference
+          : this.editProduct?.gstPercentage
+          ? this.editProduct?.gstPercentage
+          : this.gstPercentage
+          ? this.gstPercentage
+          : this.type === ItemTypeEnum.SERVICE
+          ? '18'
+          : '',
       cess: this.editProduct?.cess
         ? this.editProduct?.cess
         : this.cess
@@ -205,6 +209,13 @@ export class ItemCreationComponent implements OnInit {
     }
     if (this.editProduct?.category) {
       this.selectedCategories = this.editProduct?.category;
+    }
+    if (
+      this.editProduct?.taxPreference &&
+      this.editProduct.taxPreference !== TaxPreferenceEnum.TAXABLE
+    ) {
+      this.taxPreference = this.editProduct?.taxPreference;
+      this.gstPercentage = this.editProduct?.taxPreference;
     }
     if (categoriesStr) {
       this.selectedCategoriesString = categoriesStr;
@@ -468,12 +479,21 @@ export class ItemCreationComponent implements OnInit {
     if (data && data.selectedValue) {
       if (type === TaxTypeEnum.GST) {
         this.gstPercentage = data.selectedValue;
-        this.productForm.patchValue({ gstPercentage: this.gstPercentage });
+        this.productForm.patchValue({
+          gstPercentage: this.gstPercentage,
+          taxPreference: TaxPreferenceEnum.TAXABLE,
+        });
       }
       if (type === TaxTypeEnum.CESS) {
         this.cess = data.selectedValue;
         this.productForm.patchValue({ cess: this.cess });
       }
+    }
+    if (data && data.selectedTaxPreference) {
+      this.productForm.patchValue({
+        taxPreference: data.selectedTaxPreference,
+      });
+      this.gstPercentage = data.selectedTaxPreference;
     }
   }
 

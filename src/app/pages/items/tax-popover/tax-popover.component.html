@@ -7,11 +7,26 @@
   >
   </app-dialog-header>
   <ion-list style="max-height: 300px; overflow-y: scroll">
-    <ion-item *ngFor="let item of itemList" (click)="selectItem(item)"
+    <ion-item
+      [button]="true"
+      [detail]="false"
+      *ngFor="let item of itemList"
+      (click)="selectItem(item)"
       ><p class="bodyPrimary">
         {{ item }}
       </p></ion-item
     >
+    <div *ngIf="taxPopoverInput.type === TaxTypeEnum.GST">
+      <ion-item
+        *ngFor="let taxPreference of taxPreferenceList; let i = index"
+        [button]="true"
+        [detail]="false"
+        (click)="selectTaxPreference(taxPreference)"
+        ><div style="display: flex; flex-direction: column; padding: 10px">
+          <p>{{ taxPreference }}</p>
+        </div></ion-item
+      >
+    </div>
   </ion-list>
   <ion-item>
     <ion-input

@@ -10,6 +10,7 @@ import {
   ItemTypeEnum,
   ProductI,
   ProductsService,
+  TaxPreferenceEnum,
 } from 'src/app/core/services/products/products.service';
 import { CurrentStoreInfoService } from 'src/app/core/services/currentStore/current-store-info.service';
 import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
@@ -101,6 +102,13 @@ export class ItemDetailsComponent implements OnInit {
       error: (e) => console.error(e),
       complete: () => console.info('complete'),
     });
+  }
+
+  getGstPercentage() {
+    return this.productDetails?.taxPreference &&
+      this.productDetails.taxPreference !== TaxPreferenceEnum.TAXABLE
+      ? this.productDetails?.taxPreference
+      : this.productDetails?.gstPercentage + ' %';
   }
 
   async openEditProductModal() {

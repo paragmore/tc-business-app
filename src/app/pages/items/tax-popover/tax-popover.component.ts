@@ -7,6 +7,7 @@ import {
   PopoverController,
 } from '@ionic/angular';
 import { DialogHeaderComponent } from 'src/app/core/components/dialog-header/dialog-header.component';
+import { TaxPreferenceEnum } from 'src/app/core/services/products/products.service';
 
 @Component({
   selector: 'app-tax-popover',
@@ -17,7 +18,11 @@ import { DialogHeaderComponent } from 'src/app/core/components/dialog-header/dia
 })
 export class TaxPopoverComponent implements OnInit {
   @Input() taxPopoverInput!: TaxPopoverComponentInputI;
+  TaxTypeEnum = TaxTypeEnum;
   itemList: string[] = [];
+  taxPreferenceList = Object.values(TaxPreferenceEnum).filter(
+    (value) => value !== TaxPreferenceEnum.TAXABLE
+  );
 
   gstList: string[] = [
     'GST @ 0%',
@@ -59,6 +64,10 @@ export class TaxPopoverComponent implements OnInit {
   };
   selectItem(item: string) {
     this.popoverController.dismiss({ selectedValue: item });
+  }
+
+  selectTaxPreference(item: TaxPreferenceEnum) {
+    this.popoverController.dismiss({ selectedTaxPreference: item });
   }
 
   addItem() {
