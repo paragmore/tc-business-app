@@ -105,6 +105,20 @@ export class ItemCreationComponent implements OnInit {
   dataChanges: [] = [];
   asPerMargin = false;
   taxPreferenceList = Object.values(TaxPreferenceEnum);
+  unitsList = [
+    'box',
+    'cm',
+    'dz',
+    'ft',
+    'g',
+    'in',
+    'kg',
+    'lb',
+    'strip',
+    'mg',
+    'm',
+    'pcs',
+  ];
   taxPreference: TaxPreferenceEnum = TaxPreferenceEnum.TAXABLE;
   accountsList = {
     income: Object.values(IncomeAccountTypeEnum),
@@ -182,6 +196,13 @@ export class ItemCreationComponent implements OnInit {
         ? ''
         : '',
     });
+    if (this.editProduct?.purchaseUnit) {
+      this.onSameUnitsToggled({ detail: { checked: false } });
+      this.productForm.patchValue({
+        purchaseUnitName: this.editProduct.purchaseUnit.name,
+        purchaseUnitConversion: this.editProduct.purchaseUnit.conversion,
+      });
+    }
     if (this.editProduct?.category) {
       this.selectedCategories = this.editProduct?.category;
     }
@@ -202,6 +223,13 @@ export class ItemCreationComponent implements OnInit {
   selectTaxPreference(taxPreference: TaxPreferenceEnum) {
     this.taxPreference = taxPreference;
     this.productForm.patchValue({ taxPreference: this.taxPreference });
+  }
+
+  selectUnit(unit: string) {
+    this.productForm.patchValue({ unit });
+  }
+  selectPurchaseUnit(purchaseUnitName: string) {
+    this.productForm.patchValue({ purchaseUnitName });
   }
 
   isAddUpdateProductDisabled() {

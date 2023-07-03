@@ -256,7 +256,6 @@
                 </p></ion-toggle
               >
             </ion-row>
-
             <ion-row>
               <ion-col size-md="12" size-xs="12">
                 <ion-input
@@ -264,8 +263,42 @@
                   label-placement="stacked"
                   fill="outline"
                   formControlName="unit"
-                ></ion-input>
+                  style="width: 100%"
+                  id="unit-popover-button"
+                >
+                </ion-input>
               </ion-col>
+              <ion-popover
+                trigger="unit-popover-button"
+                [showBackdrop]="false"
+                [dismissOnSelect]="true"
+              >
+                <ng-template>
+                  <ion-content>
+                    <ion-list
+                      style="max-height: 350px; overflow-y: scroll"
+                      class="scrollbar"
+                      id="style-1"
+                    >
+                      <ion-item
+                        *ngFor="let unit of unitsList; let i = index"
+                        [button]="true"
+                        [detail]="false"
+                        (click)="selectUnit(unit)"
+                        ><div
+                          style="
+                            display: flex;
+                            flex-direction: column;
+                            padding: 10px;
+                          "
+                        >
+                          <p>{{ unit }}</p>
+                        </div></ion-item
+                      >
+                    </ion-list>
+                  </ion-content>
+                </ng-template>
+              </ion-popover>
             </ion-row>
             <ion-row *ngIf="!sameUnits">
               <ion-col size-md="6" size-xs="12">
@@ -274,8 +307,42 @@
                   label-placement="stacked"
                   fill="outline"
                   formControlName="purchaseUnitName"
-                ></ion-input>
+                  style="width: 100%"
+                  id="purchase-unit-popover-button"
+                >
+                </ion-input>
               </ion-col>
+              <ion-popover
+                trigger="purchase-unit-popover-button"
+                [showBackdrop]="false"
+                [dismissOnSelect]="true"
+              >
+                <ng-template>
+                  <ion-content>
+                    <ion-list
+                      style="max-height: 350px; overflow-y: scroll"
+                      class="scrollbar"
+                      id="style-1"
+                    >
+                      <ion-item
+                        *ngFor="let unit of unitsList; let i = index"
+                        [button]="true"
+                        [detail]="false"
+                        (click)="selectPurchaseUnit(unit)"
+                        ><div
+                          style="
+                            display: flex;
+                            flex-direction: column;
+                            padding: 10px;
+                          "
+                        >
+                          <p>{{ unit }}</p>
+                        </div></ion-item
+                      >
+                    </ion-list>
+                  </ion-content>
+                </ng-template>
+              </ion-popover>
               <ion-col size-md="6" size-xs="12">
                 <ion-input
                   label="Conversion factor"
