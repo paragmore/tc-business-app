@@ -34,6 +34,7 @@ import { AppState } from 'src/app/store/models/state.model';
 import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
 import { PartyCreationModalComponent } from '../../parties/party-creation-modal/party-creation-modal.component';
 import { ItemCreationComponent } from '../../items/item-creation/item-creation.component';
+import { DiscountsModalComponent } from '../../items/discounts-modal/discounts-modal.component';
 @Component({
   selector: 'app-transaction-creation-form',
   templateUrl: './transaction-creation-form.component.html',
@@ -118,6 +119,30 @@ export class TransactionCreationFormComponent {
 
       previousSalesItems = [...salesItems];
     });
+  }
+
+  async openDiscountsModal(index: number) {
+    console.log('idhar');
+    const modal = await this.modalController.create({
+      component: DiscountsModalComponent,
+      backdropDismiss: true,
+      cssClass: 'login-modal',
+      // breakpoints: this.isMobile ? [0, 0.8, 1] : undefined,
+      // initialBreakpoint: this.isMobile ? 0.8 : 1,
+    });
+    console.log(modal);
+
+    modal.onDidDismiss().then((modalData) => {
+      if (modalData?.data?.discount) {
+        const salesItemsForm = this.salesForm.get('salesItems') as FormArray;
+        if (salesItemsForm) {
+          salesItemsForm.at(index).patchValue({
+            discount: modalData.data.discount,
+          });
+        }
+      }
+    });
+    return await modal.present();
   }
 
   createSale() {

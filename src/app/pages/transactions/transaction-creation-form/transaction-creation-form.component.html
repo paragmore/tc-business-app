@@ -208,7 +208,7 @@
               </p>
             </ion-col>
           </ion-row>
-          <ion-row
+          <div
             formArrayName="salesItems"
             *ngFor="let item of getFormControls.controls; let i = index"
           >
@@ -333,84 +333,90 @@
                 </ng-container>
               </ion-col>
               <ion-col class="item-form-col" size="2">
-                <ion-input
-                  class="item-form-input"
-                  fill="outline"
-                  type="text"
-                  required
-                ></ion-input>
-                <ng-container *ngIf="getItemDetails(i) as itemDetails">
+                <ion-item *ngIf="!item.value.discount.value">
+                  <ion-button (click)="openDiscountsModal(i)">
+                    Add discount</ion-button
+                  >
+                </ion-item>
+                <ng-container>
                   <div class="bodyMedium">
-                    <p [id]="i + 'discount-selection-popover-button'">
-                      <ion-item
-                        *ngIf="item.value.discount as bestDiscount"
-                        [button]="true"
-                        [detail]="false"
-                        ><div
-                          style="
-                            display: flex;
-                            flex-direction: column;
-                            padding: 10px;
-                          "
-                        >
-                          <ion-row
-                            style="
-                              gap: 10px;
-                              margin-bottom: 10px;
-                              padding: 0px;
-                              margin: 0px;
-                            "
-                          >
-                            <ion-col>
-                              <p style="text-wrap: nowrap" class="bodyMedium">
-                                Code: {{ bestDiscount.code }}
-                              </p>
-                            </ion-col>
-                            <ion-col>
-                              <p style="text-wrap: nowrap" class="bodyMedium">
-                                Value :
-                                {{
-                                  bestDiscount.type === "percentage"
-                                    ? bestDiscount.value + "%"
-                                    : "₹ " + bestDiscount.value
-                                }}
-                              </p>
-                            </ion-col>
-                          </ion-row>
-                          <ion-row
+                    <div [id]="i + 'discount-selection-popover-button'">
+                      <div *ngIf="item.value.discount as bestDiscount">
+                        <ion-item
+                          *ngIf="item.value.discount.value"
+                          [button]="true"
+                          [detail]="false"
+                          ><div
                             style="
                               display: flex;
-                              flex-direction: row;
-                              gap: 10px;
+                              flex-direction: column;
+                              padding: 10px;
                             "
                           >
-                            <ion-col>
-                              <p class="bodySmall">
-                                {{
-                                  bestDiscount.minType === "orderQuantity"
-                                    ? "Min order quantity:" +
-                                      bestDiscount.minimum
-                                    : "Min order value:" + bestDiscount.minimum
-                                }}
-                              </p>
-                            </ion-col>
-                            <ion-col>
-                              <p
-                                *ngIf="bestDiscount.type === 'percentage'"
-                                class="bodySmall"
-                              >
-                                Maximum
-                                {{
-                                  bestDiscount.type === "percentage"
-                                    ? "₹ " + bestDiscount.maxDiscount
-                                    : ""
-                                }}
-                              </p>
-                            </ion-col>
-                          </ion-row>
-                        </div></ion-item
-                      >
-                    </p>
+                            <ion-icon
+                              color="danger"
+                              name="close-circle-outline"
+                            ></ion-icon>
+                            <ion-row
+                              style="
+                                gap: 10px;
+                                margin-bottom: 10px;
+                                padding: 0px;
+                                margin: 0px;
+                              "
+                            >
+                              <ion-col>
+                                <p style="text-wrap: nowrap" class="bodyMedium">
+                                  Code: {{ bestDiscount.code }}
+                                </p>
+                              </ion-col>
+                              <ion-col>
+                                <p style="text-wrap: nowrap" class="bodyMedium">
+                                  Value :
+                                  {{
+                                    bestDiscount.type === "percentage"
+                                      ? bestDiscount.value + "%"
+                                      : "₹ " + bestDiscount.value
+                                  }}
+                                </p>
+                              </ion-col>
+                            </ion-row>
+                            <ion-row
+                              style="
+                                display: flex;
+                                flex-direction: row;
+                                gap: 10px;
+                              "
+                            >
+                              <ion-col>
+                                <p class="bodySmall">
+                                  {{
+                                    bestDiscount.minType === "orderQuantity"
+                                      ? "Min order quantity:" +
+                                        bestDiscount.minimum
+                                      : "Min order value:" +
+                                        bestDiscount.minimum
+                                  }}
+                                </p>
+                              </ion-col>
+                              <ion-col>
+                                <p
+                                  *ngIf="bestDiscount.type === 'percentage'"
+                                  class="bodySmall"
+                                >
+                                  Maximum
+                                  {{
+                                    bestDiscount.type === "percentage"
+                                      ? "₹ " + bestDiscount.maxDiscount
+                                      : ""
+                                  }}
+                                </p>
+                              </ion-col>
+                            </ion-row>
+                          </div></ion-item
+                        >
+                      </div>
+                    </div>
                     <ion-popover
                       [trigger]="i + 'discount-selection-popover-button'"
                       [showBackdrop]="false"
@@ -428,7 +434,7 @@
                               (click)="onDiscountChange(i, discount)"
                               *ngFor="
                                 let discount of selectBestDiscount(
-                                  itemDetails.discounts,
+                                  getItemDetails(i).discounts,
                                   item.value.quantity,
                                   item.value.sellsPrice
                                 ).applicableDiscounts;
@@ -521,7 +527,7 @@
               </ion-col>
               <ion-col class="item-form-col last" size="2">
                 <div style="display: flex; flex-direction: row">
-                  <p class="title3">
+                  <p style="flex: 1" class="title3">
                     {{ item.value.amount }}
                   </p>
                   <div>
@@ -535,7 +541,7 @@
                 </div>
               </ion-col>
             </ion-row>
-          </ion-row>
+          </div>
           <div class="form-row">
             <div>
               <ion-button
