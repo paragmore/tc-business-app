@@ -229,9 +229,17 @@
                   style="width: 100%"
                   *ngIf="getItemDetails(i) as itemDetails"
                 >
-                  <p class="bodyRegular">
-                    {{ itemDetails.name }}
-                  </p>
+                  <div style="display: flex; flex-direction: row">
+                    <p style="flex: 1" class="bodyRegular">
+                      {{ itemDetails.name }}
+                    </p>
+                    <ion-icon
+                      style="cursor: pointer"
+                      (click)="openEditProductModal(itemDetails)"
+                      name="pencil"
+                      color="primary"
+                    ></ion-icon>
+                  </div>
                   <div
                     style="
                       background-color: var(--ion-color-primary);
@@ -333,14 +341,18 @@
                 </ng-container>
               </ion-col>
               <ion-col class="item-form-col" size="2">
-                <ion-item *ngIf="!item.value.discount.value">
-                  <ion-button (click)="openDiscountsModal(i)">
-                    Add discount</ion-button
+                <ion-item [id]="i + 'discount-selection-popover-button'">
+                  <ion-button>
+                    {{
+                      item.value.discount.value
+                        ? "Change discount"
+                        : "Add discount"
+                    }}</ion-button
                   >
                 </ion-item>
                 <ng-container>
                   <div class="bodyMedium">
-                    <div [id]="i + 'discount-selection-popover-button'">
+                    <div>
                       <div *ngIf="item.value.discount as bestDiscount">
                         <ion-item
                           *ngIf="item.value.discount.value"
@@ -354,6 +366,15 @@
                             "
                           >
                             <ion-icon
+                              style="
+                                font-size: 24px;
+                                cursor: pointer;
+                                position: absolute;
+                                top: 10px;
+                                z-index: 10;
+                                right: 10px;
+                              "
+                              (click)="removeDiscount(i)"
                               color="danger"
                               name="close-circle-outline"
                             ></ion-icon>
@@ -366,9 +387,14 @@
                               "
                             >
                               <ion-col>
-                                <p style="text-wrap: nowrap" class="bodyMedium">
-                                  Code: {{ bestDiscount.code }}
-                                </p>
+                                <div style="display: flex; flex-direction: row">
+                                  <p
+                                    style="text-wrap: nowrap; flex: 1"
+                                    class="bodyMedium"
+                                  >
+                                    Code: {{ bestDiscount.code }}
+                                  </p>
+                                </div>
                               </ion-col>
                               <ion-col>
                                 <p style="text-wrap: nowrap" class="bodyMedium">
@@ -430,6 +456,11 @@
                             class="scrollbar"
                             id="style-1"
                           >
+                            <ion-item>
+                              <ion-button (click)="openDiscountsModal(i)">
+                                Create new</ion-button
+                              >
+                            </ion-item>
                             <ion-item
                               (click)="onDiscountChange(i, discount)"
                               *ngFor="

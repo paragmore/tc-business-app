@@ -121,6 +121,25 @@ export class TransactionCreationFormComponent {
     });
   }
 
+  async openEditProductModal(productDetails: ProductI) {
+    const modal = await this.modalController.create({
+      component: ItemCreationComponent,
+      componentProps: {
+        editProduct: {
+          ...productDetails,
+        },
+        type: productDetails.isService
+          ? ItemTypeEnum.SERVICE
+          : ItemTypeEnum.PRODUCT,
+      },
+      backdropDismiss: true,
+      cssClass: 'side-modal',
+    });
+
+    modal.onDidDismiss().then((modalData) => {});
+    return await modal.present();
+  }
+
   async openDiscountsModal(index: number) {
     console.log('idhar');
     const modal = await this.modalController.create({
@@ -468,6 +487,23 @@ export class TransactionCreationFormComponent {
 
       // Set the flag back to false after updating the form value
       this.isUpdatingForm = false;
+    }
+  }
+
+  removeDiscount(index: number) {
+    const salesItemsForm = this.salesForm.get('salesItems') as FormArray;
+    if (salesItemsForm) {
+      const discount: DiscountI = {
+        code: '',
+        minType: 'orderQuantity',
+        value: 0,
+        type: 'amount',
+        maxDiscount: 0,
+        minimum: 0,
+      };
+      salesItemsForm.at(index).patchValue({
+        discount: discount,
+      });
     }
   }
   onSelectItem(item: ProductI, index: number) {
