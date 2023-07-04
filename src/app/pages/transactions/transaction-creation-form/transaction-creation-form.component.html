@@ -24,6 +24,11 @@
           >
             <ng-template>
               <ion-content>
+                <ion-item [detail]="false">
+                  <ion-button (click)="openAddPartyModal()">
+                    Create new
+                  </ion-button>
+                </ion-item>
                 <ion-list
                   style="max-height: 350px; overflow-y: scroll"
                   class="scrollbar"
@@ -169,7 +174,7 @@
                 ITEM DETAILS
               </p>
             </ion-col>
-            <ion-col class="item-form-col row" size="1">
+            <ion-col class="item-form-col row" size="2">
               <p class="subHeading" position="stacked" for="quantity">
                 QUANTITY
               </p>
@@ -180,11 +185,6 @@
               </p>
             </ion-col>
             <ion-col class="item-form-col row" size="2">
-              <p class="subHeading" position="stacked" for="rate">
-                RATE (INCL. DISCOUNT)
-              </p>
-            </ion-col>
-            <ion-col class="item-form-col row" size="1">
               <p class="subHeading" position="stacked" for="discount">
                 DISCOUNT
               </p>
@@ -215,7 +215,10 @@
                   ></ion-input>
                 </div>
 
-                <ng-container *ngIf="getItemDetails(i) as itemDetails">
+                <ng-container
+                  style="width: 100%"
+                  *ngIf="getItemDetails(i) as itemDetails"
+                >
                   <p class="bodyRegular">
                     {{ itemDetails.name }}
                   </p>
@@ -231,7 +234,7 @@
                       {{ itemDetails.isService ? "SERVICE" : "GOODS" }}
                     </p>
                   </div>
-                  <p class="bodySmall">HSN Code: {{ itemDetails.hsnCode }}</p>
+                  <p class="bodyMedium">HSN Code: {{ itemDetails.hsnCode }}</p>
                 </ng-container>
 
                 <ion-popover
@@ -243,6 +246,11 @@
                 >
                   <ng-template>
                     <ion-content>
+                      <ion-item [detail]="false">
+                        <ion-button (click)="openAddProductModal()">
+                          Create new
+                        </ion-button>
+                      </ion-item>
                       <ion-list
                         style="max-height: 350px; overflow-y: scroll"
                         class="scrollbar"
@@ -269,7 +277,7 @@
                                 Sells price: {{ product.sellsPrice }}
                               </p>
                             </div>
-                            <div class="bodySmall">
+                            <div class="bodyMedium">
                               <p>Stock on hand</p>
                               <p>
                                 {{ product.quantity }}
@@ -282,7 +290,7 @@
                   </ng-template>
                 </ion-popover></ion-col
               >
-              <ion-col class="item-form-col" size="1">
+              <ion-col class="item-form-col" size="2">
                 <ion-input
                   class="item-form-input"
                   fill="outline"
@@ -291,7 +299,7 @@
                   formControlName="quantity"
                 ></ion-input>
                 <ng-container *ngIf="getItemDetails(i) as itemDetails">
-                  <div class="bodySmall">
+                  <div class="bodyMedium">
                     <p>Stock on hand</p>
                     <p>
                       {{ itemDetails.quantity }}
@@ -308,58 +316,204 @@
                   type="number"
                   formControlName="sellsPrice"
                 ></ion-input>
+                <ng-container *ngIf="getItemDetails(i) as itemDetails">
+                  <div class="bodyMedium">
+                    <p *ngIf="itemDetails.taxIncluded">( Tax Inclusive )</p>
+                  </div>
+                </ng-container>
               </ion-col>
               <ion-col class="item-form-col" size="2">
                 <ion-input
                   class="item-form-input"
                   fill="outline"
-                  type="number"
-                  required
-                  formControlName="rate"
-                ></ion-input>
-              </ion-col>
-              <ion-col class="item-form-col" size="1">
-                <ion-input
-                  class="item-form-input"
-                  fill="outline"
                   type="text"
                   required
-                  formControlName="discount"
                 ></ion-input>
                 <ng-container *ngIf="getItemDetails(i) as itemDetails">
-                  <div class="bodySmall">
-                    <p>{{ itemDetails.discounts[0] | json }}</p>
+                  <div class="bodyMedium">
+                    <p [id]="i + 'discount-selection-popover-button'">
+                      <ion-item
+                        *ngIf="item.value.discount as bestDiscount"
+                        [button]="true"
+                        [detail]="false"
+                        ><div
+                          style="
+                            display: flex;
+                            flex-direction: column;
+                            padding: 10px;
+                          "
+                        >
+                          <ion-row
+                            style="
+                              gap: 10px;
+                              margin-bottom: 10px;
+                              padding: 0px;
+                              margin: 0px;
+                            "
+                          >
+                            <ion-col>
+                              <p style="text-wrap: nowrap" class="bodyMedium">
+                                Code: {{ bestDiscount.code }}
+                              </p>
+                            </ion-col>
+                            <ion-col>
+                              <p style="text-wrap: nowrap" class="bodyMedium">
+                                Value :
+                                {{
+                                  bestDiscount.type === "percentage"
+                                    ? bestDiscount.value + "%"
+                                    : "₹ " + bestDiscount.value
+                                }}
+                              </p>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row
+                            style="
+                              display: flex;
+                              flex-direction: row;
+                              gap: 10px;
+                            "
+                          >
+                            <ion-col>
+                              <p class="bodySmall">
+                                {{
+                                  bestDiscount.minType === "orderQuantity"
+                                    ? "Min order quantity:" +
+                                      bestDiscount.minimum
+                                    : "Min order value:" + bestDiscount.minimum
+                                }}
+                              </p>
+                            </ion-col>
+                            <ion-col>
+                              <p
+                                *ngIf="bestDiscount.type === 'percentage'"
+                                class="bodySmall"
+                              >
+                                Maximum
+                                {{
+                                  bestDiscount.type === "percentage"
+                                    ? "₹ " + bestDiscount.maxDiscount
+                                    : ""
+                                }}
+                              </p>
+                            </ion-col>
+                          </ion-row>
+                        </div></ion-item
+                      >
+                    </p>
+                    <ion-popover
+                      [trigger]="i + 'discount-selection-popover-button'"
+                      [showBackdrop]="false"
+                      [dismissOnSelect]="true"
+                      [keyboardClose]="false"
+                    >
+                      <ng-template>
+                        <ion-content>
+                          <ion-list
+                            style="max-height: 350px; overflow-y: scroll"
+                            class="scrollbar"
+                            id="style-1"
+                          >
+                            <ion-item
+                              (click)="onDiscountChange(i, discount)"
+                              *ngFor="
+                                let discount of selectBestDiscount(
+                                  itemDetails.discounts,
+                                  item.value.quantity,
+                                  item.value.sellsPrice
+                                ).applicableDiscounts;
+                                let discountI = index
+                              "
+                              [button]="true"
+                              [detail]="false"
+                              ><div
+                                style="
+                                  display: flex;
+                                  flex-direction: column;
+                                  padding: 10px;
+                                "
+                              >
+                                <div
+                                  style="
+                                    display: flex;
+                                    flex-direction: row;
+                                    gap: 10px;
+                                    margin-bottom: 10px;
+                                  "
+                                >
+                                  <p class="bodyMedium">
+                                    Code: {{ discount.code }}
+                                  </p>
+                                  <p class="bodyMedium">
+                                    Value :
+                                    {{
+                                      discount.type === "percentage"
+                                        ? discount.value + "%"
+                                        : "₹ " + discount.value
+                                    }}
+                                  </p>
+                                </div>
+                                <div
+                                  style="
+                                    display: flex;
+                                    flex-direction: row;
+                                    gap: 10px;
+                                  "
+                                >
+                                  <p class="bodySmall">
+                                    {{
+                                      discount.minType === "orderQuantity"
+                                        ? "Min order quantity:" +
+                                          discount.minimum
+                                        : "Min order value:" + discount.minimum
+                                    }}
+                                  </p>
+                                  <p
+                                    *ngIf="discount.type === 'percentage'"
+                                    class="bodySmall"
+                                  >
+                                    Maximum
+                                    {{
+                                      discount.type === "percentage"
+                                        ? "₹ " + discount.maxDiscount
+                                        : ""
+                                    }}
+                                  </p>
+                                </div>
+                              </div></ion-item
+                            >
+                          </ion-list>
+                        </ion-content>
+                      </ng-template>
+                    </ion-popover>
                   </div>
                 </ng-container>
               </ion-col>
               <ion-col class="item-form-col" size="1">
                 <ion-input
                   class="item-form-input"
-                  fill="outline"
                   type="number"
                   required
-                  formControlName="tax"
+                  formControlName="gstPercentage"
+                  label-placement="stacked"
+                  fill="outline"
+                  label="GST"
                 ></ion-input>
-                <ng-container *ngIf="getItemDetails(i) as itemDetails">
-                  <div class="bodySmall">
-                    <p *ngIf="itemDetails.gstPercentage">
-                      GST: {{ itemDetails.gstPercentage }} %
-                    </p>
-                    <p *ngIf="itemDetails.cess">
-                      Cess: {{ itemDetails.cess }} %
-                    </p>
-                  </div>
-                </ng-container>
+                <ion-input
+                  class="item-form-input"
+                  type="number"
+                  required
+                  formControlName="cess"
+                  label-placement="stacked"
+                  fill="outline"
+                  label="Cess"
+                ></ion-input>
               </ion-col>
               <ion-col class="item-form-col last" size="2">
                 <div style="display: flex; flex-direction: row">
-                  <ion-input
-                    class="item-form-input"
-                    fill="outline"
-                    type="number"
-                    required
-                    formControlName="amount"
-                  ></ion-input>
+                  <p class="title3">
+                    {{ item.value.amount }}
+                  </p>
                   <div>
                     <ion-icon
                       *ngIf="i > 0"
