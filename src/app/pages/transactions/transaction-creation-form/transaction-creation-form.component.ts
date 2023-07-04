@@ -81,6 +81,7 @@ export class TransactionCreationFormComponent {
     this.salesForm = this.fb.group({
       salesItems: this.fb.array([this.createSalesItem()]),
       customerName: ['', Validators.required],
+      date: [new Date()],
       // phoneNumber: ['', Validators.required],
       // customerGSTIN: ['', Validators.required],
       // invoiceNumber: ['', Validators.required],
@@ -278,21 +279,29 @@ export class TransactionCreationFormComponent {
       amount = amount + tax;
     }
     if (discount) {
-      let calculatedDiscount = 0;
-      if (discount.type === 'percentage') {
-        const newDiscount = (sellsPrice * discount.value) / 100;
-        if (discount.maxDiscount && newDiscount > discount.maxDiscount) {
-          calculatedDiscount = discount.maxDiscount;
-        } else {
-          calculatedDiscount = newDiscount;
-        }
-      }
-      if (discount.type === 'amount') {
-        calculatedDiscount = discount.value;
-      }
+      const calculatedDiscount = this.getDiscountAmount(
+        discount,
+        sellsPrice * quantity
+      );
       amount = amount - calculatedDiscount;
     }
     return amount;
+  }
+
+  getDiscountAmount(discount: DiscountI, amount: number) {
+    let calculatedDiscount = 0;
+    if (discount.type === 'percentage') {
+      const newDiscount = (amount * discount.value) / 100;
+      if (discount.maxDiscount && newDiscount > discount.maxDiscount) {
+        calculatedDiscount = discount.maxDiscount;
+      } else {
+        calculatedDiscount = newDiscount;
+      }
+    }
+    if (discount.type === 'amount') {
+      calculatedDiscount = discount.value;
+    }
+    return calculatedDiscount;
   }
 
   getApplicableDiscounts(
@@ -316,6 +325,45 @@ export class TransactionCreationFormComponent {
     }
 
     return applicableDiscounts;
+  }
+
+  getTotalInformation() {
+    const totalInfo = {
+      subTotal: 0,
+      gst: 0,
+      cess: 0,
+      discounts: 0,
+      total: 0,
+    };
+    this.salesForm.value.salesItems.map((item: any) => {
+      totalInfo.subTotal = totalInfo.subTotal + item.amount;
+      if (item.discount) {
+        totalInfo.discounts =
+          totalInfo.discounts +
+          this.getDiscountAmount(
+            item.discount,
+            item.quantity * item.sellsPrice
+          );
+      }
+
+      if (!isNaN(item.gstPercentage) && item.gstPercentage > 0) {
+        if (item.taxIncluded) {
+          totalInfo.gst =
+            (item.sellsPrice * item.gstPercentage) / (100 + item.gstPercentage);
+        } else {
+          totalInfo.gst = (item.gstPercentage * item.sellsPrice) / 100;
+        }
+      }
+      if (!isNaN(item.cess) && item.cess > 0) {
+        if (item.taxIncluded) {
+          totalInfo.cess = (item.sellsPrice * item.cess) / (100 + item.cess);
+        } else {
+          totalInfo.cess = (item.cess * item.sellsPrice) / 100;
+        }
+      }
+    });
+    totalInfo.total = totalInfo.subTotal;
+    return totalInfo;
   }
 
   selectBestDiscount(discounts: DiscountI[], quantity: number, amount: number) {

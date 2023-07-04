@@ -55,7 +55,7 @@
           </ion-popover>
         </ion-col>
       </ion-row>
-      <div *ngIf="selectedParty">
+      <div *ngIf="selectedParty" style="padding: 15px">
         <ion-row class="item-detail-row">
           <ion-col>
             <p class="bodySecondary">GSTIN</p>
@@ -124,7 +124,7 @@
       </div>
       <ion-row class="invoice-form">
         <ion-col size-md="6">
-          <form [formGroup]="salesForm" (ngSubmit)="createSale()">
+          <form [formGroup]="salesForm">
             <ion-row>
               <ion-input
                 label-placement="stacked"
@@ -134,10 +134,24 @@
             </ion-row>
             <ion-row>
               <ion-input
+                id="invoice-date-selection-popover-button"
                 label-placement="stacked"
                 fill="outline"
                 label="Invoice Date"
+                formControlName="date"
               ></ion-input>
+              <ion-popover
+                trigger="invoice-date-selection-popover-button"
+                [showBackdrop]="false"
+                [dismissOnSelect]="true"
+                [keyboardClose]="false"
+              >
+                <ng-template>
+                  <ion-content>
+                    <ion-datetime></ion-datetime>
+                  </ion-content>
+                </ng-template>
+              </ion-popover>
             </ion-row>
             <ion-row>
               <ion-input
@@ -163,11 +177,7 @@
 
       <!-- sales-form.component.html -->
       <div style="padding: 20px">
-        <form
-          *ngIf="!(screenState$ | async)?.isMobile"
-          [formGroup]="salesForm"
-          (ngSubmit)="createSale()"
-        >
+        <form *ngIf="!(screenState$ | async)?.isMobile" [formGroup]="salesForm">
           <ion-row>
             <ion-col class="item-form-col row" size-md="3">
               <p class="subHeading" position="stacked" for="items">
@@ -537,26 +547,57 @@
             </div>
           </div>
           <ion-row>
-            <ion-col size-md="8"></ion-col>
+            <ion-col size-md="8">
+              <ion-row>
+                <ion-col>
+                  <ion-card style="height: fit-content">
+                    <ion-accordion-group>
+                      <ion-accordion value="first">
+                        <ion-item slot="header">
+                          <ion-label>Add addition information</ion-label>
+                        </ion-item>
+                        <div class="ion-padding" slot="content">
+                          First Content
+                        </div>
+                      </ion-accordion>
+                    </ion-accordion-group>
+                  </ion-card>
+                  <ion-card style="padding: 10px; gap: 20px 20px">
+                    <div>
+                      <form [formGroup]="salesForm">
+                        <ion-label position="stacked">Customer notes</ion-label>
+                        <ion-input fill="outline"></ion-input>
+                        <p class="tiny">Will be displayed on the invoice</p>
+                        <ion-label position="stacked"
+                          >Terms and conditions</ion-label
+                        >
+                        <ion-textarea fill="outline"> </ion-textarea>
+                      </form>
+                    </div>
+                  </ion-card>
+                </ion-col>
+              </ion-row>
+            </ion-col>
             <ion-col>
               <div
-                class="form-row"
+                class="total-info"
                 style="
                   display: flex;
-                  gap: 20px;
+                  gap: 30px;
                   background-color: var(--ion-color-light);
                   border-radius: 10px;
                   padding: 20px;
                 "
               >
-                <ion-col>
+                <ion-col *ngIf="getTotalInformation() as totalInformation">
                   <ion-row style="display: flex">
                     <div style="flex: 1">
                       <p class="bodyRegularMobile">Sub Total</p>
+                      <p class="tiny">( Tax inclusive )</p>
                     </div>
                     <div>
                       <p class="bodySecondary">
-                        {{ 1000 }}
+                        {{ totalInformation.subTotal }}
                       </p>
                     </div>
                   </ion-row>
@@ -566,7 +607,7 @@
                     </div>
                     <div>
                       <p class="bodySecondary">
-                        {{ 1000 }}
+                        {{ totalInformation.gst / 2 }}
                       </p>
                     </div>
                   </ion-row>
@@ -576,7 +617,7 @@
                     </div>
                     <div>
                       <p class="bodySecondary">
-                        {{ 1000 }}
+                        {{ totalInformation.gst / 2 }}
                       </p>
                     </div>
                   </ion-row>
@@ -586,11 +627,21 @@
                     </div>
                     <div>
                       <p class="bodySecondary">
-                        {{ 1000 }}
+                        {{ totalInformation.cess }}
                       </p>
                     </div>
                   </ion-row>
                   <ion-row style="display: flex">
+                    <div style="flex: 1">
+                      <p class="bodyRegularMobile">Discounts</p>
+                    </div>
+                    <div>
+                      <p class="bodySecondary">
+                        {{ totalInformation.discounts }}
+                      </p>
+                    </div>
+                  </ion-row>
+                  <!-- <ion-row style="display: flex">
                     <div style="flex: 1">
                       <p class="bodyRegularMobile">Round off</p>
                     </div>
@@ -599,15 +650,46 @@
                         {{ 1000 }}
                       </p>
                     </div>
-                  </ion-row>
+                  </ion-row> -->
                   <ion-row style="display: flex">
                     <div style="flex: 1">
                       <p class="title2">Total ( ₹ )</p>
                     </div>
                     <div>
                       <p class="title2">
-                        {{ 1000 }}
+                        {{ totalInformation.total }}
                       </p>
+                    </div>
+                  </ion-row>
+                  <ion-row style="margin-top: 20px; margin-bottom: 10px">
+                    <ion-radio-group
+                      style="display: flex; flex-direction: row; gap: 10px"
+                      value="strawberries"
+                    >
+                      <ion-radio labelPlacement="end" value="grapes"
+                        >Unpaid</ion-radio
+                      >
+                      <ion-radio labelPlacement="end" value="strawberries"
+                        >Cash</ion-radio
+                      >
+                      <ion-radio labelPlacement="end" value="pineapple"
+                        >Online</ion-radio
+                      >
+                    </ion-radio-group>
+                  </ion-row>
+                  <ion-row>
+                    <ion-input
+                      label-placement="stacked"
+                      fill="outline"
+                      label="Amount Paid"
+                    ></ion-input>
+                  </ion-row>
+                  <ion-row style="display: flex">
+                    <div style="flex: 1">
+                      <p class="title3">Balance Due ( ₹ )</p>
+                    </div>
+                    <div>
+                      <p class="title3">₹ {{ totalInformation.total }}</p>
                     </div>
                   </ion-row>
                 </ion-col>
@@ -616,65 +698,7 @@
           </ion-row>
         </form>
       </div>
-      <ion-grid>
-        <ion-row>
-          <ion-col>
-            <ion-card style="height: fit-content">
-              <ion-accordion-group>
-                <ion-accordion value="first">
-                  <ion-item slot="header" color="light">
-                    <ion-label>Add optional information</ion-label>
-                  </ion-item>
-                  <div class="ion-padding" slot="content">First Content</div>
-                </ion-accordion>
-              </ion-accordion-group>
-            </ion-card>
-            <ion-card>
-              <div>
-                <form [formGroup]="salesForm" (ngSubmit)="createSale()">
-                  <ion-label position="stacked"
-                    >Private notes only visible to you</ion-label
-                  >
-                  <ion-input fill="outline"></ion-input>
-                </form>
-              </div>
-            </ion-card>
-          </ion-col>
-          <ion-col>
-            <ion-card style="flex: 1">
-              <ion-item style="display: flex; flex-direction: row">
-                <ion-label>Total Amount</ion-label>
-                <p>$10,000</p>
-              </ion-item>
-              <form [formGroup]="salesForm" (ngSubmit)="createSale()">
-                <ion-item>
-                  <ion-label>Paid via</ion-label>
-                  <ion-radio-group
-                    style="display: flex; flex-direction: row"
-                    value="strawberries"
-                  >
-                    <ion-radio labelPlacement="end" value="grapes"
-                      >Unpaid</ion-radio
-                    ><br />
-                    <ion-radio labelPlacement="end" value="strawberries"
-                      >Cash</ion-radio
-                    ><br />
-                    <ion-radio labelPlacement="end" value="pineapple"
-                      >Online</ion-radio
-                    ><br />
-                  </ion-radio-group>
-                </ion-item>
-                <ion-label>Amount Paid</ion-label>
-                <ion-input fill="outline"></ion-input>
-              </form>
-              <ion-item style="display: flex; flex-direction: row">
-                <ion-label>Balance Due</ion-label>
-                <p>$1,000</p>
-              </ion-item>
-            </ion-card>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+
       <div
         style="display: flex; flex-direction: row; margin-bottom: 100px"
       ></div>
