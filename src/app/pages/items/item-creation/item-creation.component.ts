@@ -56,6 +56,7 @@ import {
   updateItemInList,
 } from 'src/app/store/actions/items.action';
 import { AdditionalFieldsListComponent } from 'src/app/core/components/additional-fields-list/additional-fields-list.component';
+import { EnterAsTabDirective } from 'src/app/core/directives/enter-as-tab.directive';
 
 @Component({
   selector: 'app-item-creation',
@@ -74,6 +75,7 @@ import { AdditionalFieldsListComponent } from 'src/app/core/components/additiona
     DiscountsListComponent,
     VariantsListComponent,
     AdditionalFieldsListComponent,
+    EnterAsTabDirective,
   ],
 })
 export class ItemCreationComponent implements OnInit {
