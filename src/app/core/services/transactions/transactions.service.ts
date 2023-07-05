@@ -78,7 +78,7 @@ export class TransactionsService {
     return this.httpClient.get(url, { headers: headers });
   }
 
-  deleteStoreTransaction(storeId: string, transactionIds: string[]) {
+  deleteStoreTransactions(storeId: string, transactionIds: string[]) {
     const url = `${this.baseUrl}/transactions/delete`;
     const headers = getAuthHeaders();
     const body = {
@@ -121,6 +121,13 @@ interface TransactionI {
   termsAndConditions?: string;
   payments: string[];
   paymentStatus: string;
+  totalInformation: {
+    subTotal: number;
+    gst?: number;
+    cess?: number;
+    discounts?: number;
+    total: number;
+  };
 }
 
 export enum TaxPreferenceEnum {
@@ -298,16 +305,7 @@ export interface BulkTransactionUploadSingleRequestI {
   taxPreference: TaxPreferenceEnum;
 }
 
-export interface TransactionsFilterByI {
-  category?: string[];
-  minSellsPrice?: number;
-  maxSellsPrice?: number;
-  minPurchasePrice?: number;
-  maxPurchasePrice?: number;
-  minQuantity?: number;
-  maxQuantity?: number;
-  itemType?: ItemTypeEnum;
-}
+export interface TransactionsFilterByI {}
 
 export interface TransactionsFilterByQueryI {
   category?: string;
