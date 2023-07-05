@@ -13,6 +13,7 @@
           <ion-searchbar
             id="customer-selection-popover-button"
             placeholder="Select Customer"
+            (ionClear)="removeSelectedParty()"
             [value]="selectedParty && getPartyDetails(selectedParty).name"
           >
           </ion-searchbar>
@@ -56,6 +57,21 @@
         </ion-col>
       </ion-row>
       <div *ngIf="selectedParty" style="padding: 15px">
+        <ion-row class="item-detail-row">
+          <ion-col>
+            <p class="bodySecondary">Legal name</p>
+            <p class="bodyRegularMobile">
+              {{ selectedParty && getPartyDetails(selectedParty).name }}
+            </p>
+          </ion-col>
+          <ion-col>
+            <p class="bodySecondary">Trade name</p>
+            <p class="bodyRegularMobile">
+              {{ selectedParty && getCustomerDetails(selectedParty).tradeName }}
+            </p>
+          </ion-col>
+          <ion-col> </ion-col>
+        </ion-row>
         <ion-row class="item-detail-row">
           <ion-col>
             <p class="bodySecondary">GSTIN</p>
@@ -122,9 +138,192 @@
           </ion-col>
         </ion-row>
       </div>
+      <form [formGroup]="salesForm">
+        <div *ngIf="!selectedParty" formGroupName="party">
+          <ion-row>
+            <ion-col size-md="3">
+              <ion-input
+                label="Legal name"
+                label-placement="stacked"
+                fill="outline"
+                formControlName="name"
+              ></ion-input>
+            </ion-col>
+            <ion-col size-md="3">
+              <ion-input
+                label="Trade name"
+                label-placement="stacked"
+                fill="outline"
+                formControlName="tradeName"
+              ></ion-input>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size-md="3">
+              <ion-input
+                label="GSTIN"
+                label-placement="stacked"
+                fill="outline"
+                formControlName="gstin"
+              ></ion-input>
+            </ion-col>
+            <ion-col size-md="3">
+              <ion-input
+                label="Phone number"
+                label-placement="stacked"
+                fill="outline"
+                formControlName="phoneNumber"
+              ></ion-input>
+            </ion-col>
+          </ion-row>
+          <div formGroupName="address">
+            <ion-row>
+              <ion-col>
+                <ion-row formGroupName="shipping">
+                  <ion-grid>
+                    <ion-row>
+                      <p class="bodySecondary">Shipping Address</p>
+                    </ion-row>
+                    <ion-row>
+                      <ion-col>
+                        <ion-input
+                          label="Flat, House no., Building, Company, Apartment"
+                          label-placement="stacked"
+                          fill="outline"
+                          formControlName="line1"
+                        ></ion-input>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row>
+                      <ion-col>
+                        <ion-input
+                          label="Area, Street, Sector, Village"
+                          label-placement="stacked"
+                          fill="outline"
+                          formControlName="line2"
+                        ></ion-input>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row>
+                      <ion-col>
+                        <ion-input
+                          label="PIN Code"
+                          label-placement="stacked"
+                          fill="outline"
+                          formControlName="pinCode"
+                        ></ion-input>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row>
+                      <ion-col>
+                        <ion-input
+                          label="City"
+                          label-placement="stacked"
+                          fill="outline"
+                          formControlName="city"
+                        ></ion-input>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row>
+                      <ion-col>
+                        <ion-input
+                          label="State"
+                          label-placement="stacked"
+                          fill="outline"
+                          formControlName="state"
+                        ></ion-input>
+                      </ion-col>
+                    </ion-row>
+                  </ion-grid>
+                </ion-row>
+                <ion-row>
+                  <ion-checkbox
+                    labelPlacement="end"
+                    formControlName="billingSameAsShipping"
+                    [checked]="
+                      salesForm.value.party.address.billingSameAsShipping
+                    "
+                    formControlName="billingSameAsShipping"
+                    >Billing address same as shipping address
+                  </ion-checkbox>
+                </ion-row>
+              </ion-col>
+              <ion-col>
+                <ion-row
+                  *ngIf="!salesForm.value.party.address.billingSameAsShipping"
+                  formGroupName="billing"
+                >
+                  <ion-grid>
+                    <ion-row>
+                      <p class="titleRegular">Billing Address</p>
+                    </ion-row>
+
+                    <ion-row>
+                      <ion-col>
+                        <ion-input
+                          label="Flat, House no., Building, Company, Apartment"
+                          label-placement="stacked"
+                          fill="outline"
+                          formControlName="line1"
+                        ></ion-input>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row>
+                      <ion-col>
+                        <ion-input
+                          label="Area, Street, Sector, Village"
+                          label-placement="stacked"
+                          fill="outline"
+                          formControlName="line2"
+                        ></ion-input>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row>
+                      <ion-col>
+                        <ion-input
+                          label="PIN Code"
+                          label-placement="stacked"
+                          fill="outline"
+                          formControlName="pinCode"
+                        ></ion-input>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row>
+                      <ion-col>
+                        <ion-input
+                          label="City"
+                          label-placement="stacked"
+                          fill="outline"
+                          formControlName="city"
+                        ></ion-input>
+                      </ion-col>
+                    </ion-row>
+                    <ion-row>
+                      <ion-col>
+                        <ion-input
+                          label="State"
+                          label-placement="stacked"
+                          fill="outline"
+                          formControlName="state"
+                        ></ion-input>
+                      </ion-col>
+                    </ion-row>
+                  </ion-grid>
+                </ion-row>
+              </ion-col>
+            </ion-row>
+          </div>
+        </div>
+      </form>
+
       <ion-row class="invoice-form">
         <ion-col size-md="6">
           <form [formGroup]="salesForm">
+            <ion-row>
+              <ion-col>
+                <p class="bodySecondary">Invoice details</p>
+              </ion-col>
+            </ion-row>
             <ion-row>
               <ion-input
                 label-placement="stacked"
@@ -152,13 +351,6 @@
                   </ion-content>
                 </ng-template>
               </ion-popover>
-            </ion-row>
-            <ion-row>
-              <ion-input
-                label-placement="stacked"
-                fill="outline"
-                label="Your GSTIN"
-              ></ion-input>
             </ion-row>
             <ion-row>
               <ion-input

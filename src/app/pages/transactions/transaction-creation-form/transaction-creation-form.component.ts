@@ -81,7 +81,7 @@ export class TransactionCreationFormComponent {
     });
     this.salesForm = this.fb.group({
       salesItems: this.fb.array([this.createSalesItem()]),
-      customerName: ['', Validators.required],
+      party: this.createPartyFormGroup(),
       date: [new Date()],
       // phoneNumber: ['', Validators.required],
       // customerGSTIN: ['', Validators.required],
@@ -168,8 +168,67 @@ export class TransactionCreationFormComponent {
     // Handle sale creation logic here
   }
 
+  removeSelectedParty() {
+    this.selectedParty = undefined;
+    const partyFormPayload = {
+      _id: '',
+      name: '',
+      tradeName: '',
+      phoneNumber: '',
+      email: '',
+      gstin: '',
+      address: {
+        shipping: {
+          line1: '',
+          line2: '',
+          city: '',
+          state: '',
+          pinCode: '',
+        },
+        billingSameAsShipping: true,
+        billing: {
+          line1: '',
+          line2: '',
+          city: '',
+          state: '',
+          pinCode: '',
+        },
+      },
+    };
+    this.salesForm.patchValue({
+      party: partyFormPayload,
+    });
+  }
+
   selectTransactionParty(party: GetAllCustomersResponseI | SupplierI) {
     this.selectedParty = party;
+    let partyFormPayload: any;
+    if ('customer' in party) {
+      partyFormPayload = {
+        _id: party.customerStoreInfo.customerId,
+        name: party.customerStoreInfo.name,
+        tradeName: party.customerStoreInfo.tradeName,
+        phoneNumber: party.customer.phoneNumber,
+        email: party.customerStoreInfo.email,
+        gstin: party.customerStoreInfo.gstin,
+        address: party.customerStoreInfo.addresses
+          ? party.customerStoreInfo.addresses[0]
+          : undefined,
+      };
+    } else {
+      partyFormPayload = {
+        _id: party._id,
+        name: party.name,
+        tradeName: party.tradeName,
+        phoneNumber: party.phoneNumber,
+        email: party.email,
+        gstin: party.gstin,
+        address: party.addresses ? party.addresses[0] : undefined,
+      };
+    }
+    this.salesForm.patchValue({
+      party: partyFormPayload,
+    });
   }
 
   resetPagination() {
@@ -600,6 +659,33 @@ export class TransactionCreationFormComponent {
       minType: [''],
       minimum: [''],
       maxDiscount: [''],
+    });
+  }
+  createAddressFormGroup() {
+    return this.fb.group({
+      line1: [''],
+      line2: [''],
+      city: [''],
+      state: [''],
+      pinCode: [''],
+    });
+  }
+  createAddressesFormGroup() {
+    return this.fb.group({
+      shipping: this.createAddressFormGroup(),
+      billingSameAsShipping: [true],
+      billing: this.createAddressFormGroup(),
+    });
+  }
+  createPartyFormGroup(): FormGroup {
+    return this.fb.group({
+      _id: [''],
+      name: ['', Validators.required],
+      tradeName: [''],
+      phoneNumber: [''],
+      email: [''],
+      gstin: [''],
+      address: this.createAddressesFormGroup(),
     });
   }
 
