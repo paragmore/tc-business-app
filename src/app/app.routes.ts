@@ -48,6 +48,24 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
+    path: 'transaction/:id',
+    loadComponent: () =>
+      import(
+        './pages/transactions/transaction-details/transaction-details.component'
+      ).then((m) => m.TransactionDetailsComponent),
+    pathMatch: 'full',
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'transactions/:id',
+    loadComponent: () =>
+      import('./pages/transactions/transactions.component').then(
+        (m) => m.TransactionsComponent
+      ),
+    pathMatch: 'full',
+    canActivate: [AuthGuard],
+  },
+  {
     path: 'item/:id',
     loadComponent: () =>
       import(
