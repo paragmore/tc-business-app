@@ -1,4 +1,4 @@
-<ion-card>
+<!-- <ion-card>
   <ion-grid>
     <ion-row>
       <ion-title> Transaction summary </ion-title>
@@ -28,62 +28,83 @@
   <ion-segment-button value="segment">
     <ion-label>Purchases</ion-label>
   </ion-segment-button>
-</ion-segment>
-<ion-row>
-  <div>
-    <ion-label position="stacked">Search</ion-label>
-    <ion-searchbar
-      placeholder="Search by Customer name, Transaction name / id"
-    ></ion-searchbar>
-  </div>
-  <div>
-    <ion-label position="stacked">Filter by</ion-label>
-    <ion-list>
-      <ion-item>
-        <ion-select aria-label="Fruit" interface="popover" placeholder="All">
-          <ion-select-option value="apples">Apples</ion-select-option>
-          <ion-select-option value="oranges">Oranges</ion-select-option>
-          <ion-select-option value="bananas">Bananas</ion-select-option>
-        </ion-select>
-      </ion-item>
-    </ion-list>
-  </div>
-  <div>
-    <ion-label position="stacked">Sort by</ion-label>
-    <ion-list>
-      <ion-item>
-        <ion-select
-          aria-label="Fruit"
-          interface="popover"
-          placeholder="Most recent"
-        >
-          <ion-select-option value="apples">Apples</ion-select-option>
-          <ion-select-option value="oranges">Oranges</ion-select-option>
-          <ion-select-option value="bananas">Bananas</ion-select-option>
-        </ion-select>
-      </ion-item>
-    </ion-list>
-  </div>
-</ion-row>
-<ion-row>
-  <ion-grid>
-    <ion-row class="header-row">
-      <ion-col>
-        <ion-text color="primary">Transaction</ion-text>
-      </ion-col>
+</ion-segment> -->
 
-      <ion-col>
-        <ion-text color="primary">Amount</ion-text>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-</ion-row>
-<ion-list style="overflow: scroll; height: 400px">
-  <div *ngFor="let item of transactions; index as i">
-    <app-transactions-list-card [transactionDetails]="item">
-    </app-transactions-list-card>
+<div style="display: flex; flex-direction: column; overflow: hidden">
+  <ion-row class="header-row">
+    <ion-buttons fill="clear" class="menu-button-mobile">
+      <ion-menu-button fill="clear"></ion-menu-button>
+    </ion-buttons>
+    <app-search-filter-sort
+      [filterSortLists]="filterSortOptions"
+      (onSearchSortFilter)="onSearchSortFilter($event)"
+    ></app-search-filter-sort>
+  </ion-row>
+  <div style="display: flex; flex-direction: column" class="item-list-body">
+    <ion-segment
+      *ngIf="!isMobile"
+      (ionChange)="updateSelectedTab($event)"
+      [value]="selectedTab"
+    >
+      <ion-segment-button [value]="'All'">
+        <ion-label>All</ion-label>
+      </ion-segment-button>
+      <ion-segment-button [value]="TransactionTypeEnum.SALE">
+        <ion-label>Sales</ion-label>
+      </ion-segment-button>
+      <ion-segment-button [value]="TransactionTypeEnum.PURCHASE">
+        <ion-label>Purchases</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+    <app-credit-debit-summary-card
+      *ngIf="creditDebitSummaryData && !isMobile"
+      [creditDebitInput]="creditDebitSummaryData"
+    >
+    </app-credit-debit-summary-card>
+    <app-credit-debit-ledger-list
+      class="list-height"
+      [ledgerData]="ledgerData"
+      (onloadMoreData)="loadMoreData($event)"
+      [mobileListHeaderComponent]="MobilePartiesListHeaderComponent"
+      [injector]="partiesInjector"
+    ></app-credit-debit-ledger-list>
   </div>
-</ion-list>
+</div>
+
+<ion-row
+  style="
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    position: sticky;
+    height: 60px;
+    bottom: 0px;
+    padding: 10px;
+  "
+  *ngIf="
+    (isMobile && enableMultiSelect) ||
+    (!isMobile && selectedTransactions.length > 0)
+  "
+>
+  <ion-col size="5">
+    <ion-button
+      style="width: 100%"
+      color="danger"
+      (click)="openDeleteConfirmationModal()"
+      >Delete</ion-button
+    >
+  </ion-col>
+  <ion-col size="5">
+    <ion-button
+      color="light"
+      style="width: 100%"
+      (click)="onMultipleSelectCancel()"
+      >Cancel</ion-button
+    >
+  </ion-col>
+</ion-row>
 
 <ion-row
   style="

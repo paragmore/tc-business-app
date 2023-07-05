@@ -82,7 +82,12 @@ export class TransactionCreationFormComponent {
     this.salesForm = this.fb.group({
       salesItems: this.fb.array([this.createSalesItem()]),
       party: this.createPartyFormGroup(),
-      date: [new Date()],
+      date: [new Date(), Validators.required],
+      invoiceId: ['', Validators.required],
+      stateOfSupply: ['', Validators.required],
+      customerNotes: [''],
+      termsAndConditions: [''],
+      paymentDone: this.createPaymentDone(),
       // phoneNumber: ['', Validators.required],
       // customerGSTIN: ['', Validators.required],
       // invoiceNumber: ['', Validators.required],
@@ -166,6 +171,7 @@ export class TransactionCreationFormComponent {
 
   createSale() {
     // Handle sale creation logic here
+    console.log(this.salesForm.value);
   }
 
   removeSelectedParty() {
@@ -587,7 +593,8 @@ export class TransactionCreationFormComponent {
       console.log(bestDiscount);
       salesItemsForm.at(index).patchValue({
         sellsPrice: item.sellsPrice,
-        item: item._id,
+        itemId: item._id,
+        itemName: item.name,
         gst: item.gstPercentage ? item.gstPercentage : '0',
         cess: item.cess ? item.cess : '0',
         rate: item.sellsPrice,
@@ -639,7 +646,8 @@ export class TransactionCreationFormComponent {
 
   createSalesItem(): FormGroup {
     return this.fb.group({
-      item: ['', Validators.required],
+      itemName: ['', Validators.required],
+      itemId: [''],
       quantity: ['1.00', Validators.required],
       sellsPrice: ['0', Validators.required],
       discount: this.createDiscount(),
@@ -650,6 +658,12 @@ export class TransactionCreationFormComponent {
     });
   }
 
+  createPaymentDone(): FormGroup {
+    return this.fb.group({
+      mode: ['CASH', Validators.required],
+      amount: ['0', Validators.required],
+    });
+  }
   createDiscount(): FormGroup {
     return this.fb.group({
       _id: [''],

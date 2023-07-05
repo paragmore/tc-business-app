@@ -1,0 +1,38 @@
+.reports-card {
+  background-color: var(--ion-color-primary-contrast);
+}
+
+.header-row {
+  display: flex;
+  flex-direction: row;
+  background-color: var(--ion-color-secondary);
+  border-bottom: 1px solid var(--ion-color-secondary);
+}
+
+.menu-button-mobile {
+  @media only screen and (max-width: 768px) {
+    flex: 1;
+  }
+}
+
+.list-height {
+  height: 65vh;
+  @media only screen and (max-width: 768px) {
+    height: 77vh;
+  }
+}
+
+ion-grid {
+  padding: 0px;
+  margin: 0px;
+}
+
+ion-col {
+  padding: 0px;
+  margin: 0px;
+}
+
+ion-row {
+  padding: 0px;
+  margin: 0px;
+}
