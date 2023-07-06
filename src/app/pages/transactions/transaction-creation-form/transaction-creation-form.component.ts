@@ -10,7 +10,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { IonicModule, ModalController } from '@ionic/angular';
+import { IonicModule, ModalController, ToastController } from '@ionic/angular';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { CurrentStoreInfoService } from 'src/app/core/services/currentStore/current-store-info.service';
@@ -35,12 +35,27 @@ import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
 import { PartyCreationModalComponent } from '../../parties/party-creation-modal/party-creation-modal.component';
 import { ItemCreationComponent } from '../../items/item-creation/item-creation.component';
 import { DiscountsModalComponent } from '../../items/discounts-modal/discounts-modal.component';
+import {
+  CreateTransactionRequestI,
+  PaymentModeEnum,
+  PaymentStatusEnum,
+  TransactionTypeEnum,
+  TransactionsService,
+} from 'src/app/core/services/transactions/transactions.service';
+import { StatePopoverComponent } from 'src/app/core/components/state-popover/state-popover.component';
+import { toastAlert } from 'src/app/core/utils/toastAlert';
 @Component({
   selector: 'app-transaction-creation-form',
   templateUrl: './transaction-creation-form.component.html',
   styleUrls: ['./transaction-creation-form.component.scss'],
   standalone: true,
-  imports: [IonicModule, FormsModule, ReactiveFormsModule, CommonModule],
+  imports: [
+    IonicModule,
+    FormsModule,
+    ReactiveFormsModule,
+    CommonModule,
+    StatePopoverComponent,
+  ],
 })
 export class TransactionCreationFormComponent {
   salesForm: FormGroup;
@@ -62,25 +77,25 @@ export class TransactionCreationFormComponent {
   products: ProductI[] = [];
   selectedItems: ProductI[] = [];
   isUpdatingForm = false;
+  PaymentStatusEnum = PaymentStatusEnum;
+  PaymentModeEnum = PaymentModeEnum;
+  isLoading = false;
   constructor(
     private fb: FormBuilder,
     private store: Store<AppState>,
     private partiesService: PartiesService,
     private currentStoreInfoService: CurrentStoreInfoService,
     private productsService: ProductsService,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private transactionsService: TransactionsService,
+    private toastController: ToastController
   ) {
     this.salesForm = this.fb.group({});
   }
 
   ngOnInit(): void {
-    this.currentStoreInfoService.getCurrentStoreInfo().subscribe((response) => {
-      this.currentStoreInfo = response;
-      this.loadCustomers();
-      this.loadProducts();
-    });
     this.salesForm = this.fb.group({
-      salesItems: this.fb.array([this.createSalesItem()]),
+      items: this.fb.array([this.createSalesItem()]),
       party: this.createPartyFormGroup(),
       date: [new Date(), Validators.required],
       invoiceId: ['', Validators.required],
@@ -97,21 +112,37 @@ export class TransactionCreationFormComponent {
       // partyDetails: this.createPartyFormGroup(),
       // invoiceDetails: this.createInvoiceFormGroup(),
     });
+    this.currentStoreInfoService.getCurrentStoreInfo().subscribe((response) => {
+      this.currentStoreInfo = response;
+      if (this.currentStoreInfo?.lastInvoiceInfo) {
+        console.log(this.currentStoreInfo?.lastInvoiceInfo);
+        this.salesForm.patchValue({
+          invoiceId:
+            '' +
+            this.currentStoreInfo?.lastInvoiceInfo.sequence +
+            ' - ' +
+            this.currentStoreInfo?.lastInvoiceInfo.invoiceId,
+        });
+      }
+      this.loadCustomers();
+      this.loadProducts();
+    });
+
     this.screenState$ = this.store.select((store) => store.screen);
 
-    const salesItemsFormArray = this.salesForm.get('salesItems') as FormArray;
-    let previousSalesItems = [...salesItemsFormArray.value];
+    const itemsFormArray = this.salesForm.get('items') as FormArray;
+    let previousSalesItems = [...itemsFormArray.value];
     this.isUpdatingForm = false;
 
-    salesItemsFormArray.valueChanges.subscribe((salesItems) => {
+    itemsFormArray.valueChanges.subscribe((items) => {
       if (this.isUpdatingForm) {
         // Ignore value changes triggered programmatically
         return;
       }
 
-      for (let i = 0; i < salesItems.length; i++) {
+      for (let i = 0; i < items.length; i++) {
         const previousSalesItem = previousSalesItems[i];
-        const currentSalesItem = salesItems[i];
+        const currentSalesItem = items[i];
 
         if (
           JSON.stringify(previousSalesItem) !== JSON.stringify(currentSalesItem)
@@ -122,7 +153,7 @@ export class TransactionCreationFormComponent {
         }
       }
 
-      previousSalesItems = [...salesItems];
+      previousSalesItems = [...items];
     });
   }
 
@@ -145,6 +176,21 @@ export class TransactionCreationFormComponent {
     return await modal.present();
   }
 
+  onPartyShippingStateSelect(state: string) {
+    console.log('STATE', state);
+    this.salesForm.patchValue({ party: { address: { shipping: { state } } } });
+  }
+
+  onPartyBillingStateSelect(state: string) {
+    console.log('STATE', state);
+    this.salesForm.patchValue({ party: { address: { billing: { state } } } });
+  }
+
+  onStateSelect(state: string) {
+    console.log('STATE', state);
+    this.salesForm.patchValue({ stateOfSupply: state });
+  }
+
   async openDiscountsModal(index: number) {
     console.log('idhar');
     const modal = await this.modalController.create({
@@ -158,9 +204,9 @@ export class TransactionCreationFormComponent {
 
     modal.onDidDismiss().then((modalData) => {
       if (modalData?.data?.discount) {
-        const salesItemsForm = this.salesForm.get('salesItems') as FormArray;
-        if (salesItemsForm) {
-          salesItemsForm.at(index).patchValue({
+        const itemsForm = this.salesForm.get('items') as FormArray;
+        if (itemsForm) {
+          itemsForm.at(index).patchValue({
             discount: modalData.data.discount,
           });
         }
@@ -169,11 +215,98 @@ export class TransactionCreationFormComponent {
     return await modal.present();
   }
 
-  createSale() {
+  createTransaction() {
     // Handle sale creation logic here
     console.log(this.salesForm.value);
+    if (!this.currentStoreInfo?._id) {
+      return;
+    }
+    const salesFormValue: {
+      items: [];
+      party: {
+        _id: string;
+        name: string;
+        tradeName: string;
+        phoneNumber: string;
+        email: string;
+        gstin: string;
+        address: {
+          shipping: {
+            line1: string;
+            line2: string;
+            city: string;
+            state: string;
+            pinCode: string;
+          };
+          billingSameAsShipping: boolean;
+          billing: {
+            line1: string;
+            line2: string;
+            city: string;
+            state: string;
+            pinCode: string;
+          };
+        };
+      };
+      date: Date;
+      invoiceId: string;
+      stateOfSupply: string;
+      customerNotes: string;
+      termsAndConditions: string;
+      paymentDone: {
+        mode: string;
+        amount: number;
+      };
+    } = this.salesForm.value;
+    const transactionsPayload: CreateTransactionRequestI = {
+      storeId: this.currentStoreInfo?._id,
+      transactionType: TransactionTypeEnum.SALE,
+      ...salesFormValue,
+      dueDate: new Date(),
+      additionalFields: [],
+    };
+    console.log(transactionsPayload);
+    const replaced = this.replaceEmptyObjectsWithUndefined(transactionsPayload);
+    console.log(replaced);
+    this.isLoading = true;
+    this.transactionsService
+      .createStoreTransaction(transactionsPayload)
+      .subscribe(
+        (response) => {
+          console.log(response);
+          //@ts-ignore
+          if (response.message === 'Success') {
+            toastAlert(
+              this.toastController,
+              `${this.selectedTab} created successfully`,
+              'success'
+            );
+          }
+        },
+        (error) => {
+          toastAlert(this.toastController, error.error.message, 'danger');
+        },
+        () => {
+          this.isLoading = false;
+        }
+      );
   }
 
+  replaceEmptyObjectsWithUndefined(obj: any) {
+    for (let key in obj) {
+      if (
+        typeof obj[key] === 'object' &&
+        obj[key] !== null &&
+        !Array.isArray(obj[key] && obj[key].length === 0) &&
+        !(obj[key] instanceof Date)
+      ) {
+        this.replaceEmptyObjectsWithUndefined(obj[key]);
+        if (Object.values(obj[key]).every((value) => value === '')) {
+          obj[key] = undefined;
+        }
+      }
+    }
+  }
   removeSelectedParty() {
     this.selectedParty = undefined;
     const partyFormPayload = {
@@ -444,7 +577,7 @@ export class TransactionCreationFormComponent {
       discounts: 0,
       total: 0,
     };
-    this.salesForm.value.salesItems.map((item: any) => {
+    this.salesForm.value.items.map((item: any) => {
       totalInfo.subTotal = totalInfo.subTotal + item.amount;
       if (item.discount) {
         totalInfo.discounts =
@@ -517,18 +650,18 @@ export class TransactionCreationFormComponent {
   }
 
   onDiscountChange(index: number, discount: DiscountI) {
-    const salesItemsForm = this.salesForm.get('salesItems') as FormArray;
-    if (salesItemsForm) {
-      salesItemsForm.at(index).patchValue({
+    const itemsForm = this.salesForm.get('items') as FormArray;
+    if (itemsForm) {
+      itemsForm.at(index).patchValue({
         discount: discount,
       });
     }
   }
 
   onChangeItemValues(index: number) {
-    const salesItemsForm = this.salesForm.get('salesItems') as FormArray;
-    if (salesItemsForm) {
-      const formGroup = salesItemsForm.at(index) as FormGroup;
+    const itemsForm = this.salesForm.get('items') as FormArray;
+    if (itemsForm) {
+      const formGroup = itemsForm.at(index) as FormGroup;
       const formValue = formGroup.value;
       console.log(formValue);
       const amount = this.calculateAmount(
@@ -556,8 +689,8 @@ export class TransactionCreationFormComponent {
   }
 
   removeDiscount(index: number) {
-    const salesItemsForm = this.salesForm.get('salesItems') as FormArray;
-    if (salesItemsForm) {
+    const itemsForm = this.salesForm.get('items') as FormArray;
+    if (itemsForm) {
       const discount: DiscountI = {
         code: '',
         minType: 'orderQuantity',
@@ -566,16 +699,16 @@ export class TransactionCreationFormComponent {
         maxDiscount: 0,
         minimum: 0,
       };
-      salesItemsForm.at(index).patchValue({
+      itemsForm.at(index).patchValue({
         discount: discount,
       });
     }
   }
   onSelectItem(item: ProductI, index: number) {
-    const salesItemsForm = this.salesForm.get('salesItems') as FormArray;
+    const itemsForm = this.salesForm.get('items') as FormArray;
 
-    if (salesItemsForm) {
-      const quantity = salesItemsForm.at(index).value.quantity;
+    if (itemsForm) {
+      const quantity = itemsForm.at(index).value.quantity;
 
       const bestDiscount = this.selectBestDiscount(
         item.discounts,
@@ -591,7 +724,7 @@ export class TransactionCreationFormComponent {
         bestDiscount
       );
       console.log(bestDiscount);
-      salesItemsForm.at(index).patchValue({
+      itemsForm.at(index).patchValue({
         sellsPrice: item.sellsPrice,
         itemId: item._id,
         itemName: item.name,
@@ -604,7 +737,7 @@ export class TransactionCreationFormComponent {
       });
 
       this.selectedItems[index] = item;
-      console.log('FORM', salesItemsForm.at(index));
+      console.log('FORM', itemsForm.at(index));
       this.getForm();
     }
   }
@@ -658,9 +791,24 @@ export class TransactionCreationFormComponent {
     });
   }
 
+  onPaymentStatusChange(event: any) {
+    this.salesForm.patchValue({
+      paymentDone: {
+        mode: event.detail.value,
+      },
+    });
+  }
+
+  getBalanceDue(total: number) {
+    const formvalue = this.salesForm.value;
+    return (
+      total - (formvalue.paymentDone.amount ? formvalue.paymentDone.amount : 0)
+    );
+  }
+
   createPaymentDone(): FormGroup {
     return this.fb.group({
-      mode: ['CASH', Validators.required],
+      mode: ['UNPAID', Validators.required],
       amount: ['0', Validators.required],
     });
   }
@@ -704,17 +852,17 @@ export class TransactionCreationFormComponent {
   }
 
   get getFormControls() {
-    const control = this.salesForm.get('salesItems') as FormArray;
+    const control = this.salesForm.get('items') as FormArray;
     return control;
   }
 
   addItem(): void {
-    const salesItems = this.salesForm.get('salesItems') as FormArray;
-    salesItems.push(this.createSalesItem());
+    const items = this.salesForm.get('items') as FormArray;
+    items.push(this.createSalesItem());
   }
 
   removeItem(index: number): void {
-    const salesItems = this.salesForm.get('salesItems') as FormArray;
-    salesItems.removeAt(index);
+    const items = this.salesForm.get('items') as FormArray;
+    items.removeAt(index);
   }
 }

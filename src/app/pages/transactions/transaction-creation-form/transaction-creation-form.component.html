@@ -231,7 +231,23 @@
                           label-placement="stacked"
                           fill="outline"
                           formControlName="state"
+                          id="party-shipping-state-selection-popover-button"
+                          [readonly]="true"
                         ></ion-input>
+                        <ion-popover
+                          trigger="party-shipping-state-selection-popover-button"
+                          [showBackdrop]="false"
+                          [dismissOnSelect]="true"
+                          [keyboardClose]="false"
+                        >
+                          <ng-template>
+                            <ion-content>
+                              <app-state-popover
+                                (onSelect)="onPartyShippingStateSelect($event)"
+                              ></app-state-popover>
+                            </ion-content>
+                          </ng-template>
+                        </ion-popover>
                       </ion-col>
                     </ion-row>
                   </ion-grid>
@@ -305,7 +321,23 @@
                           label-placement="stacked"
                           fill="outline"
                           formControlName="state"
+                          id="party-billing-state-selection-popover-button"
+                          [readonly]="true"
                         ></ion-input>
+                        <ion-popover
+                          trigger="party-billing-state-selection-popover-button"
+                          [showBackdrop]="false"
+                          [dismissOnSelect]="true"
+                          [keyboardClose]="false"
+                        >
+                          <ng-template>
+                            <ion-content>
+                              <app-state-popover
+                                (onSelect)="onPartyBillingStateSelect($event)"
+                              ></app-state-popover>
+                            </ion-content>
+                          </ng-template>
+                        </ion-popover>
                       </ion-col>
                     </ion-row>
                   </ion-grid>
@@ -329,6 +361,7 @@
                 label-placement="stacked"
                 fill="outline"
                 label="Invoice Number"
+                formControlName="invoiceId"
               ></ion-input>
             </ion-row>
             <ion-row>
@@ -357,7 +390,24 @@
                 label-placement="stacked"
                 fill="outline"
                 label="State of Suppy"
+                id="state-selection-popover-button"
+                formControlName="stateOfSupply"
+                [readonly]="true"
               ></ion-input>
+              <ion-popover
+                trigger="state-selection-popover-button"
+                [showBackdrop]="false"
+                [dismissOnSelect]="true"
+                [keyboardClose]="false"
+              >
+                <ng-template>
+                  <ion-content>
+                    <app-state-popover
+                      (onSelect)="onStateSelect($event)"
+                    ></app-state-popover>
+                  </ion-content>
+                </ng-template>
+              </ion-popover>
             </ion-row>
           </form>
         </ion-col>
@@ -401,7 +451,7 @@
             </ion-col>
           </ion-row>
           <div
-            formArrayName="salesItems"
+            formArrayName="items"
             *ngFor="let item of getFormControls.controls; let i = index"
           >
             <ion-row [formGroupName]="i">
@@ -794,13 +844,20 @@
                   <ion-card style="padding: 10px; gap: 20px 20px">
                     <div>
                       <form [formGroup]="salesForm">
-                        <ion-label position="stacked">Customer notes</ion-label>
-                        <ion-input fill="outline"></ion-input>
+                        <ion-input
+                          formControlName="customerNotes"
+                          label="Customer notes"
+                          label-placement="stacked"
+                          fill="outline"
+                        ></ion-input>
                         <p class="tiny">Will be displayed on the invoice</p>
-                        <ion-label position="stacked"
-                          >Terms and conditions</ion-label
+                        <ion-textarea
+                          label="Terms and conditions"
+                          label-placement="stacked"
+                          fill="outline"
+                          formControlName="termsAndConditions"
                         >
-                        <ion-textarea fill="outline"> </ion-textarea>
+                        </ion-textarea>
                       </form>
                     </div>
                   </ion-card>
@@ -890,35 +947,58 @@
                       </p>
                     </div>
                   </ion-row>
-                  <ion-row style="margin-top: 20px; margin-bottom: 10px">
-                    <ion-radio-group
-                      style="display: flex; flex-direction: row; gap: 10px"
-                      value="strawberries"
-                    >
-                      <ion-radio labelPlacement="end" value="grapes"
-                        >Unpaid</ion-radio
+                  <form [formGroup]="salesForm">
+                    <div formGroupName="paymentDone">
+                      <ion-row style="margin-top: 20px; margin-bottom: 10px">
+                        <ion-radio-group
+                          style="display: flex; flex-direction: row; gap: 10px"
+                          [value]="salesForm.value.paymentDone.mode"
+                          (ionChange)="onPaymentStatusChange($event)"
+                        >
+                          <ion-radio
+                            labelPlacement="end"
+                            [value]="PaymentStatusEnum.UNPAID"
+                            >Unpaid</ion-radio
+                          >
+                          <ion-radio
+                            labelPlacement="end"
+                            [value]="PaymentModeEnum.CASH"
+                            >Cash</ion-radio
+                          >
+                          <ion-radio
+                            labelPlacement="end"
+                            [value]="PaymentModeEnum.ONLINE"
+                            >Online</ion-radio
+                          >
+                        </ion-radio-group>
+                      </ion-row>
+                      <ion-row
+                        *ngIf="
+                          salesForm.value.paymentDone.mode ===
+                            PaymentModeEnum.CASH ||
+                          salesForm.value.paymentDone.mode ===
+                            PaymentModeEnum.ONLINE
+                        "
                       >
-                      <ion-radio labelPlacement="end" value="strawberries"
-                        >Cash</ion-radio
-                      >
-                      <ion-radio labelPlacement="end" value="pineapple"
-                        >Online</ion-radio
-                      >
-                    </ion-radio-group>
-                  </ion-row>
-                  <ion-row>
-                    <ion-input
-                      label-placement="stacked"
-                      fill="outline"
-                      label="Amount Paid"
-                    ></ion-input>
-                  </ion-row>
+                        <ion-input
+                          label-placement="stacked"
+                          fill="outline"
+                          label="Amount Paid"
+                          [required]="true"
+                          formControlName="amount"
+                        ></ion-input>
+                      </ion-row>
+                    </div>
+                  </form>
+
                   <ion-row style="display: flex">
                     <div style="flex: 1">
                       <p class="title3">Balance Due ( ₹ )</p>
                     </div>
                     <div>
-                      <p class="title3">₹ {{ totalInformation.total }}</p>
+                      <p class="title3">
+                        ₹ {{ getBalanceDue(totalInformation.total) }}
+                      </p>
                     </div>
                   </ion-row>
                 </ion-col>
@@ -944,7 +1024,7 @@
       "
       type="submit"
       class="btn btn-primary"
-      (click)="createSale()"
+      (click)="createTransaction()"
       >Create Sale</ion-button
     >
   </div>
