@@ -1,0 +1,109 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: 20px;
+}
+.main-page-styles {
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  overflow-y: scroll;
+  max-height: 100vh;
+}
+
+.container .h1 {
+  font-size: 24px;
+  margin-top: 0;
+  color: #333;
+}
+
+.container p {
+  margin-top: 0;
+  color: #777;
+}
+
+.container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.container th,
+td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.container th {
+  background-color: #f2f2f2;
+}
+
+.container .total {
+  font-weight: bold;
+}
+
+.container .paid {
+  color: green;
+}
+
+.container .partially-paid {
+  color: orange;
+}
+
+.container .unpaid {
+  color: red;
+}
+
+/* Additional styles for print preview */
+@media print {
+  body {
+    background-color: #fff;
+    margin: 0;
+    padding: 0;
+  }
+
+  .container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 0;
+    box-shadow: none;
+  }
+
+  h1 {
+    text-align: center;
+  }
+
+  p,
+  th,
+  td {
+    color: #000;
+  }
+
+  table {
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    border-bottom: none;
+  }
+
+  .total {
+    font-weight: bold;
+  }
+
+  .paid {
+    color: green;
+  }
+
+  .partially-paid {
+    color: orange;
+  }
+
+  .unpaid {
+    color: red;
+  }
+}
