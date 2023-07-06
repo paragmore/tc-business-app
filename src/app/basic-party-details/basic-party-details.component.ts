@@ -35,8 +35,12 @@ export interface BasicPartyDetailsInputI {
   amount: {
     title: string;
     value: number;
-    color: string;
+    color?: string;
     prefix?: string;
+    subtitle?: {
+      text: string;
+      color?: string;
+    };
   };
   onEditClick?: () => void;
 }

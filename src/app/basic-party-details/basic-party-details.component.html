@@ -13,7 +13,7 @@
         </div>
       </div>
       <div>
-        <p class="titleMedium">
+        <p class="title3">
           {{ partyDetails.name }}
         </p>
         <p class="caption">
@@ -22,35 +22,51 @@
       </div>
     </div>
     <div>
-      <ion-button
-        fill="outline"
-        (click)="partyDetails.onEditClick()"
-        *ngIf="partyDetails.onEditClick"
-      >
-        <ion-icon name="pencil"></ion-icon>
-      </ion-button>
-    </div>
-  </ion-row>
-  <ion-row style="justify-content: end">
-    <div style="display: flex; flex-direction: column; padding: 10px">
-      <p class="titleSmall">
-        {{ partyDetails.amount.title }}
-      </p>
-      <div
-        style="
-          display: flex;
-          flex-direction: row;
-          justify-content: center;
-          align-items: center;
-        "
-      >
-        <p class="caption">
-          {{ partyDetails.amount.prefix + " " }}
-        </p>
-        <p [class]="partyDetails.amount.color" class="titleMedium">
-          ₹ {{ partyDetails.amount.value }}
-        </p>
-      </div>
+      <ion-row style="justify-content: end">
+        <ion-button
+          fill="outline"
+          (click)="partyDetails.onEditClick()"
+          *ngIf="partyDetails.onEditClick"
+        >
+          <ion-icon name="pencil"></ion-icon>
+        </ion-button>
+      </ion-row>
+      <ion-row style="justify-content: end">
+        <div
+          style="
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            align-items: center;
+          "
+        >
+          <p class="titleSmall">
+            {{ partyDetails.amount.title }}
+          </p>
+          <div
+            style="
+              display: flex;
+              flex-direction: row;
+              justify-content: center;
+              align-items: center;
+            "
+          >
+            <p class="caption">
+              {{ partyDetails.amount.prefix + " " }}
+            </p>
+            <p [class]="partyDetails.amount.color" class="titleMedium">
+              ₹ {{ partyDetails.amount.value }}
+            </p>
+          </div>
+          <p
+            *ngIf="partyDetails.amount.subtitle"
+            [class]="partyDetails.amount.subtitle.color"
+            class="bodyMedium"
+          >
+            {{ partyDetails.amount.subtitle.text }}
+          </p>
+        </div>
+      </ion-row>
     </div>
   </ion-row>
 </ion-grid>
