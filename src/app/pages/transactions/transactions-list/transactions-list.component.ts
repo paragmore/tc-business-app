@@ -10,6 +10,7 @@ import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
 import { Observable } from 'rxjs';
 import { ScreenModel } from 'src/app/store/models/screen.models';
 import {
+  PaymentStatusEnum,
   SortOrder,
   TransactionI,
   TransactionTypeEnum,
@@ -37,6 +38,7 @@ import {
 import { ConfirmationModalComponent } from 'src/app/core/components/confirmation-modal/confirmation-modal.component';
 import { toastAlert } from 'src/app/core/utils/toastAlert';
 import { MobilePartiesListHeaderComponent } from '../../parties/mobile-parties-list-header/mobile-parties-list-header.component';
+import { format } from 'date-fns';
 
 @Component({
   selector: 'app-transactions-list',
@@ -101,7 +103,7 @@ export class TransactionsListComponent implements OnInit {
     totalPages: this.totalPages,
     goToPage: this.goToPage,
     changePageSize: this.changePageSize,
-    col1Title: 'Name',
+    col1Title: 'Transaction',
     col2Title: 'Amount',
     onSelectionToggle: (event: any, transactionId: string) => {
       this.onTransactionSelectionToggle(event, transactionId);
@@ -244,29 +246,36 @@ export class TransactionsListComponent implements OnInit {
       const supplierData = transaction;
       ledgerItem = {
         id: supplierData._id,
-        title: supplierData.invoiceId || '',
+        title: supplierData.party.name || '',
+        subTitle: format(new Date(supplierData.date), 'dd MMM yyyy'),
+        chipText: supplierData.invoiceId,
         amount: {
           text: Math.abs(
             supplierData?.totalInformation?.total || 0
           )?.toString(),
-          color:
-            supplierData &&
-            supplierData?.totalInformation?.total &&
-            supplierData?.totalInformation?.total > 0
-              ? 'danger'
-              : supplierData &&
-                supplierData?.totalInformation?.total &&
-                supplierData?.totalInformation?.total < 0
-              ? 'success'
-              : '',
         },
-        subTitle: supplierData.paymentStatus,
-        imageUrl: supplierData.storeId,
+        amountSubtitle: {
+          text: supplierData.paymentStatus,
+          color: this.getPaymentStatusColor(supplierData.paymentStatus),
+        },
+        imageUrl:
+          'https://www.freeiconspng.com/thumbs/sales-icon/sales-icon-10.png',
         onClick: this.onTransactionLedgerCardClicked,
         openDetailsPage: this.onOpenDetailsPage,
       };
       return ledgerItem;
     });
+  }
+
+  getPaymentStatusColor(paymentStatus: PaymentStatusEnum) {
+    switch (paymentStatus) {
+      case PaymentStatusEnum.PAID:
+        return 'success';
+      case PaymentStatusEnum.UNPAID:
+        return 'danger';
+      case PaymentStatusEnum.PARTIALLY_PAID:
+        return 'warning';
+    }
   }
 
   onTransactionLedgerCardClicked = (ledger: LedgerItemI) => {

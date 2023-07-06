@@ -111,7 +111,7 @@ interface TransactionI {
   storeId: string;
   transactionType: string;
   invoiceId: string;
-  date: Date;
+  date: string;
   dueDate: Date;
   party: TransactionPartyI;
   additionalFields: AdditionalFieldI[];
@@ -120,7 +120,7 @@ interface TransactionI {
   customerNotes?: string;
   termsAndConditions?: string;
   payments: string[];
-  paymentStatus: string;
+  paymentStatus: PaymentStatusEnum;
   totalInformation: {
     subTotal: number;
     gst?: number;
@@ -128,6 +128,21 @@ interface TransactionI {
     discounts?: number;
     total: number;
   };
+  paymentDone: {
+    amount: number;
+    mode: string;
+  };
+}
+
+export enum PaymentStatusEnum {
+  PAID = 'PAID',
+  PARTIALLY_PAID = 'PARTIALLY PAID',
+  UNPAID = 'UNPAID',
+}
+
+export enum PaymentModeEnum {
+  ONLINE = 'ONLINE',
+  CASH = 'CASH',
 }
 
 export enum TaxPreferenceEnum {
@@ -240,12 +255,6 @@ export interface DiscountI {
   type: 'percentage' | 'amount';
   minType: 'orderQuantity' | 'orderValue';
   maxDiscount?: number;
-}
-
-export enum PaymentStatusEnum {
-  PAID = 'PAID',
-  PARTIALLY_PAID = 'PARTIALLY PAID',
-  UNPAID = 'UNPAID',
 }
 export interface TransactionItemI {
   itemName: string;
