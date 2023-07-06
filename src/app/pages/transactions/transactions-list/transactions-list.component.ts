@@ -259,7 +259,9 @@ export class TransactionsListComponent implements OnInit {
           color: this.getPaymentStatusColor(supplierData.paymentStatus),
         },
         imageUrl:
-          'https://www.freeiconspng.com/thumbs/sales-icon/sales-icon-10.png',
+          supplierData.transactionType === 'SALE'
+            ? 'https://www.freeiconspng.com/thumbs/sales-icon/sales-icon-10.png'
+            : 'https://icons.veryicon.com/png/o/business/store-marketing-management-icon/goods-purchase-order.png',
         onClick: this.onTransactionLedgerCardClicked,
         openDetailsPage: this.onOpenDetailsPage,
       };
