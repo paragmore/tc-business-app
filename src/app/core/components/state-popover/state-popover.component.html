@@ -1,0 +1,8 @@
+<div>
+  <ion-item
+    (click)="onSelectEvent(state)"
+    [button]="true"
+    *ngFor="let state of states; let i = index"
+    >{{ state }}</ion-item
+  >
+</div>
