@@ -15,4 +15,27 @@ export interface StoreInfoModel {
   updatedAt: string;
   __v: number;
   role: string;
+  name?: string;
+  logoUrl?: string;
+  businessType?: string;
+  businessDomain?: string;
+  gstNumber?: string;
+  allowCreditReportAccess?: boolean;
+  onlineStoreLive?: boolean;
+  plan?: string;
+  address?: {
+    city?: string;
+    state?: string;
+    firstLine?: string;
+    secondLine?: string;
+    pinCode?: string;
+    district?: string;
+  };
+  location?: string;
+  companyType?: string;
+  phoneNumber: string;
+  lastInvoiceInfo: {
+    sequence: string;
+    invoiceId: number;
+  };
 }
