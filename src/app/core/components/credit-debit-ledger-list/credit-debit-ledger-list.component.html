@@ -171,11 +171,15 @@
                     >
                       {{ ledger.title }}
                     </p>
-                    <ion-chip *ngIf="ledger.chipText" fill="outline">
+                    <div
+                      class="custom-invoice-id-chip"
+                      *ngIf="ledger.chipText"
+                      fill="outline"
+                    >
                       <p style="text-align: start" class="caption">
                         {{ ledger.chipText }}
                       </p>
-                    </ion-chip>
+                    </div>
                     <p
                       class="caption"
                       style="overflow-wrap: anywhere; text-align: start"
@@ -201,7 +205,7 @@
                     <p
                       *ngIf="ledger.amountSubtitle"
                       [class]="ledger.amountSubtitle.color"
-                      class="caption"
+                      class="bodyMedium"
                       style="overflow-wrap: anywhere"
                     >
                       {{ ledger.amountSubtitle.text }}
