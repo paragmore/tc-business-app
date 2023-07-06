@@ -133,6 +133,7 @@
         </table>
 
         <div style="clear: both"></div>
+
         <table
           style="width: 100%; table-layout: fixed; clear: both"
           class="pcs-itemtable"
@@ -230,15 +231,19 @@
               </td>
             </tr>
           </thead>
-
           <tbody class="itemBody">
             <tr
               *ngFor="let item of invoiceInfo.transaction.items; let i = index"
               class="breakrow-inside breakrow-after"
               style="height: 20px"
             >
-              <td>
-                {{ item | json }}
+              <td
+                rowspan="1"
+                valign="top"
+                style="text-align: center"
+                class="pcs-item-row"
+              >
+                {{ i }}
               </td>
               <td
                 rowspan="1"
@@ -248,8 +253,9 @@
               >
                 <div>
                   <div>
-                    <span style="word-wrap: break-word" id="tmp_item_name"
-                      >Cello SS swift 1800ml</span
+                    <span style="word-wrap: break-word" id="tmp_item_name">{{
+                      item.itemName
+                    }}</span
                     ><br />
 
                     <span
@@ -269,7 +275,7 @@
                 class="pcs-item-row"
                 id="tmp_item_qty"
               >
-                1.00
+                {{ item.quantity }}
                 <div>pcs</div>
               </td>
 
@@ -280,7 +286,7 @@
                 class="pcs-item-row"
                 id="tmp_item_rate"
               >
-                1,370.00
+                {{ item.sellsPrice }}
               </td>
 
               <td
@@ -289,7 +295,7 @@
                 style="text-align: right"
                 class="pcs-item-row"
               >
-                <div>9%</div>
+                <div>{{ item.gstPercentage / 2 }}%</div>
               </td>
               <td
                 rowspan="1"
@@ -297,7 +303,9 @@
                 style="text-align: right"
                 class="pcs-item-row"
               >
-                <div id="tmp_item_tax_amount">104.49</div>
+                <div id="tmp_item_tax_amount">
+                  {{ (item.sellsPrice * item.gstPercentage) / 2 }}
+                </div>
               </td>
               <td
                 rowspan="1"
@@ -305,7 +313,7 @@
                 style="text-align: right"
                 class="pcs-item-row"
               >
-                <div>9%</div>
+                <div>{{ item.gstPercentage / 2 }}%</div>
               </td>
               <td
                 rowspan="1"
@@ -313,7 +321,9 @@
                 style="text-align: right"
                 class="pcs-item-row"
               >
-                <div id="tmp_item_tax_amount">104.49</div>
+                <div id="tmp_item_tax_amount">
+                  {{ (item.sellsPrice * item.gstPercentage) / 2 }}
+                </div>
               </td>
               <td
                 rowspan="1"
@@ -322,7 +332,16 @@
                 class="pcs-item-row"
                 id="tmp_item_amount"
               >
-                1,370.00
+                {{
+                  calculateAmount(
+                    item.sellsPrice,
+                    item.quantity,
+                    item.taxIncluded,
+                    item.gstPercentage,
+                    item.cess,
+                    item.discount
+                  )
+                }}
               </td>
             </tr>
           </tbody>
@@ -400,7 +419,7 @@
                   <td valign="middle">Payment Made</td>
 
                   <td valign="middle" style="width: 110px; color: red">
-                    (-) {{ invoiceInfo.transaction.paymentDone.amount }}
+                    (-) {{ invoiceInfo.transaction.paymentDone?.amount }}
                   </td>
                 </tr>
 
@@ -409,8 +428,7 @@
                   <td id="tmp_balance_due" valign="middle" style="width: 110px">
                     <strong
                       >₹{{
-                        invoiceInfo.transaction.totalInformation.total -
-                          invoiceInfo.transaction.paymentDone.amount
+                        invoiceInfo.transaction.totalInformation.total
                       }}</strong
                     >
                   </td>
