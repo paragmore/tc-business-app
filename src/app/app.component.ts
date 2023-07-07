@@ -39,9 +39,8 @@ export class AppComponent {
     { title: 'Items', url: '/items', icon: 'pricetags' },
     { title: 'Parties', url: '/parties', icon: 'people' },
     { title: 'Reports', url: '/reports', icon: 'bar-chart' },
-    { title: 'Orders', url: '/folder/spam', icon: 'cart' },
-    { title: 'Reports', url: '/folder/spam', icon: 'warning' },
-    { title: 'Settings', url: '/folder/spam', icon: 'warning' },
+    { title: 'Orders', url: '/folder/orders', icon: 'cart' },
+    { title: 'Settings', url: '/folder/settings', icon: 'settings' },
   ];
   public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
   public screenState$: Observable<ScreenModel> | undefined;
