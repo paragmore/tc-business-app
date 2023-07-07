@@ -7,6 +7,8 @@ export interface UserStoreInfoModel {
   __v: number;
   currentStoreId?: string;
   defaultStoreId: string;
+  name?: string;
+  photoUrl?: string;
 }
 
 export interface StoreInfoModel {

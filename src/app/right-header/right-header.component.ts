@@ -1,6 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
+import { Observable } from 'rxjs';
+import { UserStoreInfoModel } from '../store/models/userStoreInfo.models';
+import { Store } from '@ngrx/store';
+import { AppState } from '../store/models/state.model';
 
 @Component({
   selector: 'app-right-header',
@@ -10,7 +14,17 @@ import { IonicModule } from '@ionic/angular';
   imports: [IonicModule, CommonModule],
 })
 export class RightHeaderComponent implements OnInit {
-  constructor() {}
+  public route!: string;
+  userStoreInfoState$: Observable<UserStoreInfoModel> | undefined;
+  userStoreInfoState: UserStoreInfoModel | undefined;
+  constructor(private store: Store<AppState>) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.userStoreInfoState$ = this.store.select(
+      (store) => store.userStoreInfo
+    );
+    this.userStoreInfoState$?.subscribe(
+      (userStoreInfo) => (this.userStoreInfoState = userStoreInfo)
+    );
+  }
 }

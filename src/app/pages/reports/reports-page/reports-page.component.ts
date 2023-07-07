@@ -8,6 +8,7 @@ import {
   PeriodRangeEnum,
   getPeriodRange,
 } from 'src/app/core/utils/startEndDates';
+import { RightHeaderComponent } from 'src/app/right-header/right-header.component';
 
 @Component({
   selector: 'app-reports-page',
@@ -20,6 +21,7 @@ import {
     FormsModule,
     DateFormatPipe,
     PeriodSelectionComponent,
+    RightHeaderComponent,
   ],
 })
 export class ReportsPageComponent implements OnInit {
