@@ -1,6 +1,13 @@
-<div class="main-page-styles">
-  <p class="title2">Invoice #{{ transactionDetails?.invoiceId }}</p>
-  <p class="bodySecondary">{{ getFormattedDate(transactionDetails?.date) }}</p>
+<ion-row class="header-row">
+  <app-right-header style="width: 100%"></app-right-header>
+</ion-row>
+<div class="main-scrollable-page">
+  <div style="margin-bottom: 10px">
+    <p class="title2">Invoice #{{ transactionDetails?.invoiceId }}</p>
+    <p class="bodySecondary">
+      {{ getFormattedDate(transactionDetails?.date) }}
+    </p>
+  </div>
   <app-basic-party-details
     style="width: 100%"
     *ngIf="basicPartyDetails"

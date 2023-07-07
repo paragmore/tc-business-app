@@ -1,3 +1,20 @@
+.main-scrollable-page {
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: 90vh;
+  @media only screen and (max-width: 768px) {
+    height: 85vh;
+  }
+
+  @media only screen and (min-width: 768px) {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
 .container {
   margin: 0 auto;
   background-color: #fff;
@@ -8,7 +25,7 @@
   padding-right: 10px;
   padding-top: 5px;
   overflow-y: scroll;
-  max-height: 100vh;
+  max-height: 99vh;
 }
 
 .container .h1 {

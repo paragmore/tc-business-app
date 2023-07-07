@@ -21,6 +21,7 @@ import { AppState } from 'src/app/store/models/state.model';
 import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
 import { toJpeg, toPng } from 'html-to-image';
 import { InvoiceTemplatePreviewComponent } from 'src/app/core/components/invoice-template-preview/invoice-template-preview.component';
+import { RightHeaderComponent } from 'src/app/right-header/right-header.component';
 
 @Component({
   selector: 'app-transaction-details',
@@ -32,6 +33,7 @@ import { InvoiceTemplatePreviewComponent } from 'src/app/core/components/invoice
     CommonModule,
     BasicPartyDetailsComponent,
     InvoiceTemplatePreviewComponent,
+    RightHeaderComponent,
   ],
 })
 export class TransactionDetailsComponent implements OnInit, AfterViewInit {
