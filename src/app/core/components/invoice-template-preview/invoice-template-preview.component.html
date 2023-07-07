@@ -25,7 +25,17 @@
                 style="width: 40%; padding: 5px; vertical-align: bottom"
                 align="right"
               >
-                <div class="pcs-entity-title">TAX INVOICE</div>
+                <div class="pcs-entity-title">
+                  {{
+                    invoiceInfo.transaction.transactionType ===
+                    TransactionTypeEnum.SALE
+                      ? "TAX INVOICE"
+                      : invoiceInfo.transaction.transactionType ===
+                        TransactionTypeEnum.PURCHASE
+                      ? "BILL"
+                      : ""
+                  }}
+                </div>
               </td>
             </tr>
           </tbody>
@@ -56,7 +66,7 @@
 
                   <span class="pcs-label">Invoice Date</span>
                   <span style="font-weight: 600" id="tmp_entity_date"
-                    >: {{ invoiceInfo.transaction.date }}</span
+                    >: {{ invoiceInfo.transaction.date | dateFormat }}</span
                   >
 
                   <span class="pcs-label">Terms</span>
@@ -66,7 +76,7 @@
 
                   <span class="pcs-label">Due Date</span>
                   <span style="font-weight: 600" id="tmp_due_date"
-                    >: {{ invoiceInfo.transaction.dueDate }}</span
+                    >: {{ invoiceInfo.transaction.dueDate | dateFormat }}</span
                   >
                 </td>
                 <td style="padding-bottom: 10px">
@@ -187,7 +197,7 @@
                 id=""
                 class="pcs-itemtable-header pcs-itemtable-breakword"
               >
-                <b>CGST</b>
+                <b>GST</b>
               </td>
               <td
                 style="padding: 5px 7px 2px 7px; width: 11%; text-align: center"
@@ -196,7 +206,7 @@
                 id=""
                 class="pcs-itemtable-header pcs-itemtable-breakword"
               >
-                <b>SGST</b>
+                <b>Cess</b>
               </td>
               <td
                 style="padding: 5px 7px 2px 7px; width: 13%; text-align: right"
@@ -243,7 +253,7 @@
                 style="text-align: center"
                 class="pcs-item-row"
               >
-                {{ i }}
+                {{ i + 1 }}
               </td>
               <td
                 rowspan="1"
@@ -295,7 +305,7 @@
                 style="text-align: right"
                 class="pcs-item-row"
               >
-                <div>{{ item.gstPercentage / 2 }}%</div>
+                <div>{{ item.gstPercentage }}%</div>
               </td>
               <td
                 rowspan="1"
@@ -304,7 +314,7 @@
                 class="pcs-item-row"
               >
                 <div id="tmp_item_tax_amount">
-                  {{ (item.sellsPrice * item.gstPercentage) / 2 }}
+                  {{ (item.sellsPrice * item.gstPercentage) / 100 }}
                 </div>
               </td>
               <td
@@ -313,7 +323,7 @@
                 style="text-align: right"
                 class="pcs-item-row"
               >
-                <div>{{ item.gstPercentage / 2 }}%</div>
+                <div>{{ item.cess }}%</div>
               </td>
               <td
                 rowspan="1"
@@ -321,9 +331,7 @@
                 style="text-align: right"
                 class="pcs-item-row"
               >
-                <div id="tmp_item_tax_amount">
-                  {{ (item.sellsPrice * item.gstPercentage) / 2 }}
-                </div>
+                <div>{{ (item.sellsPrice * item.cess) / 100 }}</div>
               </td>
               <td
                 rowspan="1"
@@ -352,7 +360,12 @@
             <div style="margin: 10px 0 5px">
               <div style="padding-right: 10px">Total In Words</div>
               <span
-                ><b><i>Indian Rupee Two Thousand One Hundred Only</i></b></span
+                ><b
+                  ><i>{{
+                    invoiceInfo.transaction.totalInformation.total
+                      | numberToWords
+                  }}</i></b
+                ></span
               >
             </div>
             <div style="padding-top: 10px">
@@ -360,7 +373,20 @@
                 style="white-space: pre-wrap; word-wrap: break-word"
                 class="pcs-notes"
               >
-                Thanks for your business.
+                {{ invoiceInfo.transaction.customerNotes }}
+              </p>
+            </div>
+            <div
+              *ngIf="invoiceInfo.transaction.termsAndConditions"
+              style="padding-top: 10px"
+            >
+              <b>Terms &amp; conditions</b>
+
+              <p
+                style="white-space: pre-wrap; word-wrap: break-word"
+                class="pcs-notes"
+              >
+                {{ invoiceInfo.transaction.termsAndConditions }}
               </p>
             </div>
           </div>
@@ -387,20 +413,43 @@
                   </td>
                 </tr>
 
-                <tr style="height: 10px">
-                  <td valign="middle" align="right">CGST9 (9%)</td>
+                <tr
+                  *ngIf="invoiceInfo.transaction.totalInformation.gst"
+                  style="height: 10px"
+                >
+                  <td valign="middle">
+                    CGST
+                    {{
+                      getGSTFormatString(
+                        invoiceInfo.transaction.totalInformation.gst
+                      )
+                    }}
+                  </td>
                   <td valign="middle" style="width: 110px">
                     {{ invoiceInfo.transaction.totalInformation.gst }}
                   </td>
                 </tr>
-                <tr style="height: 10px">
-                  <td valign="middle" align="right">SGST9 (9%)</td>
+                <tr
+                  *ngIf="invoiceInfo.transaction.totalInformation.gst"
+                  style="height: 10px"
+                >
+                  <td valign="middle">
+                    SGST
+                    {{
+                      getGSTFormatString(
+                        invoiceInfo.transaction.totalInformation.gst
+                      )
+                    }}
+                  </td>
                   <td valign="middle" style="width: 110px">
                     {{ invoiceInfo.transaction.totalInformation.gst }}
                   </td>
                 </tr>
-                <tr style="height: 10px">
-                  <td valign="middle" align="right">CESS</td>
+                <tr
+                  *ngIf="invoiceInfo.transaction.totalInformation.cess"
+                  style="height: 10px"
+                >
+                  <td valign="middle">CESS</td>
                   <td valign="middle" style="width: 110px">
                     {{ invoiceInfo.transaction.totalInformation.cess }}
                   </td>
