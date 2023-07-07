@@ -1,3 +1,8 @@
-<p>
-  period-selection works!
-</p>
+<div class="scrollbar" id="style-1" style="height: 300px; overflow-y: scroll">
+  <ion-item
+    (click)="onSelectEvent(period)"
+    [button]="true"
+    *ngFor="let period of periods; let i = index"
+    ><p class="bodyPrimary">{{ period }}</p></ion-item
+  >
+</div>
