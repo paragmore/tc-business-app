@@ -4,6 +4,15 @@ import { LoginComponent } from './pages/login/login.component';
 
 export const routes: Routes = [
   {
+    path: 'reports',
+    loadComponent: () =>
+      import('./pages/reports/reports-page/reports-page.component').then(
+        (m) => m.ReportsPageComponent
+      ),
+    pathMatch: 'full',
+    canActivate: [AuthGuard],
+  },
+  {
     path: 'parties',
     loadComponent: () =>
       import('./pages/parties/parties.component').then(

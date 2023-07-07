@@ -38,7 +38,7 @@ export class AppComponent {
     { title: 'Transactions', url: '/transactions', icon: 'receipt' },
     { title: 'Items', url: '/items', icon: 'pricetags' },
     { title: 'Parties', url: '/parties', icon: 'people' },
-    { title: 'Collections', url: '/folder/trash', icon: 'trash' },
+    { title: 'Reports', url: '/reports', icon: 'bar-chart' },
     { title: 'Orders', url: '/folder/spam', icon: 'cart' },
     { title: 'Reports', url: '/folder/spam', icon: 'warning' },
     { title: 'Settings', url: '/folder/spam', icon: 'warning' },
