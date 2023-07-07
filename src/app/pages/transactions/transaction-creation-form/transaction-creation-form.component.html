@@ -1,24 +1,25 @@
 <!-- sales-creation-form.component.html -->
 <ion-content>
-  <ion-header>
-    <ion-toolbar>
-      <ion-title> New Sale </ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-row class="header-row">
+    <ion-buttons fill="clear" class="menu-button-mobile">
+      <ion-menu-button fill="clear"></ion-menu-button>
+    </ion-buttons>
+    <ion-title> New {{ transactionType }} </ion-title>
+  </ion-row>
 
   <div style="margin-right: 100px">
     <ion-grid>
       <ion-row>
         <ion-col size-md="6">
           <ion-searchbar
-            id="customer-selection-popover-button"
-            placeholder="Select Customer"
+            id="party-selection-popover-button"
+            placeholder="Select {{ selectedPartyTab }}"
             (ionClear)="removeSelectedParty()"
             [value]="selectedParty && getPartyDetails(selectedParty).name"
           >
           </ion-searchbar>
           <ion-popover
-            trigger="customer-selection-popover-button"
+            trigger="party-selection-popover-button"
             [showBackdrop]="false"
             [dismissOnSelect]="true"
             [keyboardClose]="false"
@@ -1021,10 +1022,11 @@
         bottom: 0px;
         justify-content: flex-end;
         padding: 10px;
+        z-index: 100;
       "
       type="submit"
-      class="btn btn-primary"
       (click)="createTransaction()"
+      [disabled]="!salesForm.valid"
       >Create Sale</ion-button
     >
   </div>

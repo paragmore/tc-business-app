@@ -44,6 +44,7 @@ import {
 } from 'src/app/core/services/transactions/transactions.service';
 import { StatePopoverComponent } from 'src/app/core/components/state-popover/state-popover.component';
 import { toastAlert } from 'src/app/core/utils/toastAlert';
+import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-transaction-creation-form',
   templateUrl: './transaction-creation-form.component.html',
@@ -72,7 +73,7 @@ export class TransactionCreationFormComponent {
   filters: PartiesFilterByQueryI = {};
   parties: Array<GetAllCustomersResponseI | SupplierI> = [];
   currentStoreInfo: StoreInfoModel | undefined;
-  selectedTab: PartyTypeEnum = PartyTypeEnum.CUSTOMER;
+  selectedPartyTab: PartyTypeEnum = PartyTypeEnum.CUSTOMER;
   selectedParty: GetAllCustomersResponseI | SupplierI | undefined;
   products: ProductI[] = [];
   selectedItems: ProductI[] = [];
@@ -80,6 +81,7 @@ export class TransactionCreationFormComponent {
   PaymentStatusEnum = PaymentStatusEnum;
   PaymentModeEnum = PaymentModeEnum;
   isLoading = false;
+  transactionType!: TransactionTypeEnum;
   constructor(
     private fb: FormBuilder,
     private store: Store<AppState>,
@@ -88,12 +90,23 @@ export class TransactionCreationFormComponent {
     private productsService: ProductsService,
     private modalController: ModalController,
     private transactionsService: TransactionsService,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private route: ActivatedRoute
   ) {
     this.salesForm = this.fb.group({});
   }
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe((params) => {
+      this.transactionType = params['type'];
+      if (this.transactionType === TransactionTypeEnum.SALE) {
+        this.selectedPartyTab = PartyTypeEnum.CUSTOMER;
+      }
+      if (this.transactionType === TransactionTypeEnum.PURCHASE) {
+        this.selectedPartyTab = PartyTypeEnum.SUPPLIER;
+      }
+      // Use the values in your component logic
+    });
     this.salesForm = this.fb.group({
       items: this.fb.array([this.createSalesItem()]),
       party: this.createPartyFormGroup(),
@@ -121,7 +134,7 @@ export class TransactionCreationFormComponent {
             '' +
             this.currentStoreInfo?.lastInvoiceInfo.sequence +
             ' - ' +
-            this.currentStoreInfo?.lastInvoiceInfo.invoiceId,
+            (this.currentStoreInfo?.lastInvoiceInfo.invoiceId + 1),
         });
       }
       this.loadCustomers();
@@ -260,10 +273,16 @@ export class TransactionCreationFormComponent {
     } = this.salesForm.value;
     const transactionsPayload: CreateTransactionRequestI = {
       storeId: this.currentStoreInfo?._id,
-      transactionType: TransactionTypeEnum.SALE,
+      transactionType: this.transactionType,
       ...salesFormValue,
       dueDate: new Date(),
       additionalFields: [],
+      party: {
+        ...salesFormValue.party,
+        address: salesFormValue.party.address.shipping.pinCode
+          ? salesFormValue.party.address
+          : undefined,
+      },
     };
     console.log(transactionsPayload);
     const replaced = this.replaceEmptyObjectsWithUndefined(transactionsPayload);
@@ -278,7 +297,7 @@ export class TransactionCreationFormComponent {
           if (response.message === 'Success') {
             toastAlert(
               this.toastController,
-              `${this.selectedTab} created successfully`,
+              `${this.selectedPartyTab} created successfully`,
               'success'
             );
           }
@@ -430,7 +449,7 @@ export class TransactionCreationFormComponent {
     }
     this.isCustomersLoading = true;
     this.partiesService
-      .getAllStoreParties(this.currentStoreInfo?._id, this.selectedTab, {
+      .getAllStoreParties(this.currentStoreInfo?._id, this.selectedPartyTab, {
         page: this.partyCurrentPage.toString(),
         pageSize: this.partyPageSize.toString(),
         ...this.filters,
@@ -492,7 +511,7 @@ export class TransactionCreationFormComponent {
   async openAddPartyModal() {
     const modal = await this.modalController.create({
       component: PartyCreationModalComponent,
-      componentProps: { partyType: this.selectedTab },
+      componentProps: { partyType: this.selectedPartyTab },
       backdropDismiss: true,
       cssClass: 'side-modal',
     });
