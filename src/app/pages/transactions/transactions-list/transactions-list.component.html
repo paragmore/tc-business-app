@@ -46,14 +46,14 @@
       (ionChange)="updateSelectedTab($event)"
       [value]="selectedTab"
     >
-      <ion-segment-button [value]="'All'">
-        <ion-label>All</ion-label>
-      </ion-segment-button>
       <ion-segment-button [value]="TransactionTypeEnum.SALE">
         <ion-label>Sales</ion-label>
       </ion-segment-button>
       <ion-segment-button [value]="TransactionTypeEnum.PURCHASE">
         <ion-label>Purchases</ion-label>
+      </ion-segment-button>
+      <ion-segment-button [value]="TransactionTypeEnum.EXPENSE">
+        <ion-label>Expenses</ion-label>
       </ion-segment-button>
     </ion-segment>
     <app-credit-debit-summary-card
@@ -120,19 +120,10 @@
   <ion-col>
     <ion-button
       style="width: 100%"
-      (click)="navigateToCreateSales()"
+      (click)="navigateToCreateTransaction(selectedTab)"
       type="submit"
       class="btn btn-primary"
-      >Create Sale</ion-button
-    >
-  </ion-col>
-  <ion-col>
-    <ion-button
-      style="width: 100%"
-      (click)="navigateToCreateSales()"
-      type="submit"
-      class="btn btn-primary"
-      >Create Purchase</ion-button
+      >Create {{ selectedTab }}</ion-button
     >
   </ion-col>
 </ion-row>

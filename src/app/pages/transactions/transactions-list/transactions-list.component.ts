@@ -1,5 +1,5 @@
 import { CommonModule, Location } from '@angular/common';
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, DoCheck, Injector, OnInit } from '@angular/core';
 import { IonicModule, ModalController, ToastController } from '@ionic/angular';
 import { TransactionsListCardComponent } from '../transactions-list-card/transactions-list-card.component';
 import { Router } from '@angular/router';
@@ -55,7 +55,7 @@ import { format } from 'date-fns';
     MobilePartiesListHeaderComponent,
   ],
 })
-export class TransactionsListComponent implements OnInit {
+export class TransactionsListComponent implements OnInit, DoCheck {
   currentPage = 1;
   totalPages = 100;
   pageSize = 10;
@@ -68,14 +68,15 @@ export class TransactionsListComponent implements OnInit {
   selectedTab: TransactionTypeEnum = TransactionTypeEnum.SALE;
   sortBy: string = 'name';
   sortOrder: SortOrder = 'asc';
-  filters: TransactionsFilterByI = {};
+  filters: TransactionsFilterByI = {
+    transactionType: this.selectedTab,
+  };
   transactions: Array<TransactionI> = [];
   selectedTransactions: Array<string> = [];
   currentTransactionId: string | undefined;
   partiesInjector!: Injector;
   creditDebitSummaryData: CreditDebitSummaryCardInputI | undefined;
   MobilePartiesListHeaderComponent = MobilePartiesListHeaderComponent;
-
   goToPage = (page: number) => {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
@@ -161,7 +162,7 @@ export class TransactionsListComponent implements OnInit {
       { type: 'balance', text: 'Balance low to high', value: 'asc' },
       { type: 'balance', text: 'Balance high to low', value: 'desc' },
     ],
-    searchPlaceholder: `Search by ${this.selectedTab} name`,
+    searchPlaceholder: `Search by invoice id or party name`,
   };
 
   ngOnInit() {
@@ -178,8 +179,8 @@ export class TransactionsListComponent implements OnInit {
     this.store
       .select((store) => store.transactions)
       .subscribe((transactions) => {
-        this.transactions = transactions.transactionsList;
         this.updateLedgerData();
+        this.transactions = transactions.transactionsList;
       });
   }
 
@@ -194,13 +195,14 @@ export class TransactionsListComponent implements OnInit {
   updateSelectedTab = (event: any) => {
     console.log(this._location.path());
     this.selectedTab = event.detail.value;
+    this.filters.transactionType = this.selectedTab;
+
     // this._location.replaceState(
     //   this._location.path() + `?type=${this.selectedTab}`
     // );
     this.navigateWithQuery({ type: this.selectedTab });
     this.loadTransactions(undefined, true);
     this.loadStoreTransactionsTotalBalance();
-    this.filterSortOptions.searchPlaceholder = `Search by ${this.selectedTab} name`;
   };
 
   navigateWithQuery(queryParams: any, replace?: boolean) {
@@ -228,8 +230,10 @@ export class TransactionsListComponent implements OnInit {
     }
     console.log(this.selectedTransactions);
   };
-  navigateToCreateSales() {
-    this.router.navigate(['/transactions/create']);
+  navigateToCreateTransaction(type: TransactionTypeEnum) {
+    this.router.navigate(['/transactions/create'], {
+      queryParams: { type },
+    });
   }
 
   onOpenDetailsPage = (ledger: LedgerItemI) => {
@@ -239,6 +243,33 @@ export class TransactionsListComponent implements OnInit {
     }
     this.openTransactionDetailsPage(ledger.id);
   };
+
+  ngDoCheck() {
+    this.ledgerData = {
+      ledgerItems: this.ledgerData.ledgerItems,
+      onSort: this.toggleSort,
+      isLoading: this.isTransactionsLoading,
+      currentPage: this.currentPage,
+      totalPages: this.totalPages,
+      goToPage: this.goToPage,
+      changePageSize: this.changePageSize,
+      col1Title: 'Name',
+      col2Title: 'Amount',
+      onSelectionToggle: (event: any, partyId: string) => {
+        this.onTransactionSelectionToggle(event, partyId);
+      },
+      onLongPress: () => {
+        this.onLongPress();
+      },
+      selectAllToggle: (event) => {
+        this.selectAllToggle(event);
+      },
+      enableMultiSelect: this.enableMultiSelect,
+      isSelected: (id) => {
+        return this.isTransactionSelected(id);
+      },
+    };
+  }
 
   updateLedgerData() {
     this.ledgerData.ledgerItems = this.transactions.map((transaction) => {
@@ -435,6 +466,12 @@ export class TransactionsListComponent implements OnInit {
             this.store.dispatch(
               setTransactionsList({ transactionsList: newTransactions })
             );
+
+            //@ts-ignore
+            const pagination = response.body.pagination;
+            this.currentPage = pagination.page;
+            this.pageSize = pagination.pageSize;
+            this.totalPages = pagination.totalPages;
             //@ts-ignore
 
             !this.isMobile &&
@@ -444,12 +481,6 @@ export class TransactionsListComponent implements OnInit {
             '_id' in this.transactions[0]
               ? this.openTransactionDetails(this.transactions[0]._id)
               : null;
-
-            //@ts-ignore
-            const pagination = response.body.pagination;
-            this.currentPage = pagination.page;
-            this.pageSize = pagination.pageSize;
-            this.totalPages = pagination.totalPages;
           }
         },
         (error) => {},
