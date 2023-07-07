@@ -1,6 +1,23 @@
-.header-row {
+.home-header {
+  width: 100%;
+  background-color: white;
+  border-bottom: 2px solid var(--ion-color-light);
+  height: 60px;
+  font-family: sans-serif;
   display: flex;
-  flex-direction: row;
-  background-color: var(--ion-color-secondary);
-  border-bottom: 1px solid var(--ion-color-secondary);
+  align-items: center;
+  padding: 10px;
+}
+
+.user-name {
+  color: var(--ion-color-primary);
+  font-weight: 600;
+  margin-left: 10px;
+}
+
+.home-card {
+  background-color: white;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 20px;
 }
