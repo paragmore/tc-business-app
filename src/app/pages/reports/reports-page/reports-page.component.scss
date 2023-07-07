@@ -1,0 +1,21 @@
+.header-row {
+  display: flex;
+  flex-direction: row;
+  background-color: var(--ion-color-secondary);
+  border-bottom: 1px solid var(--ion-color-secondary);
+}
+
+.report-name-icon-container {
+  height: 30px;
+  width: 30px;
+  background-color: var(--ion-color-secondary);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 5px;
+  font-weight: 500;
+}
+
+.reports-list {
+}

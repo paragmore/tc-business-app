@@ -1,0 +1,205 @@
+<div
+  style="
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 100%;
+  "
+>
+  <ion-row class="header-row">
+    <ion-buttons fill="clear" class="menu-button-mobile">
+      <ion-menu-button fill="clear"></ion-menu-button>
+    </ion-buttons>
+  </ion-row>
+  <ion-row style="height: 100%">
+    <ion-col
+      size-md="3"
+      style="
+        height: 100%;
+        overflow-y: scroll;
+        border-right: 2px solid var(--ion-color-secondary);
+      "
+      id="style-1"
+      class="scrollbar"
+    >
+      <div
+        style="margin-bottom: 20px; margin-top: 10px"
+        *ngFor="let reportlistType of reportlistTypes"
+      >
+        <p
+          style="margin-left: 10px; color: var(--ion-color-primary)"
+          class="title3"
+        >
+          {{ reportlistType }}
+        </p>
+        <ion-item
+          *ngFor="let reportType of getReportTypesArray(reportlistType)"
+          [button]="true"
+          (click)="onReportTypeSelected(reportType)"
+          [color]="reportType === selectedReportType ? 'primary' : ''"
+          style="border-radius: 10px"
+        >
+          <div
+            style="display: flex; justify-content: center; align-items: center"
+          >
+            <div class="report-name-icon-container">
+              <ion-icon color="primary" name="bar-chart-outline"> </ion-icon>
+            </div>
+            <p class="bodyMedium">
+              {{ reportType }}
+            </p>
+          </div>
+        </ion-item>
+      </div>
+    </ion-col>
+    <ion-col side-md="9">
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          border-bottom: 2px solid var(--ion-color-secondary);
+        "
+      >
+        <div class="report-name-icon-container">
+          <ion-icon color="primary" name="bar-chart-outline"> </ion-icon>
+        </div>
+        <div style="flex: 1">
+          <p class="title2">
+            {{ selectedReportType }}
+          </p>
+        </div>
+        <div>
+          <ion-button fill="outline"> PDF </ion-button>
+          <ion-button fill="outline"> Excel </ion-button>
+        </div>
+      </div>
+      <div></div>
+      <div
+        style="
+          display: flex;
+          justify-content: center;
+          flex-direction: column;
+          align-items: center;
+        "
+      >
+        <h4>THE KITCHEN STUDIO</h4>
+        <h3>Profit and Loss</h3>
+        <span>Basis: Accrual</span>
+        <h5>
+          <span>From</span>&nbsp;01/04/2023 <span>To</span>&nbsp;31/03/2024
+        </h5>
+
+        <div></div>
+        <div class="reports-table-wrapper fill-container table-container">
+          <table
+            class="table tb-comparison-table zi-table financial-comparison table-no-border"
+          >
+            <thead>
+              <tr>
+                <th
+                  class="text-left sortable align-middle whitespace-nowrap"
+                  style=""
+                  rowspan="1"
+                  colspan="1"
+                >
+                  <div class="position-relative d-flex">
+                    <!---->
+                    <div title="Account">
+                      Account<!---->
+                      <!---->
+                    </div>
+                    <!---->
+                  </div>
+                </th>
+                <th
+                  class="text-right sortable align-middle whitespace-nowrap"
+                  style=""
+                  rowspan="1"
+                  colspan="1"
+                >
+                  <div class="position-relative d-flex justify-content-end">
+                    <!---->
+                    <div title="Total">
+                      Total<!---->
+                      <!---->
+                    </div>
+                    <!---->
+                  </div>
+                </th>
+              </tr>
+              <!----><!---->
+            </thead>
+            <tbody>
+              <!---->
+              <tr class="font-weight-bold">
+                <td>Operating Income</td>
+                <td colspan="1">&nbsp;</td>
+              </tr>
+              <!---->
+              <tr class="highlight-subaccount-section">
+                <td><strong>Total for Operating Income</strong></td>
+                <td class="text-right">0.00</td>
+              </tr>
+              <tr class="font-weight-bold">
+                <td>Cost of Goods Sold</td>
+                <td colspan="1">&nbsp;</td>
+              </tr>
+              <!---->
+              <tr class="highlight-subaccount-section">
+                <td><strong>Total for Cost of Goods Sold</strong></td>
+                <td class="text-right">0.00</td>
+              </tr>
+              <tr class="highlight-subaccount-section">
+                <td class="text-right"><strong>Gross Profit</strong></td>
+                <td class="text-right">0.00</td>
+              </tr>
+              <tr class="font-weight-bold">
+                <td>Operating Expense</td>
+                <td colspan="1">&nbsp;</td>
+              </tr>
+              <!---->
+              <tr class="highlight-subaccount-section">
+                <td><strong>Total for Operating Expense</strong></td>
+                <td class="text-right">0.00</td>
+              </tr>
+              <tr class="highlight-subaccount-section">
+                <td class="text-right"><strong>Operating Profit</strong></td>
+                <td class="text-right">0.00</td>
+              </tr>
+              <tr class="font-weight-bold">
+                <td>Non Operating Income</td>
+                <td colspan="1">&nbsp;</td>
+              </tr>
+              <!---->
+              <tr class="highlight-subaccount-section">
+                <td><strong>Total for Non Operating Income</strong></td>
+                <td class="text-right">0.00</td>
+              </tr>
+              <tr class="font-weight-bold">
+                <td>Non Operating Expense</td>
+                <td colspan="1">&nbsp;</td>
+              </tr>
+              <!---->
+              <tr class="highlight-subaccount-section">
+                <td><strong>Total for Non Operating Expense</strong></td>
+                <td class="text-right">0.00</td>
+              </tr>
+              <tr class="highlight-subaccount-section">
+                <td class="text-right"><strong>Net Profit/Loss</strong></td>
+                <td class="text-right">0.00</td>
+              </tr>
+              <!---->
+            </tbody>
+          </table>
+          <!---->
+          <div class="reconciliation-summary-table p-4">
+            <!----><small>**Amount is displayed in your base currency</small
+            >&nbsp;<span class="badge text-semibold badge-success d-inline"
+              >INR</span
+            ><!----><!---->
+          </div>
+        </div>
+      </div></ion-col
+    >
+  </ion-row>
+</div>
