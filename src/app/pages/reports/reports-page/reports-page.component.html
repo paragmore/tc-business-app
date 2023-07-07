@@ -58,6 +58,7 @@
           display: flex;
           align-items: center;
           border-bottom: 2px solid var(--ion-color-secondary);
+          padding: 5px;
         "
       >
         <div class="report-name-icon-container">
@@ -69,11 +70,104 @@
           </p>
         </div>
         <div>
-          <ion-button fill="outline"> PDF </ion-button>
-          <ion-button fill="outline"> Excel </ion-button>
+          <ion-button
+            label-placement="stacked"
+            fill="outline"
+            label="Invoice Date"
+          >
+            PDF
+          </ion-button>
+          <ion-button
+            label-placement="stacked"
+            fill="outline"
+            label="Invoice Date"
+          >
+            Excel
+          </ion-button>
         </div>
       </div>
-      <div></div>
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          border-bottom: 2px solid var(--ion-color-secondary);
+          padding: 10px;
+          gap: 20px;
+        "
+      >
+        <div>
+          <ion-input
+            label-placement="stacked"
+            fill="outline"
+            label="Period"
+            [value]="period"
+            [readonly]="true"
+            id="period-selection-popover-button"
+          ></ion-input>
+          <ion-popover
+            trigger="period-selection-popover-button"
+            [showBackdrop]="false"
+            [dismissOnSelect]="true"
+            [keyboardClose]="false"
+          >
+            <ng-template>
+              <ion-content>
+                <app-period-selection
+                  (onSelect)="onPeriodSelect($event)"
+                ></app-period-selection>
+              </ion-content>
+            </ng-template>
+          </ion-popover>
+        </div>
+        <div>
+          <ion-input
+            id="start-date-selection-popover-button"
+            label-placement="stacked"
+            fill="outline"
+            label="Start Date"
+            [readonly]="true"
+            [value]="reportStartDate | dateFormat"
+          ></ion-input>
+          <ion-popover
+            trigger="start-date-selection-popover-button"
+            [showBackdrop]="false"
+            [keyboardClose]="false"
+          >
+            <ng-template>
+              <ion-content>
+                <ion-datetime
+                  [value]="reportStartDate"
+                  (ionChange)="onStartDateChange($event)"
+                ></ion-datetime>
+              </ion-content>
+            </ng-template>
+          </ion-popover>
+        </div>
+        <div>
+          <ion-input
+            id="end-date-selection-popover-button"
+            label-placement="stacked"
+            fill="outline"
+            label="End Date"
+            [readonly]="true"
+            [value]="reportEndDate | dateFormat"
+          ></ion-input>
+          <ion-popover
+            trigger="end-date-selection-popover-button"
+            [showBackdrop]="false"
+            [keyboardClose]="false"
+          >
+            <ng-template>
+              <ion-content>
+                <ion-datetime
+                  [value]="reportEndDate"
+                  (ionChange)="onEndDateChange($event)"
+                ></ion-datetime>
+              </ion-content>
+            </ng-template>
+          </ion-popover>
+        </div>
+      </div>
       <div
         style="
           display: flex;
@@ -86,7 +180,8 @@
         <h3>Profit and Loss</h3>
         <span>Basis: Accrual</span>
         <h5>
-          <span>From</span>&nbsp;01/04/2023 <span>To</span>&nbsp;31/03/2024
+          <span>From</span>&nbsp;{{ reportStartDate | dateFormat }}
+          <span>To</span>&nbsp;{{ reportEndDate | dateFormat }}
         </h5>
 
         <div></div>

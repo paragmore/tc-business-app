@@ -1,27 +1,62 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
+import { PeriodSelectionComponent } from 'src/app/core/components/period-selection/period-selection.component';
+import { DateFormatPipe } from 'src/app/core/pipes/date-format.pipe';
+import {
+  PeriodRangeEnum,
+  getPeriodRange,
+} from 'src/app/core/utils/startEndDates';
 
 @Component({
   selector: 'app-reports-page',
   templateUrl: './reports-page.component.html',
   styleUrls: ['./reports-page.component.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule],
+  imports: [
+    IonicModule,
+    CommonModule,
+    FormsModule,
+    DateFormatPipe,
+    PeriodSelectionComponent,
+  ],
 })
 export class ReportsPageComponent implements OnInit {
   reportTypesList = REPORT_TYPES_LIST;
   reportlistTypes = Object.keys(this.reportTypesList);
   selectedReportType: string = 'Profit and Loss';
+  reportStartDate: string | undefined;
+  reportEndDate: string | undefined;
+  period: PeriodRangeEnum = PeriodRangeEnum.THIS_MONTH;
   constructor() {}
   getReportTypesArray(reportlistType: string) {
     //@ts-ignore
     return this.reportTypesList[reportlistType];
   }
-  ngOnInit() {}
+  ngOnInit() {
+    const periodRange = getPeriodRange(this.period);
+    this.reportStartDate = periodRange.startDate;
+    this.reportEndDate = periodRange.endDate;
+  }
 
   onReportTypeSelected(selectedReportType: string) {
     this.selectedReportType = selectedReportType;
+  }
+
+  onStartDateChange(event: any) {
+    this.reportStartDate = event.detail.value;
+  }
+
+  onEndDateChange(event: any) {
+    this.reportEndDate = event.detail.value;
+  }
+
+  onPeriodSelect(period: PeriodRangeEnum) {
+    this.period = period;
+    const periodRange = getPeriodRange(this.period);
+    this.reportStartDate = periodRange.startDate;
+    this.reportEndDate = periodRange.endDate;
   }
 }
 
