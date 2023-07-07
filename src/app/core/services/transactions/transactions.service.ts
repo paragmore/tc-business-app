@@ -71,6 +71,9 @@ export class TransactionsService {
     if (options?.sortOrder) {
       queryParams.append('sortOrder', options.sortOrder);
     }
+    if (options?.transactionType) {
+      queryParams.append('transactionType', options.transactionType);
+    }
     const url = `${
       this.baseUrl
     }/transactions/${storeId}?${queryParams.toString()}`;
@@ -112,7 +115,7 @@ interface TransactionI {
   transactionType: string;
   invoiceId: string;
   date: string;
-  dueDate: Date;
+  dueDate: string;
   party: TransactionPartyI;
   additionalFields: AdditionalFieldI[];
   items: TransactionItemI[];
@@ -135,14 +138,14 @@ interface TransactionI {
 }
 
 export enum PaymentStatusEnum {
-  PAID = 'PAID',
-  PARTIALLY_PAID = 'PARTIALLY PAID',
-  UNPAID = 'UNPAID',
+  PAID = 'Paid',
+  PARTIALLY_PAID = 'Partially paid',
+  UNPAID = 'Unpaid',
 }
 
 export enum PaymentModeEnum {
-  ONLINE = 'ONLINE',
-  CASH = 'CASH',
+  ONLINE = 'Online',
+  CASH = 'Cash',
 }
 
 export enum TaxPreferenceEnum {
@@ -314,17 +317,12 @@ export interface BulkTransactionUploadSingleRequestI {
   taxPreference: TaxPreferenceEnum;
 }
 
-export interface TransactionsFilterByI {}
+export interface TransactionsFilterByI {
+  transactionType: TransactionTypeEnum;
+}
 
 export interface TransactionsFilterByQueryI {
-  category?: string;
-  minSellsPrice?: number;
-  maxSellsPrice?: number;
-  minPurchasePrice?: number;
-  maxPurchasePrice?: number;
-  minQuantity?: number;
-  maxQuantity?: number;
-  itemType?: ItemTypeEnum;
+  transactionType: TransactionTypeEnum;
 }
 
 export enum ItemTypeEnum {
