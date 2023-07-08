@@ -1,0 +1,18 @@
+<div>
+  <ion-list
+    style="max-height: 350px; overflow-y: scroll"
+    class="scrollbar"
+    id="style-1"
+  >
+    <ion-item
+      *ngFor="let gstType of gstTypeList; let i = index"
+      [button]="true"
+      [detail]="false"
+      (click)="onSelectEvent(gstType)"
+      ><div style="display: flex; flex-direction: column; padding: 10px">
+        <p>{{ gstType.title }}</p>
+        <p class="caption">{{ gstType.subtitle }}</p>
+      </div></ion-item
+    >
+  </ion-list>
+</div>
