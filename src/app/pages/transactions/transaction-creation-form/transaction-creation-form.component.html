@@ -7,7 +7,13 @@
     <ion-title> New {{ transactionType }} </ion-title>
   </ion-row>
 
-  <div style="margin-right: 100px">
+  <app-expense-creation-form
+    *ngIf="transactionType === TransactionTypeEnum.EXPENSE"
+  ></app-expense-creation-form>
+  <div
+    *ngIf="transactionType !== TransactionTypeEnum.EXPENSE"
+    style="margin-right: 100px"
+  >
     <ion-grid>
       <ion-row>
         <ion-col size-md="6">

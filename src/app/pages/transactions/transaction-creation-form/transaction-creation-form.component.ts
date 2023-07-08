@@ -45,6 +45,7 @@ import {
 import { StatePopoverComponent } from 'src/app/core/components/state-popover/state-popover.component';
 import { toastAlert } from 'src/app/core/utils/toastAlert';
 import { ActivatedRoute } from '@angular/router';
+import { ExpenseCreationFormComponent } from '../expense-creation-form/expense-creation-form.component';
 @Component({
   selector: 'app-transaction-creation-form',
   templateUrl: './transaction-creation-form.component.html',
@@ -56,6 +57,7 @@ import { ActivatedRoute } from '@angular/router';
     ReactiveFormsModule,
     CommonModule,
     StatePopoverComponent,
+    ExpenseCreationFormComponent,
   ],
 })
 export class TransactionCreationFormComponent {
@@ -82,6 +84,7 @@ export class TransactionCreationFormComponent {
   PaymentModeEnum = PaymentModeEnum;
   isLoading = false;
   transactionType!: TransactionTypeEnum;
+  TransactionTypeEnum = TransactionTypeEnum;
   constructor(
     private fb: FormBuilder,
     private store: Store<AppState>,
