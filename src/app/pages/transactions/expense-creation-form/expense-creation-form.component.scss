@@ -1,0 +1,22 @@
+.item-form-input {
+  --border-color: transparent;
+  font-size: 14px;
+}
+
+.item-form-col {
+  border-bottom: 1px solid var(--ion-color-light-shade);
+  border-right: 1px solid var(--ion-color-light-shade);
+  padding: 10px;
+}
+
+.item-form-col.last {
+  border-right: 0px;
+}
+
+.item-form-col.row {
+  border-top: 1px solid var(--ion-color-light-shade);
+}
+
+.item-form-input:hover {
+  --border-color: var(--ion-color-primary);
+}
