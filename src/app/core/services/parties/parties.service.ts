@@ -3,7 +3,7 @@ import { getAuthHeaders } from '../../utils/authHeaders';
 import { HttpClient } from '@angular/common/http';
 import { PaginationQueryParamsI } from '../products/products.service';
 import { environment } from 'src/environments/environment';
-import { GSTTypeEnum } from 'src/app/pages/parties/party-creation-modal/party-creation-modal.component';
+import { GSTTypeEnum } from '../../components/gst-type-list/gst-type-list.component';
 
 @Injectable({
   providedIn: 'root',
