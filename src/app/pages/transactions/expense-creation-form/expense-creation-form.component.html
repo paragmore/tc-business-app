@@ -33,7 +33,7 @@
             id="supplier-selection-popover-button"
             placeholder="Select supplier"
             (ionClear)="removeSelectedParty()"
-            [value]="selectedParty && getPartyDetails(selectedParty).name"
+            [value]="salesForm.value.supplier.name"
           >
           </ion-searchbar>
           <ion-popover
@@ -58,7 +58,7 @@
                     *ngFor="let party of suppliers; let i = index"
                     [button]="true"
                     [detail]="false"
-                    (click)="selectTransactionParty(party)"
+                    (click)="selectExpenseSupplier(party)"
                     ><div
                       style="
                         display: flex;
@@ -328,7 +328,7 @@
             id="customer-selection-popover-button"
             placeholder="Select customer"
             (ionClear)="removeSelectedParty()"
-            [value]="selectedParty && getPartyDetails(selectedParty).name"
+            [value]="salesForm.value.customer.name"
           >
           </ion-searchbar>
           <ion-popover
@@ -353,7 +353,7 @@
                     *ngFor="let party of customers; let i = index"
                     [button]="true"
                     [detail]="false"
-                    (click)="selectTransactionParty(party)"
+                    (click)="selectExpenseCustomer(party)"
                     ><div
                       style="
                         display: flex;
@@ -372,4 +372,20 @@
       </ion-row>
     </ion-grid>
   </form>
+  <ion-button
+    style="
+      display: flex;
+      position: sticky;
+      height: 60px;
+      align-items: center;
+      bottom: 0px;
+      justify-content: flex-end;
+      padding: 10px;
+      z-index: 100;
+    "
+    type="submit"
+    (click)="createTransaction()"
+    [disabled]="!salesForm.valid"
+    >Create Expense</ion-button
+  >
 </ion-content>

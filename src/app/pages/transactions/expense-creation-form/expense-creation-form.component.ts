@@ -84,7 +84,7 @@ export class ExpenseCreationFormComponent implements OnInit {
   itemsPageSize = 10;
   filters: PartiesFilterByQueryI = {};
   customers: Array<GetAllCustomersResponseI> = [];
-  suppliers: Array<GetAllCustomersResponseI> = [];
+  suppliers: Array<SupplierI> = [];
 
   currentStoreInfo: StoreInfoModel | undefined;
   selectedPartyTab: PartyTypeEnum = PartyTypeEnum.CUSTOMER;
@@ -129,7 +129,8 @@ export class ExpenseCreationFormComponent implements OnInit {
     });
     this.salesForm = this.fb.group({
       items: this.fb.array([this.createSalesItem()]),
-      party: this.createPartyFormGroup(),
+      supplier: this.createPartyFormGroup(),
+      customer: this.createPartyFormGroup(),
       date: [new Date(), Validators.required],
       invoiceId: ['', Validators.required],
       stateOfSupply: ['', Validators.required],
@@ -164,56 +165,11 @@ export class ExpenseCreationFormComponent implements OnInit {
     });
 
     this.screenState$ = this.store.select((store) => store.screen);
-
-    const itemsFormArray = this.salesForm.get('items') as FormArray;
-    let previousSalesItems = [...itemsFormArray.value];
-    this.isUpdatingForm = false;
-
-    itemsFormArray.valueChanges.subscribe((items) => {
-      if (this.isUpdatingForm) {
-        // Ignore value changes triggered programmatically
-        return;
-      }
-
-      for (let i = 0; i < items.length; i++) {
-        const previousSalesItem = previousSalesItems[i];
-        const currentSalesItem = items[i];
-
-        if (
-          JSON.stringify(previousSalesItem) !== JSON.stringify(currentSalesItem)
-        ) {
-          console.log('Changed salesItem:', currentSalesItem);
-          this.onChangeItemValues(i);
-          // Perform your calculations or updates for the changed salesItem here
-        }
-      }
-
-      previousSalesItems = [...items];
-    });
   }
 
   async selectGSTType(gstType: GSTTypeI) {
     this.selectedGSTType = gstType;
     this.salesForm.patchValue({ gstType: gstType.title });
-  }
-
-  async openEditProductModal(productDetails: ProductI) {
-    const modal = await this.modalController.create({
-      component: ItemCreationComponent,
-      componentProps: {
-        editProduct: {
-          ...productDetails,
-        },
-        type: productDetails.isService
-          ? ItemTypeEnum.SERVICE
-          : ItemTypeEnum.PRODUCT,
-      },
-      backdropDismiss: true,
-      cssClass: 'side-modal',
-    });
-
-    modal.onDidDismiss().then((modalData) => {});
-    return await modal.present();
   }
 
   onPartyShippingStateSelect(state: string) {
@@ -229,30 +185,6 @@ export class ExpenseCreationFormComponent implements OnInit {
   onStateSelect(state: string) {
     console.log('STATE', state);
     this.salesForm.patchValue({ stateOfSupply: state });
-  }
-
-  async openDiscountsModal(index: number) {
-    console.log('idhar');
-    const modal = await this.modalController.create({
-      component: DiscountsModalComponent,
-      backdropDismiss: true,
-      cssClass: 'login-modal',
-      // breakpoints: this.isMobile ? [0, 0.8, 1] : undefined,
-      // initialBreakpoint: this.isMobile ? 0.8 : 1,
-    });
-    console.log(modal);
-
-    modal.onDidDismiss().then((modalData) => {
-      if (modalData?.data?.discount) {
-        const itemsForm = this.salesForm.get('items') as FormArray;
-        if (itemsForm) {
-          itemsForm.at(index).patchValue({
-            discount: modalData.data.discount,
-          });
-        }
-      }
-    });
-    return await modal.present();
   }
 
   createTransaction() {
@@ -385,37 +317,45 @@ export class ExpenseCreationFormComponent implements OnInit {
     });
   }
 
-  selectTransactionParty(party: GetAllCustomersResponseI | SupplierI) {
+  selectExpenseSupplier(party: SupplierI) {
     this.selectedParty = party;
     let partyFormPayload: any;
-    if ('customer' in party) {
-      partyFormPayload = {
-        _id: party.customerStoreInfo.customerId,
-        name: party.customerStoreInfo.name,
-        tradeName: party.customerStoreInfo.tradeName,
-        phoneNumber: party.customer.phoneNumber,
-        email: party.customerStoreInfo.email,
-        gstin: party.customerStoreInfo.gstin,
-        address: party.customerStoreInfo.addresses
-          ? party.customerStoreInfo.addresses[0]
-          : undefined,
-      };
-    } else {
-      partyFormPayload = {
-        _id: party._id,
-        name: party.name,
-        tradeName: party.tradeName,
-        phoneNumber: party.phoneNumber,
-        email: party.email,
-        gstin: party.gstin,
-        address: party.addresses ? party.addresses[0] : undefined,
-      };
-    }
+
+    partyFormPayload = {
+      _id: party._id,
+      name: party.name,
+      tradeName: party.tradeName,
+      phoneNumber: party.phoneNumber,
+      email: party.email,
+      gstin: party.gstin,
+      address: party.addresses ? party.addresses[0] : undefined,
+    };
+
     this.salesForm.patchValue({
-      party: partyFormPayload,
+      supplier: partyFormPayload,
     });
   }
 
+  selectExpenseCustomer(party: GetAllCustomersResponseI) {
+    this.selectedParty = party;
+    let partyFormPayload: any;
+
+    partyFormPayload = {
+      _id: party.customerStoreInfo._id,
+      name: party.customerStoreInfo.name,
+      tradeName: party.customerStoreInfo.tradeName,
+      phoneNumber: party.customer.phoneNumber,
+      email: party.customerStoreInfo.email,
+      gstin: party.customerStoreInfo.gstin,
+      address: party.customerStoreInfo.addresses
+        ? party.customerStoreInfo.addresses[0]
+        : undefined,
+    };
+
+    this.salesForm.patchValue({
+      supplier: partyFormPayload,
+    });
+  }
   resetPagination() {
     this.customerCurrentPage = 1;
     this.customerTotalPages = 1;
@@ -654,36 +594,6 @@ export class ExpenseCreationFormComponent implements OnInit {
     });
     totalInfo.total = totalInfo.subTotal;
     return totalInfo;
-  }
-
-  onChangeItemValues(index: number) {
-    const itemsForm = this.salesForm.get('items') as FormArray;
-    if (itemsForm) {
-      const formGroup = itemsForm.at(index) as FormGroup;
-      const formValue = formGroup.value;
-      console.log(formValue);
-      const amount = this.calculateAmount(
-        formValue.sellsPrice,
-        formValue.quantity,
-        formValue.taxIncluded,
-        formValue.gstPercentage,
-        formValue.cess,
-        formValue.discount
-      );
-      console.log('AMOUNT', amount);
-
-      // Set the flag to true before updating the form value
-      this.isUpdatingForm = true;
-
-      // Use setValue instead of patchValue to avoid triggering valueChanges again
-      formGroup.setValue({
-        ...formValue,
-        amount: amount,
-      });
-
-      // Set the flag back to false after updating the form value
-      this.isUpdatingForm = false;
-    }
   }
 
   getForm() {
