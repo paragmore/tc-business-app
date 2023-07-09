@@ -1,12 +1,11 @@
 <!-- sales-creation-form.component.html -->
+<ion-row class="header-row">
+  <ion-buttons fill="clear" class="menu-button-mobile">
+    <ion-menu-button fill="clear"></ion-menu-button>
+  </ion-buttons>
+  <ion-title> New {{ transactionType }} </ion-title>
+</ion-row>
 <ion-content>
-  <ion-row class="header-row">
-    <ion-buttons fill="clear" class="menu-button-mobile">
-      <ion-menu-button fill="clear"></ion-menu-button>
-    </ion-buttons>
-    <ion-title> New {{ transactionType }} </ion-title>
-  </ion-row>
-
   <app-expense-creation-form
     *ngIf="transactionType === TransactionTypeEnum.EXPENSE"
   ></app-expense-creation-form>
@@ -1019,21 +1018,22 @@
         style="display: flex; flex-direction: row; margin-bottom: 100px"
       ></div>
     </div>
-    <ion-button
-      style="
-        display: flex;
-        position: sticky;
-        height: 60px;
-        align-items: center;
-        bottom: 0px;
-        justify-content: flex-end;
-        padding: 10px;
-        z-index: 100;
-      "
-      type="submit"
-      (click)="createTransaction()"
-      [disabled]="!salesForm.valid"
-      >Create Sale</ion-button
-    >
   </div>
 </ion-content>
+<ion-button
+  *ngIf="transactionType !== TransactionTypeEnum.EXPENSE"
+  style="
+    display: flex;
+    position: sticky;
+    height: 60px;
+    align-items: center;
+    bottom: 0px;
+    justify-content: flex-end;
+    padding: 10px;
+    z-index: 100;
+  "
+  type="submit"
+  (click)="createTransaction()"
+  [disabled]="!salesForm.valid"
+  >Create Sale</ion-button
+>

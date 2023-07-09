@@ -300,7 +300,7 @@ export class TransactionCreationFormComponent {
           if (response.message === 'Success') {
             toastAlert(
               this.toastController,
-              `${this.selectedPartyTab} created successfully`,
+              `${this.transactionType} created successfully`,
               'success'
             );
           }
@@ -599,7 +599,7 @@ export class TransactionCreationFormComponent {
       discounts: 0,
       total: 0,
     };
-    this.salesForm.value.items.map((item: any) => {
+    this.salesForm.value.items.forEach((item: any) => {
       totalInfo.subTotal = totalInfo.subTotal + item.amount;
       if (item.discount) {
         totalInfo.discounts =
