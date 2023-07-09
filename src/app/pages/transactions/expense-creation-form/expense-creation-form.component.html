@@ -1,391 +1,534 @@
-<ion-content>
-  <form
-    style="margin-right: 140px; padding: 10px; gap: 10px"
-    [formGroup]="salesForm"
-  >
-    <ion-grid>
-      <ion-row>
-        <ion-col size-md="5">
-          <ion-input
-            id="invoice-date-selection-popover-button"
-            label-placement="stacked"
-            fill="outline"
-            label="Invoice Date"
-            formControlName="date"
-          ></ion-input>
-          <ion-popover
-            trigger="invoice-date-selection-popover-button"
-            [showBackdrop]="false"
-            [dismissOnSelect]="true"
-            [keyboardClose]="false"
-          >
-            <ng-template>
-              <ion-content>
-                <ion-datetime></ion-datetime>
-              </ion-content>
-            </ng-template>
-          </ion-popover>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col size-md="5">
-          <ion-searchbar
-            id="supplier-selection-popover-button"
-            placeholder="Select supplier"
-            (ionClear)="removeSelectedParty()"
-            [value]="salesForm.value.supplier.name"
-          >
-          </ion-searchbar>
-          <ion-popover
-            trigger="supplier-selection-popover-button"
-            [showBackdrop]="false"
-            [dismissOnSelect]="true"
-            [keyboardClose]="false"
-          >
-            <ng-template>
-              <ion-content>
-                <ion-item [detail]="false">
-                  <ion-button (click)="openAddPartyModal()">
-                    Create new
-                  </ion-button>
-                </ion-item>
-                <ion-list
-                  style="max-height: 350px; overflow-y: scroll"
-                  class="scrollbar"
-                  id="style-1"
-                >
-                  <ion-item
-                    *ngFor="let party of suppliers; let i = index"
-                    [button]="true"
-                    [detail]="false"
-                    (click)="selectExpenseSupplier(party)"
-                    ><div
-                      style="
-                        display: flex;
-                        flex-direction: column;
-                        padding: 10px;
-                      "
-                    >
-                      <p>{{ getPartyDetails(party).name }}</p>
-                    </div></ion-item
-                  >
-                </ion-list>
-              </ion-content>
-            </ng-template>
-          </ion-popover>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col size-md="5">
-          <ion-input
-            style="width: 100%"
-            fill="outline"
-            id="gst-type-popover-button"
-            formControlName="gstType"
-            placeholder="Select GST Type"
-            label="GST Type"
-            label-placement="stacked"
-            [readonly]="true"
-          >
-          </ion-input>
-        </ion-col>
+<form
+  style="margin-right: 140px; padding: 10px; gap: 10px"
+  [formGroup]="salesForm"
+>
+  <ion-grid>
+    <ion-row>
+      <ion-col size-md="5">
+        <ion-input
+          id="invoice-date-selection-popover-button"
+          label-placement="stacked"
+          fill="outline"
+          label="Invoice Date"
+          [readonly]="true"
+          [value]="expenseDate | dateFormat"
+        ></ion-input>
         <ion-popover
-          size="cover"
-          trigger="gst-type-popover-button"
-          [dismissOnSelect]="true"
+          trigger="invoice-date-selection-popover-button"
+          [showBackdrop]="false"
+          [keyboardClose]="false"
         >
           <ng-template>
             <ion-content>
-              <app-gst-type-list
-                (onSelect)="selectGSTType($event)"
-              ></app-gst-type-list>
+              <ion-datetime
+                (ionChange)="onDateChange($event)"
+                [value]="expenseDate"
+              ></ion-datetime>
             </ion-content>
           </ng-template>
         </ion-popover>
-      </ion-row>
-      <ion-row *ngIf="selectedGSTType?.isGstin">
-        <ion-col size-md="5">
-          <ion-input
-            label="Supplier GSTIN"
-            label-placement="stacked"
-            fill="outline"
-            placeholder="Add GSTIN"
-            formControlName="gstin"
-          ></ion-input>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col size-md="5">
-          <ion-input
-            label-placement="stacked"
-            fill="outline"
-            label="Source of Supply"
-            id="state-selection-popover-button"
-            formControlName="stateOfSupply"
-            [readonly]="true"
-          ></ion-input>
-          <ion-popover
-            trigger="state-selection-popover-button"
-            [showBackdrop]="false"
-            [dismissOnSelect]="true"
-            [keyboardClose]="false"
-          >
-            <ng-template>
-              <ion-content>
-                <app-state-popover
-                  (onSelect)="onStateSelect($event)"
-                ></app-state-popover>
-              </ion-content>
-            </ng-template>
-          </ion-popover>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col size-md="5">
-          <ion-input
-            label-placement="stacked"
-            fill="outline"
-            label="Destination of Suppy"
-            id="destination-state-selection-popover-button"
-            formControlName="destinationOfSupply"
-            [readonly]="true"
-          ></ion-input>
-          <ion-popover
-            trigger="destination-state-selection-popover-button"
-            [showBackdrop]="false"
-            [dismissOnSelect]="true"
-            [keyboardClose]="false"
-          >
-            <ng-template>
-              <ion-content>
-                <app-state-popover
-                  (onSelect)="onStateSelect($event)"
-                ></app-state-popover>
-              </ion-content>
-            </ng-template>
-          </ion-popover>
-        </ion-col>
-      </ion-row>
-      <div>
-        <ion-row>
-          <ion-col class="item-form-col row" size-md="3">
-            <p class="subHeading" position="stacked" for="items">
-              EXPENSE ACCOUNT
-            </p>
-          </ion-col>
-          <ion-col class="item-form-col row" size="3">
-            <p class="subHeading" position="stacked" for="quantity">NOTES</p>
-          </ion-col>
-          <ion-col class="item-form-col row" size="3">
-            <p class="subHeading" position="stacked" for="sellingPrice">TAX</p>
-          </ion-col>
-          <ion-col class="item-form-col row last" size="3">
-            <p class="subHeading" position="stacked" for="amount1">
-              AMOUNT (₹)
-            </p>
-          </ion-col>
-        </ion-row>
-        <div
-          formArrayName="items"
-          *ngFor="let item of getFormControls.controls; let i = index"
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size-md="5">
+        <ion-searchbar
+          id="supplier-selection-popover-button"
+          placeholder="Select supplier"
+          (ionClear)="removeSelectedParty()"
+          [value]="salesForm.value.supplier.name"
         >
-          <ion-row [formGroupName]="i">
-            <ion-col class="item-form-col" size-md="3">
-              <div [id]="'expense-account-selection-popover-button' + i">
-                <ion-input
-                  class="expense-account-form-input"
-                  type="text"
-                  fill="outline"
-                  [readonly]="true"
-                  formControlName="expenseAccount"
-                  placeholder="Select Account"
-                  required
-                ></ion-input>
+        </ion-searchbar>
+        <ion-popover
+          trigger="supplier-selection-popover-button"
+          [showBackdrop]="false"
+          [dismissOnSelect]="true"
+          [keyboardClose]="false"
+        >
+          <ng-template>
+            <ion-content>
+              <ion-item [detail]="false">
+                <ion-button (click)="openAddPartyModal()">
+                  Create new
+                </ion-button>
+              </ion-item>
+              <ion-list
+                style="max-height: 350px; overflow-y: scroll"
+                class="scrollbar"
+                id="style-1"
+              >
+                <ion-item
+                  *ngFor="let party of suppliers; let i = index"
+                  [button]="true"
+                  [detail]="false"
+                  (click)="selectExpenseSupplier(party)"
+                  ><div
+                    style="display: flex; flex-direction: column; padding: 10px"
+                  >
+                    <p>{{ getPartyDetails(party).name }}</p>
+                  </div></ion-item
+                >
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size-md="5">
+        <ion-input
+          style="width: 100%"
+          fill="outline"
+          id="gst-type-popover-button"
+          formControlName="gstType"
+          placeholder="Select GST Type"
+          label="GST Type"
+          label-placement="stacked"
+          [readonly]="true"
+        >
+        </ion-input>
+      </ion-col>
+      <ion-popover
+        size="cover"
+        trigger="gst-type-popover-button"
+        [dismissOnSelect]="true"
+      >
+        <ng-template>
+          <ion-content>
+            <app-gst-type-list
+              (onSelect)="selectGSTType($event)"
+            ></app-gst-type-list>
+          </ion-content>
+        </ng-template>
+      </ion-popover>
+    </ion-row>
+    <ion-row *ngIf="selectedGSTType?.isGstin">
+      <ion-col size-md="5">
+        <ion-input
+          label="Supplier GSTIN"
+          label-placement="stacked"
+          fill="outline"
+          placeholder="Add GSTIN"
+          formControlName="gstin"
+        ></ion-input>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size-md="5">
+        <ion-input
+          label-placement="stacked"
+          fill="outline"
+          label="Source of Supply"
+          id="state-selection-popover-button"
+          formControlName="sourceOfSupply"
+          [readonly]="true"
+        ></ion-input>
+        <ion-popover
+          trigger="state-selection-popover-button"
+          [showBackdrop]="false"
+          [dismissOnSelect]="true"
+          [keyboardClose]="false"
+        >
+          <ng-template>
+            <ion-content>
+              <app-state-popover
+                (onSelect)="onStateSelect($event, 'source')"
+              ></app-state-popover>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size-md="5">
+        <ion-input
+          label-placement="stacked"
+          fill="outline"
+          label="Destination of Suppy"
+          id="destination-state-selection-popover-button"
+          formControlName="destinationOfSupply"
+          [readonly]="true"
+        ></ion-input>
+        <ion-popover
+          trigger="destination-state-selection-popover-button"
+          [showBackdrop]="false"
+          [dismissOnSelect]="true"
+          [keyboardClose]="false"
+        >
+          <ng-template>
+            <ion-content>
+              <app-state-popover
+                (onSelect)="onStateSelect($event, 'destination')"
+              ></app-state-popover>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+      </ion-col>
+    </ion-row>
+    <div>
+      <ion-row>
+        <ion-col class="item-form-col row" size-md="3">
+          <p class="subHeading" position="stacked" for="items">
+            EXPENSE ACCOUNT
+          </p>
+        </ion-col>
+        <ion-col class="item-form-col row" size="3">
+          <p class="subHeading" position="stacked" for="quantity">NOTES</p>
+        </ion-col>
+        <ion-col class="item-form-col row" size="3">
+          <p class="subHeading" position="stacked" for="sellingPrice">TAX</p>
+        </ion-col>
+        <ion-col class="item-form-col row last" size="3">
+          <p class="subHeading" position="stacked" for="amount1">AMOUNT (₹)</p>
+        </ion-col>
+      </ion-row>
+      <div
+        formArrayName="items"
+        *ngFor="let item of getFormControls.controls; let i = index"
+      >
+        <ion-row [formGroupName]="i">
+          <ion-col class="item-form-col" size-md="3">
+            <div [id]="'expense-account-selection-popover-button' + i">
+              <ion-input
+                class="expense-account-form-input"
+                type="text"
+                fill="outline"
+                [readonly]="true"
+                formControlName="expenseAccount"
+                placeholder="Select Account"
+                required
+              ></ion-input>
+            </div>
+            <div *ngIf="salesForm.value.items[i].expenseAccount">
+              <div style="margin-top: 10px">
+                <div
+                  class="custom-item-type-chip"
+                  [id]="'item-type-selection-popover-button' + i"
+                >
+                  <p class="caption">
+                    {{ salesForm.value.items[i].itemType }}
+                  </p>
+                </div>
               </div>
 
+              <div style="margin-top: 10px">
+                <div style="display: flex">
+                  <p style="color: var(--ion-color-medium)" class="bodyMedium">
+                    {{
+                      salesForm.value.items[i].itemType === "Services"
+                        ? "SAC : "
+                        : "HSN code : "
+                    }}
+                  </p>
+                  <div
+                    style="
+                      display: flex;
+                      font-size: 14px;
+                      cursor: pointer;
+                      font-weight: 600;
+                      justify-content: center;
+                      align-items: center;
+                    "
+                    [id]="'hsn-code-selection-popover-button' + i"
+                  >
+                    <p
+                      style="color: var(--ion-color-primary)"
+                      class="bodyMedium"
+                    >
+                      {{
+                        salesForm.value.items[i].hsnCode
+                          ? salesForm.value.items[i].hsnCode
+                          : "Update"
+                      }}
+                    </p>
+                    <ion-icon name="pencil" color="primary"></ion-icon>
+                  </div>
+                </div>
+              </div>
               <ion-popover
                 class="custom-popover"
-                [trigger]="'expense-account-selection-popover-button' + i"
+                #hsnPopoverRef
+                [trigger]="'hsn-code-selection-popover-button' + i"
                 triggerAction="click"
-                style="--height: 350px"
+                [showBackdrop]="false"
+              >
+                <ng-template>
+                  <ion-content>
+                    <div style="padding: 10px">
+                      <ion-input
+                        class="expense-account-form-input"
+                        type="text"
+                        fill="outline"
+                        formControlName="hsnCode"
+                        required
+                      ></ion-input>
+                      <ion-button (click)="hsnPopoverRef.dismiss()">
+                        Ok
+                      </ion-button>
+                    </div>
+                  </ion-content>
+                </ng-template>
+              </ion-popover>
+              <ion-popover
+                class="custom-popover"
+                [trigger]="'item-type-selection-popover-button' + i"
+                triggerAction="click"
                 [dismissOnSelect]="true"
               >
                 <ng-template>
                   <ion-content>
-                    <ion-list
-                      style="max-height: 350px; overflow-y: scroll"
-                      class="scrollbar"
-                      id="style-1"
+                    <ion-item
+                      *ngFor="let itemType of itemTypes"
+                      [button]="true"
+                      size="cover"
+                      (click)="onSelectItemType(itemType, i)"
                     >
-                      <ion-item
-                        [button]="true"
-                        *ngFor="let account of accountsTypeList.expense"
-                        (click)="onPurchaseAccountChange(account, i)"
-                      >
-                        <p class="bodyRegularMobile">
-                          {{ account }}
-                        </p>
-                      </ion-item>
-                      <ion-item
-                        [button]="true"
-                        *ngFor="let account of accountsTypeList.cogs"
-                        (click)="onPurchaseAccountChange(account, i)"
-                      >
-                        <p class="bodyRegularMobile">
-                          {{ account }}
-                        </p>
-                      </ion-item>
-                    </ion-list>
+                      <p class="bodyMedium">{{ itemType }}</p>
+                    </ion-item>
                   </ion-content>
                 </ng-template>
               </ion-popover>
-            </ion-col>
-            <ion-col class="item-form-col" size="3">
-              <ion-textarea
-                class="item-form-input"
-                fill="outline"
-                type="text"
-                required
-                formControlName="notes"
-                maxlength="500"
-                [counter]="true"
-              ></ion-textarea>
-              <!-- <ng-container *ngIf="getItemDetails(i) as itemDetails">
+            </div>
+
+            <ion-popover
+              class="custom-popover"
+              [trigger]="'expense-account-selection-popover-button' + i"
+              triggerAction="click"
+              style="--height: 350px"
+              [dismissOnSelect]="true"
+            >
+              <ng-template>
+                <ion-content>
+                  <ion-list
+                    style="max-height: 350px; overflow-y: scroll"
+                    class="scrollbar"
+                    id="style-1"
+                  >
+                    <ion-item
+                      [button]="true"
+                      *ngFor="let account of accountsTypeList.expense"
+                      (click)="onPurchaseAccountChange(account, i)"
+                    >
+                      <p class="bodyRegularMobile">
+                        {{ account }}
+                      </p>
+                    </ion-item>
+                    <ion-item
+                      [button]="true"
+                      *ngFor="let account of accountsTypeList.cogs"
+                      (click)="onPurchaseAccountChange(account, i)"
+                    >
+                      <p class="bodyRegularMobile">
+                        {{ account }}
+                      </p>
+                    </ion-item>
+                  </ion-list>
+                </ion-content>
+              </ng-template>
+            </ion-popover>
+          </ion-col>
+          <ion-col class="item-form-col" size="3">
+            <ion-textarea
+              class="item-form-input"
+              fill="outline"
+              type="text"
+              formControlName="notes"
+              maxlength="500"
+              [counter]="true"
+            ></ion-textarea>
+            <!-- <ng-container *ngIf="getItemDetails(i) as itemDetails">
                 <div class="bodyMedium">
                   <p *ngIf="itemDetails.taxIncluded">( Tax Inclusive )</p>
                 </div>
               </ng-container> -->
-            </ion-col>
-            <ion-col class="item-form-col" size="3">
-              <ion-row>
-                <ion-col>
-                  <ion-input
-                    label="GST %"
-                    label-placement="stacked"
-                    fill="outline"
-                    (click)="openGSTTaxPopover($event, i)"
-                    formControlName="gstPercentage"
-                  ></ion-input>
-                </ion-col>
-              </ion-row>
-              <ion-row>
-                <ion-col>
-                  <ion-input
-                    [label]="'Cess %'"
-                    label-placement="stacked"
-                    fill="outline"
-                    (click)="openCessTaxPopover($event, i)"
-                    formControlName="cess"
-                  ></ion-input>
-                </ion-col>
-              </ion-row>
-            </ion-col>
-            <ion-col class="item-form-col last" size="3">
-              <div style="display: flex; flex-direction: row">
+          </ion-col>
+          <ion-col class="item-form-col" size="3">
+            <ion-row>
+              <ion-col>
                 <ion-input
-                  class="item-form-input"
-                  type="number"
-                  required
-                  formControlName="amount"
+                  label="GST %"
+                  label-placement="stacked"
                   fill="outline"
+                  (click)="openGSTTaxPopover($event, i)"
+                  formControlName="gstPercentage"
                 ></ion-input>
-                <div>
-                  <ion-icon
-                    *ngIf="i > 0"
-                    style="cursor: pointer; font-size: 22px"
-                    (click)="removeItem(i)"
-                    name="trash-outline"
-                  ></ion-icon>
-                </div>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-input
+                  [label]="'Cess %'"
+                  label-placement="stacked"
+                  fill="outline"
+                  (click)="openCessTaxPopover($event, i)"
+                  formControlName="cess"
+                ></ion-input>
+              </ion-col>
+            </ion-row>
+          </ion-col>
+          <ion-col class="item-form-col last" size="3">
+            <div style="display: flex; flex-direction: row">
+              <ion-input
+                class="item-form-input"
+                type="number"
+                required
+                formControlName="amount"
+                fill="outline"
+              ></ion-input>
+              <div>
+                <ion-icon
+                  *ngIf="i > 0"
+                  style="cursor: pointer; font-size: 22px"
+                  (click)="removeItem(i)"
+                  name="trash-outline"
+                ></ion-icon>
               </div>
-            </ion-col>
-          </ion-row>
-        </div>
-        <div class="form-row">
-          <div>
-            <ion-button
-              type="button"
-              class="btn btn-success"
-              (click)="addItem()"
-              >Add Item</ion-button
-            >
-          </div>
-        </div>
+            </div>
+          </ion-col>
+        </ion-row>
       </div>
-      <ion-row>
-        <ion-col size-md="5">
-          <ion-input
-            label-placement="stacked"
-            fill="outline"
-            label="Invoice Number"
-            formControlName="invoiceId"
-          ></ion-input>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col size-md="5">
-          <ion-searchbar
-            id="customer-selection-popover-button"
-            placeholder="Select customer"
-            (ionClear)="removeSelectedParty()"
-            [value]="salesForm.value.customer.name"
-          >
-          </ion-searchbar>
-          <ion-popover
-            trigger="customer-selection-popover-button"
-            [showBackdrop]="false"
-            [dismissOnSelect]="true"
-            [keyboardClose]="false"
-          >
-            <ng-template>
-              <ion-content>
-                <ion-item [detail]="false">
-                  <ion-button (click)="openAddPartyModal()">
-                    Create new
-                  </ion-button>
-                </ion-item>
-                <ion-list
-                  style="max-height: 350px; overflow-y: scroll"
-                  class="scrollbar"
-                  id="style-1"
-                >
-                  <ion-item
-                    *ngFor="let party of customers; let i = index"
-                    [button]="true"
-                    [detail]="false"
-                    (click)="selectExpenseCustomer(party)"
-                    ><div
-                      style="
-                        display: flex;
-                        flex-direction: column;
-                        padding: 10px;
-                      "
-                    >
-                      <p>{{ getPartyDetails(party).name }}</p>
-                    </div></ion-item
+      <div>
+        <ion-row>
+          <ion-col>
+            <ion-button (click)="addItem()">Add Item</ion-button>
+          </ion-col>
+          <ion-col>
+            <div
+              class="total-info"
+              style="
+                display: flex;
+                gap: 30px;
+                background-color: var(--ion-color-light);
+                border-radius: 10px;
+                padding: 20px;
+              "
+            >
+              <ion-col *ngIf="getTotalInformation() as totalInformation">
+                <ion-row style="display: flex">
+                  <div style="flex: 1">
+                    <p class="bodyRegularMobile">Sub Total</p>
+                    <p class="tiny">( Tax inclusive )</p>
+                  </div>
+                  <div>
+                    <p class="bodySecondary">
+                      {{ totalInformation.subTotal }}
+                    </p>
+                  </div>
+                </ion-row>
+                <ion-row style="display: flex">
+                  <div style="flex: 1">
+                    <p class="bodyRegularMobile">CSGT</p>
+                  </div>
+                  <div>
+                    <p class="bodySecondary">
+                      {{ totalInformation.gst / 2 }}
+                    </p>
+                  </div>
+                </ion-row>
+                <ion-row style="display: flex">
+                  <div style="flex: 1">
+                    <p class="bodyRegularMobile">SGST</p>
+                  </div>
+                  <div>
+                    <p class="bodySecondary">
+                      {{ totalInformation.gst / 2 }}
+                    </p>
+                  </div>
+                </ion-row>
+                <ion-row style="display: flex">
+                  <div style="flex: 1">
+                    <p class="bodyRegularMobile">Cess</p>
+                  </div>
+                  <div>
+                    <p class="bodySecondary">
+                      {{ totalInformation.cess }}
+                    </p>
+                  </div>
+                </ion-row>
+                <ion-row style="display: flex">
+                  <div style="flex: 1">
+                    <p class="title2">Total ( ₹ )</p>
+                  </div>
+                  <div>
+                    <p class="title2">
+                      {{ totalInformation.total }}
+                    </p>
+                  </div>
+                </ion-row>
+              </ion-col>
+            </div>
+          </ion-col>
+        </ion-row>
+      </div>
+    </div>
+    <ion-row>
+      <ion-col size-md="5">
+        <ion-input
+          label-placement="stacked"
+          fill="outline"
+          label="Invoice Number"
+          formControlName="invoiceId"
+        ></ion-input>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size-md="5">
+        <ion-searchbar
+          id="customer-selection-popover-button"
+          placeholder="Select customer"
+          (ionClear)="removeSelectedParty()"
+          [value]="salesForm.value.customer.name"
+        >
+        </ion-searchbar>
+        <ion-popover
+          trigger="customer-selection-popover-button"
+          [showBackdrop]="false"
+          [dismissOnSelect]="true"
+          [keyboardClose]="false"
+        >
+          <ng-template>
+            <ion-content>
+              <ion-item [detail]="false">
+                <ion-button (click)="openAddPartyModal()">
+                  Create new
+                </ion-button>
+              </ion-item>
+              <ion-list
+                style="max-height: 350px; overflow-y: scroll"
+                class="scrollbar"
+                id="style-1"
+              >
+                <ion-item
+                  *ngFor="let party of customers; let i = index"
+                  [button]="true"
+                  [detail]="false"
+                  (click)="selectExpenseCustomer(party)"
+                  ><div
+                    style="display: flex; flex-direction: column; padding: 10px"
                   >
-                </ion-list>
-              </ion-content>
-            </ng-template>
-          </ion-popover>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </form>
-  <ion-button
-    style="
-      display: flex;
-      position: sticky;
-      height: 60px;
-      align-items: center;
-      bottom: 0px;
-      justify-content: flex-end;
-      padding: 10px;
-      z-index: 100;
-    "
-    type="submit"
-    (click)="createTransaction()"
-    [disabled]="!salesForm.valid"
-    >Create Expense</ion-button
-  >
-</ion-content>
+                    <p>{{ getPartyDetails(party).name }}</p>
+                  </div></ion-item
+                >
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</form>
+<ion-button
+  style="
+    display: flex;
+    position: sticky;
+    height: 60px;
+    align-items: center;
+    bottom: 0px;
+    justify-content: flex-end;
+    padding: 10px;
+    z-index: 100;
+  "
+  type="submit"
+  (click)="createTransaction()"
+  [disabled]="!salesForm.valid"
+  >Create Expense</ion-button
+>

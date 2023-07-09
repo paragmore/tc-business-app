@@ -52,6 +52,7 @@ import {
   TaxPopoverComponent,
   TaxTypeEnum,
 } from '../../items/tax-popover/tax-popover.component';
+import { DateFormatPipe } from 'src/app/core/pipes/date-format.pipe';
 
 @Component({
   selector: 'app-expense-creation-form',
@@ -65,6 +66,7 @@ import {
     ReactiveFormsModule,
     StatePopoverComponent,
     GstTypeListComponent,
+    DateFormatPipe,
   ],
 })
 export class ExpenseCreationFormComponent implements OnInit {
@@ -85,7 +87,7 @@ export class ExpenseCreationFormComponent implements OnInit {
   filters: PartiesFilterByQueryI = {};
   customers: Array<GetAllCustomersResponseI> = [];
   suppliers: Array<SupplierI> = [];
-
+  itemTypes = ['Goods', 'Sevices'];
   currentStoreInfo: StoreInfoModel | undefined;
   selectedPartyTab: PartyTypeEnum = PartyTypeEnum.CUSTOMER;
   selectedParty: GetAllCustomersResponseI | SupplierI | undefined;
@@ -96,7 +98,7 @@ export class ExpenseCreationFormComponent implements OnInit {
   isLoading = false;
   transactionType!: TransactionTypeEnum;
   selectedGSTType: GSTTypeI | undefined;
-
+  expenseDate: string | undefined;
   accountsTypeList = {
     expense: Object.values(ExpenseAccountTypeEnum),
     cogs: Object.values(CostOfGoodsSoldAccountTypeEnum),
@@ -116,50 +118,34 @@ export class ExpenseCreationFormComponent implements OnInit {
     this.salesForm = this.fb.group({});
   }
 
+  onDateChange(event: any) {
+    this.expenseDate = event.detail.value;
+    this.salesForm.patchValue({ date: event.detail.value });
+  }
+
+  onSelectItemType(itemType: string, index: number) {
+    const itemsForm = this.salesForm.get('items') as FormArray;
+
+    if (itemsForm) {
+      itemsForm.at(index).patchValue({ itemType: itemType });
+    }
+  }
+
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
-      this.transactionType = params['type'];
-      if (this.transactionType === TransactionTypeEnum.SALE) {
-        this.selectedPartyTab = PartyTypeEnum.CUSTOMER;
-      }
-      if (this.transactionType === TransactionTypeEnum.PURCHASE) {
-        this.selectedPartyTab = PartyTypeEnum.SUPPLIER;
-      }
-      // Use the values in your component logic
-    });
     this.salesForm = this.fb.group({
-      items: this.fb.array([this.createSalesItem()]),
+      date: ['', Validators.required],
       supplier: this.createPartyFormGroup(),
-      customer: this.createPartyFormGroup(),
-      date: [new Date(), Validators.required],
-      invoiceId: ['', Validators.required],
-      stateOfSupply: ['', Validators.required],
-      customerNotes: [''],
-      termsAndConditions: [''],
-      paymentDone: this.createPaymentDone(),
       gstType: ['', Validators.required],
+      gstin: [''],
+      sourceOfSupply: ['', Validators.required],
       destinationOfSupply: ['', Validators.required],
-      // phoneNumber: ['', Validators.required],
-      // customerGSTIN: ['', Validators.required],
-      // invoiceNumber: ['', Validators.required],
-      // invoiceDate: ['', Validators.required],
-      // storeGSTIN: ['', Validators.required],
-      // state: ['', Validators.required],
-      // partyDetails: this.createPartyFormGroup(),
-      // invoiceDetails: this.createInvoiceFormGroup(),
+      items: this.fb.array([this.createSalesItem()]),
+      invoiceId: ['', Validators.required],
+      customer: this.createPartyFormGroup(),
     });
+    this.onDateChange({ detail: { value: new Date().toISOString() } });
     this.currentStoreInfoService.getCurrentStoreInfo().subscribe((response) => {
       this.currentStoreInfo = response;
-      if (this.currentStoreInfo?.lastInvoiceInfo) {
-        console.log(this.currentStoreInfo?.lastInvoiceInfo);
-        this.salesForm.patchValue({
-          invoiceId:
-            '' +
-            this.currentStoreInfo?.lastInvoiceInfo.sequence +
-            ' - ' +
-            (this.currentStoreInfo?.lastInvoiceInfo.invoiceId + 1),
-        });
-      }
       this.loadCustomers();
       this.loadSuppliers();
     });
@@ -172,19 +158,13 @@ export class ExpenseCreationFormComponent implements OnInit {
     this.salesForm.patchValue({ gstType: gstType.title });
   }
 
-  onPartyShippingStateSelect(state: string) {
-    console.log('STATE', state);
-    this.salesForm.patchValue({ party: { address: { shipping: { state } } } });
-  }
-
-  onPartyBillingStateSelect(state: string) {
-    console.log('STATE', state);
-    this.salesForm.patchValue({ party: { address: { billing: { state } } } });
-  }
-
-  onStateSelect(state: string) {
-    console.log('STATE', state);
-    this.salesForm.patchValue({ stateOfSupply: state });
+  onStateSelect(state: string, type: 'source' | 'destination') {
+    if (type === 'source') {
+      this.salesForm.patchValue({ sourceOfSupply: state });
+    }
+    if (type === 'destination') {
+      this.salesForm.patchValue({ destinationOfSupply: state });
+    }
   }
 
   createTransaction() {
@@ -333,6 +313,7 @@ export class ExpenseCreationFormComponent implements OnInit {
 
     this.salesForm.patchValue({
       supplier: partyFormPayload,
+      gstin: party.gstin,
     });
   }
 
@@ -353,7 +334,7 @@ export class ExpenseCreationFormComponent implements OnInit {
     };
 
     this.salesForm.patchValue({
-      supplier: partyFormPayload,
+      customer: partyFormPayload,
     });
   }
   resetPagination() {
@@ -489,110 +470,28 @@ export class ExpenseCreationFormComponent implements OnInit {
     return await modal.present();
   }
 
-  calculateAmount(
-    sellsPrice: number,
-    quantity: number,
-    taxIncluded: boolean | undefined,
-    gstPercentage: number | undefined,
-    cess: number | undefined,
-    discount: DiscountI | undefined | null
-  ) {
-    let amount = sellsPrice * quantity;
-    let tax = 0;
-    if (gstPercentage) {
-      tax = (amount * gstPercentage) / 100;
-    }
-    if (cess) {
-      tax = tax + (amount * cess) / 100;
-    }
-    if (!taxIncluded) {
-      amount = amount + tax;
-    }
-    if (discount) {
-      const calculatedDiscount = this.getDiscountAmount(
-        discount,
-        sellsPrice * quantity
-      );
-      amount = amount - calculatedDiscount;
-    }
-    return amount;
-  }
-
-  getDiscountAmount(discount: DiscountI, amount: number) {
-    let calculatedDiscount = 0;
-    if (discount.type === 'percentage') {
-      const newDiscount = (amount * discount.value) / 100;
-      if (discount.maxDiscount && newDiscount > discount.maxDiscount) {
-        calculatedDiscount = discount.maxDiscount;
-      } else {
-        calculatedDiscount = newDiscount;
-      }
-    }
-    if (discount.type === 'amount') {
-      calculatedDiscount = discount.value;
-    }
-    return calculatedDiscount;
-  }
-
-  getApplicableDiscounts(
-    discounts: DiscountI[],
-    quantity: number,
-    amount: number
-  ) {
-    const applicableDiscounts = [];
-
-    for (const discount of discounts) {
-      if (
-        (discount.minType === 'orderQuantity' &&
-          discount?.minimum &&
-          quantity >= discount?.minimum) ||
-        (discount.minType === 'orderValue' &&
-          discount?.minimum &&
-          amount >= discount?.minimum)
-      ) {
-        applicableDiscounts.push(discount);
-      }
-    }
-
-    return applicableDiscounts;
-  }
-
   getTotalInformation() {
     const totalInfo = {
       subTotal: 0,
       gst: 0,
       cess: 0,
-      discounts: 0,
       total: 0,
     };
-    this.salesForm.value.items.map((item: any) => {
-      totalInfo.subTotal = totalInfo.subTotal + item.amount;
-      if (item.discount) {
-        totalInfo.discounts =
-          totalInfo.discounts +
-          this.getDiscountAmount(
-            item.discount,
-            item.quantity * item.sellsPrice
-          );
-      }
 
-      if (!isNaN(item.gstPercentage) && item.gstPercentage > 0) {
-        if (item.taxIncluded) {
-          totalInfo.gst =
-            (item.sellsPrice * item.gstPercentage) / (100 + item.gstPercentage);
-        } else {
-          totalInfo.gst = (item.gstPercentage * item.sellsPrice) / 100;
-        }
+    this.salesForm.value.items.forEach((item: any) => {
+      if (item.amount) {
+        totalInfo.subTotal += item.amount;
       }
-      if (!isNaN(item.cess) && item.cess > 0) {
-        if (item.taxIncluded) {
-          totalInfo.cess = (item.sellsPrice * item.cess) / (100 + item.cess);
-        } else {
-          totalInfo.cess = (item.cess * item.sellsPrice) / 100;
-        }
+      if (item.gstPercentage && item.gstPercentage > 0) {
+        totalInfo.gst += (item.amount * item.gstPercentage) / 100;
+      }
+      if (item.cess && item.cess > 0) {
+        totalInfo.cess += (item.amount * item.cess) / 100;
       }
     });
-    totalInfo.total = totalInfo.subTotal;
+
+    totalInfo.total = totalInfo.subTotal + totalInfo.gst + totalInfo.cess;
+
     return totalInfo;
   }
 
@@ -604,13 +503,13 @@ export class ExpenseCreationFormComponent implements OnInit {
   createSalesItem(): FormGroup {
     return this.fb.group({
       expenseAccount: ['', Validators.required],
-      itemType: ['', Validators.required],
+      itemType: ['Services', Validators.required],
       hsnCode: [''],
       notes: [''],
       gstPercentage: [''],
       gstTaxPreference: [''],
       cess: [''],
-      amount: ['0', Validators.required],
+      amount: ['', Validators.required],
     });
   }
 
@@ -653,14 +552,26 @@ export class ExpenseCreationFormComponent implements OnInit {
       return;
     }
     if (data && data.selectedValue) {
+      const taxRegex = /(\d+(\.\d+)?)/g;
       if (type === TaxTypeEnum.GST) {
+        const gstMatch =
+          typeof data.selectedValue === 'string'
+            ? data.selectedValue.match(taxRegex)
+            : undefined;
+        const gstPercent = gstMatch ? parseFloat(gstMatch[0]) : undefined;
         itemsForm.at(index).patchValue({
-          gstPercentage: data.selectedValue,
+          gstPercentage: gstPercent,
           taxPreference: TaxPreferenceEnum.TAXABLE,
         });
       }
       if (type === TaxTypeEnum.CESS) {
-        itemsForm.at(index).patchValue({ cess: data.selectedValue });
+        const cessMatch =
+          typeof data.selectedValue === 'string'
+            ? data.selectedValue.match(taxRegex)
+            : undefined;
+        const cess = cessMatch ? parseFloat(cessMatch[0]) : undefined;
+
+        itemsForm.at(index).patchValue({ cess: cess });
       }
     }
     if (data && data.selectedTaxPreference) {
@@ -686,23 +597,6 @@ export class ExpenseCreationFormComponent implements OnInit {
     );
   }
 
-  createPaymentDone(): FormGroup {
-    return this.fb.group({
-      mode: ['UNPAID', Validators.required],
-      amount: ['0', Validators.required],
-    });
-  }
-  createDiscount(): FormGroup {
-    return this.fb.group({
-      _id: [''],
-      type: [''],
-      code: [''],
-      value: [''],
-      minType: [''],
-      minimum: [''],
-      maxDiscount: [''],
-    });
-  }
   createAddressFormGroup() {
     return this.fb.group({
       line1: [''],
@@ -722,7 +616,7 @@ export class ExpenseCreationFormComponent implements OnInit {
   createPartyFormGroup(): FormGroup {
     return this.fb.group({
       _id: [''],
-      name: ['', Validators.required],
+      name: [''],
       tradeName: [''],
       phoneNumber: [''],
       email: [''],
