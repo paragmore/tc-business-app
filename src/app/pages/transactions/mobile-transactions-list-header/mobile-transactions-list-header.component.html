@@ -1,0 +1,16 @@
+<ion-segment (ionChange)="updateSelectedTab($event)" [value]="selectedTab">
+  <ion-segment-button [value]="TransactionTypeEnum.SALE">
+    <ion-label>Sales</ion-label>
+  </ion-segment-button>
+  <ion-segment-button [value]="TransactionTypeEnum.PURCHASE">
+    <ion-label>Purchases</ion-label>
+  </ion-segment-button>
+  <ion-segment-button [value]="TransactionTypeEnum.EXPENSE">
+    <ion-label>Expenses</ion-label>
+  </ion-segment-button>
+</ion-segment>
+<app-credit-debit-summary-card
+  *ngIf="creditDebitSummaryData"
+  [creditDebitInput]="creditDebitSummaryData"
+>
+</app-credit-debit-summary-card>
