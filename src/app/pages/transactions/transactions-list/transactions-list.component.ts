@@ -10,6 +10,7 @@ import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
 import { Observable } from 'rxjs';
 import { ScreenModel } from 'src/app/store/models/screen.models';
 import {
+  ExpenseI,
   PaymentStatusEnum,
   SortOrder,
   TransactionI,
@@ -19,6 +20,7 @@ import {
 } from 'src/app/core/services/transactions/transactions.service';
 import {
   deleteTransactionInList,
+  setExpensesList,
   setTransactionsList,
 } from 'src/app/store/actions/transactions.action';
 import {
@@ -39,6 +41,7 @@ import { ConfirmationModalComponent } from 'src/app/core/components/confirmation
 import { toastAlert } from 'src/app/core/utils/toastAlert';
 import { MobilePartiesListHeaderComponent } from '../../parties/mobile-parties-list-header/mobile-parties-list-header.component';
 import { format } from 'date-fns';
+import { MobileTransactionsListHeaderComponent } from '../mobile-transactions-list-header/mobile-transactions-list-header.component';
 
 @Component({
   selector: 'app-transactions-list',
@@ -72,11 +75,12 @@ export class TransactionsListComponent implements OnInit, DoCheck {
     transactionType: this.selectedTab,
   };
   transactions: Array<TransactionI> = [];
+  expenses: Array<ExpenseI> = [];
   selectedTransactions: Array<string> = [];
   currentTransactionId: string | undefined;
   partiesInjector!: Injector;
   creditDebitSummaryData: CreditDebitSummaryCardInputI | undefined;
-  MobilePartiesListHeaderComponent = MobilePartiesListHeaderComponent;
+  MobileTransactionsListHeaderComponent = MobileTransactionsListHeaderComponent;
   goToPage = (page: number) => {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
@@ -179,8 +183,9 @@ export class TransactionsListComponent implements OnInit, DoCheck {
     this.store
       .select((store) => store.transactions)
       .subscribe((transactions) => {
-        this.updateLedgerData();
         this.transactions = transactions.transactionsList;
+        this.expenses = transactions.expensesList;
+        this.updateLedgerData();
       });
   }
 
@@ -272,32 +277,52 @@ export class TransactionsListComponent implements OnInit, DoCheck {
   }
 
   updateLedgerData() {
-    this.ledgerData.ledgerItems = this.transactions.map((transaction) => {
-      let ledgerItem: LedgerItemI;
-      const supplierData = transaction;
-      ledgerItem = {
-        id: supplierData._id,
-        title: supplierData.party.name || '',
-        subTitle: format(new Date(supplierData.date), 'dd MMM yyyy'),
-        chipText: supplierData.invoiceId,
-        amount: {
-          text: Math.abs(
-            supplierData?.totalInformation?.total || 0
-          )?.toString(),
-        },
-        amountSubtitle: {
-          text: supplierData.paymentStatus,
-          color: this.getPaymentStatusColor(supplierData.paymentStatus),
-        },
-        imageUrl:
-          supplierData.transactionType === 'SALE'
-            ? 'https://www.freeiconspng.com/thumbs/sales-icon/sales-icon-10.png'
-            : 'https://icons.veryicon.com/png/o/business/store-marketing-management-icon/goods-purchase-order.png',
-        onClick: this.onTransactionLedgerCardClicked,
-        openDetailsPage: this.onOpenDetailsPage,
-      };
-      return ledgerItem;
-    });
+    if (this.selectedTab === TransactionTypeEnum.EXPENSE) {
+      this.ledgerData.ledgerItems = this.expenses.map((expense) => {
+        let ledgerItem: LedgerItemI;
+        ledgerItem = {
+          id: expense._id,
+          title: expense.supplier?.name || '',
+          subTitle: format(new Date(expense.date), 'dd MMM yyyy'),
+          chipText: expense.invoiceId,
+          amount: {
+            text: Math.abs(expense?.totalInformation?.total || 0)?.toString(),
+          },
+          imageUrl:
+            'https://w7.pngwing.com/pngs/1012/596/png-transparent-computer-icons-business-digital-marketing-operating-expense-service-business-service-orange-people-thumbnail.png',
+          onClick: this.onTransactionLedgerCardClicked,
+          openDetailsPage: this.onOpenDetailsPage,
+        };
+        return ledgerItem;
+      });
+    } else {
+      this.ledgerData.ledgerItems = this.transactions.map((transaction) => {
+        let ledgerItem: LedgerItemI;
+        const supplierData = transaction;
+        ledgerItem = {
+          id: supplierData._id,
+          title: supplierData.party.name || '',
+          subTitle: format(new Date(supplierData.date), 'dd MMM yyyy'),
+          chipText: supplierData.invoiceId,
+          amount: {
+            text: Math.abs(
+              supplierData?.totalInformation?.total || 0
+            )?.toString(),
+          },
+          amountSubtitle: {
+            text: supplierData.paymentStatus,
+            color: this.getPaymentStatusColor(supplierData.paymentStatus),
+          },
+          imageUrl:
+            supplierData.transactionType === 'SALE'
+              ? 'https://www.freeiconspng.com/thumbs/sales-icon/sales-icon-10.png'
+              : 'https://icons.veryicon.com/png/o/business/store-marketing-management-icon/goods-purchase-order.png',
+          onClick: this.onTransactionLedgerCardClicked,
+          openDetailsPage: this.onOpenDetailsPage,
+        };
+        return ledgerItem;
+      });
+    }
   }
 
   getPaymentStatusColor(paymentStatus: PaymentStatusEnum) {
@@ -440,56 +465,109 @@ export class TransactionsListComponent implements OnInit, DoCheck {
     }
     this.isTransactionsLoading = true;
     console.log(1);
-    this.transactionsService
-      .getAllStoreTransactions(this.currentStoreInfo?._id, {
-        page: this.currentPage.toString(),
-        pageSize: this.pageSize.toString(),
-        sortBy: this.sortBy,
-        sortOrder: this.sortOrder,
-        ...this.filters,
-      })
-      .subscribe(
-        (response) => {
-          console.log('FILTERS', this.filters);
-
-          //@ts-ignore
-          if (response.message === 'Success') {
-            //@ts-ignore
-            console.log(response.body.transactions);
-            //@ts-ignore
-            const newTransactions =
-              this.isMobile && !isReload
-                ? //@ts-ignore
-                  [...this.transactions, ...response.body.transactions]
-                : //@ts-ignore
-                  [...response.body.transactions];
-            this.store.dispatch(
-              setTransactionsList({ transactionsList: newTransactions })
-            );
+    if (this.selectedTab === TransactionTypeEnum.EXPENSE) {
+      this.transactionsService
+        .getAllStoreExpenses(this.currentStoreInfo?._id, {
+          page: this.currentPage.toString(),
+          pageSize: this.pageSize.toString(),
+          sortBy: this.sortBy,
+          sortOrder: this.sortOrder,
+          ...this.filters,
+        })
+        .subscribe(
+          (response) => {
+            console.log('FILTERS', this.filters);
 
             //@ts-ignore
-            const pagination = response.body.pagination;
-            this.currentPage = pagination.page;
-            this.pageSize = pagination.pageSize;
-            this.totalPages = pagination.totalPages;
-            //@ts-ignore
+            if (response.message === 'Success') {
+              //@ts-ignore
+              console.log(response.body.transactions);
+              //@ts-ignore
+              const newTransactions =
+                this.isMobile && !isReload
+                  ? //@ts-ignore
+                    [...this.transactions, ...response.body.transactions]
+                  : //@ts-ignore
+                    [...response.body.transactions];
+              this.store.dispatch(
+                setExpensesList({ expensesList: newTransactions })
+              );
 
-            !this.isMobile &&
-            !this.currentTransactionId &&
-            !this.isMobile &&
-            !this.currentTransactionId &&
-            '_id' in this.transactions[0]
-              ? this.openTransactionDetails(this.transactions[0]._id)
-              : null;
+              //@ts-ignore
+              const pagination = response.body.pagination;
+              this.currentPage = pagination.page;
+              this.pageSize = pagination.pageSize;
+              this.totalPages = pagination.totalPages;
+              //@ts-ignore
+
+              !this.isMobile &&
+              !this.currentTransactionId &&
+              !this.isMobile &&
+              !this.currentTransactionId &&
+              '_id' in this.transactions[0]
+                ? this.openTransactionDetails(this.transactions[0]._id)
+                : null;
+            }
+          },
+          (error) => {},
+          () => {
+            this.isTransactionsLoading = false;
+            onLoadingFinished && onLoadingFinished();
           }
-        },
-        (error) => {},
-        () => {
-          this.isTransactionsLoading = false;
-          onLoadingFinished && onLoadingFinished();
-        }
-      );
-    console.log(3);
+        );
+      console.log(3);
+    } else {
+      this.transactionsService
+        .getAllStoreTransactions(this.currentStoreInfo?._id, {
+          page: this.currentPage.toString(),
+          pageSize: this.pageSize.toString(),
+          sortBy: this.sortBy,
+          sortOrder: this.sortOrder,
+          ...this.filters,
+        })
+        .subscribe(
+          (response) => {
+            console.log('FILTERS', this.filters);
+
+            //@ts-ignore
+            if (response.message === 'Success') {
+              //@ts-ignore
+              console.log(response.body.transactions);
+              //@ts-ignore
+              const newTransactions =
+                this.isMobile && !isReload
+                  ? //@ts-ignore
+                    [...this.transactions, ...response.body.transactions]
+                  : //@ts-ignore
+                    [...response.body.transactions];
+              this.store.dispatch(
+                setTransactionsList({ transactionsList: newTransactions })
+              );
+
+              //@ts-ignore
+              const pagination = response.body.pagination;
+              this.currentPage = pagination.page;
+              this.pageSize = pagination.pageSize;
+              this.totalPages = pagination.totalPages;
+              //@ts-ignore
+
+              !this.isMobile &&
+              !this.currentTransactionId &&
+              !this.isMobile &&
+              !this.currentTransactionId &&
+              '_id' in this.transactions[0]
+                ? this.openTransactionDetails(this.transactions[0]._id)
+                : null;
+            }
+          },
+          (error) => {},
+          () => {
+            this.isTransactionsLoading = false;
+            onLoadingFinished && onLoadingFinished();
+          }
+        );
+      console.log(3);
+    }
   }
 
   onSearchSortFilter = (event: any) => {

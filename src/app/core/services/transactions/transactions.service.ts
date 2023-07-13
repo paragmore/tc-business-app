@@ -30,6 +30,14 @@ export class TransactionsService {
     };
     return this.httpClient.post(url, body, { headers: headers });
   }
+  createStoreExpense(createTransactionRequest: CreateExpenseRequestI) {
+    const url = `${this.baseUrl}/transactions/create/expense`;
+    const headers = getAuthHeaders();
+    const body = {
+      ...createTransactionRequest,
+    };
+    return this.httpClient.post(url, body, { headers: headers });
+  }
 
   // bulkTransactionsUpload(bulkTransactionsUploadRequest: BulkTransactionsUploadRequestI) {
   //   const url = `${this.baseUrl}/transactions/bulk/create`;
@@ -77,6 +85,30 @@ export class TransactionsService {
     const url = `${
       this.baseUrl
     }/transactions/${storeId}?${queryParams.toString()}`;
+    const headers = getAuthHeaders();
+    return this.httpClient.get(url, { headers: headers });
+  }
+
+  getAllStoreExpenses(storeId: string, options?: GetTransactionsQueryParamsI) {
+    const queryParams = new URLSearchParams();
+    if (options?.pageSize) {
+      queryParams.append('pageSize', options.pageSize);
+    }
+    if (options?.page) {
+      queryParams.append('page', options.page);
+    }
+    if (options?.sortBy) {
+      queryParams.append('sortBy', options.sortBy);
+    }
+    if (options?.sortOrder) {
+      queryParams.append('sortOrder', options.sortOrder);
+    }
+    if (options?.transactionType) {
+      queryParams.append('transactionType', options.transactionType);
+    }
+    const url = `${
+      this.baseUrl
+    }/transactions/expense/${storeId}?${queryParams.toString()}`;
     const headers = getAuthHeaders();
     return this.httpClient.get(url, { headers: headers });
   }
@@ -287,6 +319,48 @@ export interface CreateTransactionRequestI {
     mode: string;
     amount: number;
   };
+}
+
+export interface ExpenseItemI {
+  expenseAccount: string;
+  itemType: string;
+  hsnCode?: string;
+  notes?: string;
+  gstPercentage?: number;
+  gstTaxPreference?: string;
+  cess?: number;
+  amount: number;
+}
+
+export interface ExpenseI {
+  _id: string;
+  storeId: string;
+  date: Date;
+  supplier?: TransactionPartyI;
+  gstPreference: string;
+  sourceOfSupply: string;
+  destinationOfSupply: string;
+  items: ExpenseItemI[];
+  invoiceId: string;
+  customer?: TransactionPartyI;
+  totalInformation: {
+    subTotal: number;
+    gst?: number;
+    cess?: number;
+    total: number;
+  };
+}
+
+export interface CreateExpenseRequestI {
+  storeId: string;
+  date: Date;
+  supplier?: TransactionPartyI;
+  gstPreference: string;
+  sourceOfSupply: string;
+  destinationOfSupply: string;
+  items: ExpenseItemI[];
+  invoiceId: string;
+  customer?: TransactionPartyI;
 }
 
 export interface BulkTransactionUploadSingleRequestI {

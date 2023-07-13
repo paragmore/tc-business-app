@@ -29,9 +29,11 @@ import {
   TaxPreferenceEnum,
 } from 'src/app/core/services/products/products.service';
 import {
+  CreateExpenseRequestI,
   CreateTransactionRequestI,
   PaymentModeEnum,
   PaymentStatusEnum,
+  TransactionPartyI,
   TransactionTypeEnum,
   TransactionsService,
 } from 'src/app/core/services/transactions/transactions.service';
@@ -135,7 +137,7 @@ export class ExpenseCreationFormComponent implements OnInit {
     this.salesForm = this.fb.group({
       date: ['', Validators.required],
       supplier: this.createPartyFormGroup(),
-      gstType: ['', Validators.required],
+      gstPreference: ['', Validators.required],
       gstin: [''],
       sourceOfSupply: ['', Validators.required],
       destinationOfSupply: ['', Validators.required],
@@ -153,9 +155,9 @@ export class ExpenseCreationFormComponent implements OnInit {
     this.screenState$ = this.store.select((store) => store.screen);
   }
 
-  async selectGSTType(gstType: GSTTypeI) {
-    this.selectedGSTType = gstType;
-    this.salesForm.patchValue({ gstType: gstType.title });
+  async selectGSTType(gstPreference: GSTTypeI) {
+    this.selectedGSTType = gstPreference;
+    this.salesForm.patchValue({ gstPreference: gstPreference.title });
   }
 
   onStateSelect(state: string, type: 'source' | 'destination') {
@@ -175,81 +177,58 @@ export class ExpenseCreationFormComponent implements OnInit {
     }
     const salesFormValue: {
       items: [];
-      party: {
-        _id: string;
-        name: string;
-        tradeName: string;
-        phoneNumber: string;
-        email: string;
-        gstin: string;
-        address: {
-          shipping: {
-            line1: string;
-            line2: string;
-            city: string;
-            state: string;
-            pinCode: string;
-          };
-          billingSameAsShipping: boolean;
-          billing: {
-            line1: string;
-            line2: string;
-            city: string;
-            state: string;
-            pinCode: string;
-          };
-        };
-      };
+      supplier: TransactionPartyI;
       date: Date;
       invoiceId: string;
-      stateOfSupply: string;
-      customerNotes: string;
-      termsAndConditions: string;
-      paymentDone: {
-        mode: string;
-        amount: number;
-      };
+      sourceOfSupply: string;
+      destinationOfSupply: string;
+      gstPreference: string;
+      customer: TransactionPartyI;
     } = this.salesForm.value;
-    const transactionsPayload: CreateTransactionRequestI = {
+    const transactionsPayload: CreateExpenseRequestI = {
       storeId: this.currentStoreInfo?._id,
-      transactionType: this.transactionType,
       ...salesFormValue,
-      dueDate: new Date(),
-      additionalFields: [],
-      party: {
-        ...salesFormValue.party,
-        address: salesFormValue.party.address.shipping.pinCode
-          ? salesFormValue.party.address
-          : undefined,
-      },
+      supplier: salesFormValue.supplier.phoneNumber
+        ? {
+            ...salesFormValue.supplier,
+            address: salesFormValue.supplier.address?.shipping.pinCode
+              ? salesFormValue.supplier.address
+              : undefined,
+          }
+        : undefined,
+      customer: salesFormValue.customer.phoneNumber
+        ? {
+            ...salesFormValue.customer,
+            address: salesFormValue.customer.address?.shipping.pinCode
+              ? salesFormValue.customer.address
+              : undefined,
+          }
+        : undefined,
     };
     console.log(transactionsPayload);
     const replaced = this.replaceEmptyObjectsWithUndefined(transactionsPayload);
     console.log(replaced);
     this.isLoading = true;
-    this.transactionsService
-      .createStoreTransaction(transactionsPayload)
-      .subscribe(
-        (response) => {
-          console.log(response);
-          //@ts-ignore
-          if (response.message === 'Success') {
-            toastAlert(
-              this.toastController,
-              `${this.selectedPartyTab} created successfully`,
-              'success'
-            );
-          }
-        },
-        (error) => {
-          toastAlert(this.toastController, error.error.message, 'danger');
-        },
-        () => {
-          this.isLoading = false;
+    this.transactionsService.createStoreExpense(transactionsPayload).subscribe(
+      (response) => {
+        console.log(response);
+        //@ts-ignore
+        if (response.message === 'Success') {
+          toastAlert(
+            this.toastController,
+            `${this.transactionType} created successfully`,
+            'success'
+          );
         }
-      );
+      },
+      (error) => {
+        toastAlert(this.toastController, error.error.message, 'danger');
+      },
+      () => {
+        this.isLoading = false;
+      }
+    );
   }
-
   replaceEmptyObjectsWithUndefined(obj: any) {
     for (let key in obj) {
       if (
