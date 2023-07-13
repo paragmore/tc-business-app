@@ -8,12 +8,21 @@ import {
   setTransactionsList,
   setSelectedTransaction,
   updateTransactionInList,
+  setExpensesList,
+  setSelectedExpense,
+  updateExpenseInList,
+  deleteExpenseInList,
 } from '../actions/transactions.action';
-import { TransactionI } from 'src/app/core/services/transactions/transactions.service';
+import {
+  ExpenseI,
+  TransactionI,
+} from 'src/app/core/services/transactions/transactions.service';
 //create a dummy initial state
 const initialState: TransactionsModel = {
   selectedTransaction: undefined,
   transactionsList: [],
+  expensesList: [],
+  selectedExpense: undefined,
 };
 
 export const transactionsReducer = createReducer(
@@ -48,8 +57,47 @@ export const transactionsReducer = createReducer(
       state.transactionsList,
       transaction
     ),
+  })),
+  on(setExpensesList, (state, { expensesList }) => ({
+    ...state,
+    expensesList: expensesList,
+  })),
+  on(setSelectedExpense, (state, { selectedExpense }) => {
+    console.log(selectedExpense, 'in update');
+
+    return { ...state, selectedExpense: selectedExpense };
+  }),
+  on(updateExpenseInList, (state, { expense }) => {
+    return {
+      ...state,
+      expensesList: state.expensesList.map((listExpense) => {
+        if (listExpense._id === expense._id) {
+          return expense;
+        } else {
+          return listExpense;
+        }
+      }),
+    };
+  }),
+  on(deleteExpenseInList, (state, { expense }) => ({
+    ...state,
+    expensesList: deleteExpenseInListFn(state.expensesList, expense),
   }))
 );
+
+function deleteExpenseInListFn(expensesList: Array<ExpenseI>, expense: string) {
+  const deleteIndex = expensesList.findIndex((listTransaction) => {
+    if ('_id' in listTransaction) {
+      return listTransaction._id === expense;
+    } else {
+      return false;
+    }
+  });
+  if (deleteIndex) {
+    expensesList.splice(deleteIndex, 1);
+  }
+  return expensesList;
+}
 
 function deleteTransactionInListFn(
   transactionsList: Array<TransactionI>,
