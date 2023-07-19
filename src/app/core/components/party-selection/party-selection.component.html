@@ -1,0 +1,15 @@
+<ion-list
+  style="max-height: 350px; overflow-y: scroll"
+  class="scrollbar"
+  id="style-1"
+>
+  <ion-item
+    *ngFor="let party of parties; let i = index"
+    [button]="true"
+    [detail]="false"
+    (click)="onSelectEvent(party)"
+    ><div style="display: flex; flex-direction: column; padding: 10px">
+      <p>{{ getPartyDetails(party).name }}</p>
+    </div></ion-item
+  >
+</ion-list>
