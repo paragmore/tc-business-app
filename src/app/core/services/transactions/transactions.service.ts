@@ -30,6 +30,14 @@ export class TransactionsService {
     };
     return this.httpClient.post(url, body, { headers: headers });
   }
+  createStorePayment(createPaymentRequest: CreatePaymentRequestI) {
+    const url = `${this.baseUrl}/transactions/create`;
+    const headers = getAuthHeaders();
+    const body = {
+      ...createPaymentRequest,
+    };
+    return this.httpClient.post(url, body, { headers: headers });
+  }
   createStoreExpense(createTransactionRequest: CreateExpenseRequestI) {
     const url = `${this.baseUrl}/transactions/create/expense`;
     const headers = getAuthHeaders();
@@ -81,6 +89,12 @@ export class TransactionsService {
     }
     if (options?.transactionType) {
       queryParams.append('transactionType', options.transactionType);
+    }
+    if (options?.paymentStatus) {
+      queryParams.append('paymentStatus', options.paymentStatus);
+    }
+    if (options?.partyId) {
+      queryParams.append('partyId', options.partyId);
     }
     const url = `${
       this.baseUrl
@@ -305,7 +319,7 @@ export interface TransactionItemI {
 
 export interface CreateTransactionRequestI {
   storeId: string;
-  transactionType: string;
+  transactionType: TransactionTypeEnum;
   invoiceId: string;
   date: Date;
   dueDate: Date;
@@ -393,10 +407,13 @@ export interface BulkTransactionUploadSingleRequestI {
 
 export interface TransactionsFilterByI {
   transactionType: TransactionTypeEnum;
+  paymentStatus?: string;
 }
 
 export interface TransactionsFilterByQueryI {
   transactionType: TransactionTypeEnum;
+  paymentStatus?: string;
+  partyId?: string;
 }
 
 export enum ItemTypeEnum {
@@ -435,4 +452,28 @@ export enum TransactionTypeEnum {
   SALE = 'SALE',
   PURCHASE = 'PURCHASE',
   EXPENSE = 'EXPENSE',
+}
+
+export enum PaymentTypeEnum {
+  IN = 'IN',
+  OUT = 'OUT',
+}
+
+export interface InvoicePaymentI {
+  invoiceId: string;
+  paymentAmount: number;
+}
+export interface CreatePaymentRequestI {
+  storeId: string;
+  partyId: string;
+  paymentType: PaymentTypeEnum;
+  amount: number;
+  date: Date;
+  paymentNumber: number;
+  paymentMode: string;
+  paymentAccount: string;
+  taxDeducted: boolean;
+  taxAccount?: string;
+  invoicePayments: InvoicePaymentI[];
+  notes?: string;
 }

@@ -93,7 +93,7 @@ export interface CreatePartyRequestI {
   email?: string;
   balance?: number;
   gstin?: string;
-  address: AdrressesI;
+  address?: AdrressesI;
   gstType: GSTTypeEnum;
 }
 

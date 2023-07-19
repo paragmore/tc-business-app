@@ -156,9 +156,21 @@ export class TransactionsListComponent implements OnInit, DoCheck {
 
   filterSortOptions: FilterSortListsI = {
     filter: [
-      { type: 'balance', text: "You'll give", value: 'gt,0' },
-      { type: 'balance', text: "You'll get", value: 'lt,0' },
-      { type: 'balance', text: 'Zero Balance', value: 'eq,0' },
+      {
+        type: 'paymentStatus',
+        text: PaymentStatusEnum.PAID,
+        value: PaymentStatusEnum.PAID,
+      },
+      {
+        type: 'paymentStatus',
+        text: PaymentStatusEnum.PARTIALLY_PAID,
+        value: PaymentStatusEnum.PARTIALLY_PAID,
+      },
+      {
+        type: 'paymentStatus',
+        text: PaymentStatusEnum.UNPAID,
+        value: PaymentStatusEnum.UNPAID,
+      },
     ],
     sort: [
       { type: 'name', text: 'Name ascending (A - Z)', value: 'asc' },
@@ -581,9 +593,9 @@ export class TransactionsListComponent implements OnInit, DoCheck {
   };
 
   addFilter = (filterBy: string, filterValue: string) => {
-    // if (filterBy === 'balance') {
-    //   this.filters.balance = filterValue;
-    // }
+    if (filterBy === 'paymentStatus') {
+      this.filters.paymentStatus = filterValue;
+    }
     this.loadTransactions(undefined, true);
   };
 }
