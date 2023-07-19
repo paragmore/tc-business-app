@@ -46,6 +46,8 @@ import { StatePopoverComponent } from 'src/app/core/components/state-popover/sta
 import { toastAlert } from 'src/app/core/utils/toastAlert';
 import { ActivatedRoute } from '@angular/router';
 import { ExpenseCreationFormComponent } from '../expense-creation-form/expense-creation-form.component';
+import { CapitalizeWordsPipe } from 'src/app/core/pipes/capitalize.pipe';
+import { PartySelectionComponent } from 'src/app/core/components/party-selection/party-selection.component';
 @Component({
   selector: 'app-transaction-creation-form',
   templateUrl: './transaction-creation-form.component.html',
@@ -58,6 +60,8 @@ import { ExpenseCreationFormComponent } from '../expense-creation-form/expense-c
     CommonModule,
     StatePopoverComponent,
     ExpenseCreationFormComponent,
+    CapitalizeWordsPipe,
+    PartySelectionComponent,
   ],
 })
 export class TransactionCreationFormComponent {
@@ -140,7 +144,6 @@ export class TransactionCreationFormComponent {
             (this.currentStoreInfo?.lastInvoiceInfo.invoiceId + 1),
         });
       }
-      this.loadCustomers();
       this.loadProducts();
     });
 
@@ -240,7 +243,7 @@ export class TransactionCreationFormComponent {
     const salesFormValue: {
       items: [];
       party: {
-        _id: string;
+        partyId: string;
         name: string;
         tradeName: string;
         phoneNumber: string;
@@ -332,7 +335,7 @@ export class TransactionCreationFormComponent {
   removeSelectedParty() {
     this.selectedParty = undefined;
     const partyFormPayload = {
-      _id: '',
+      partyId: '',
       name: '',
       tradeName: '',
       phoneNumber: '',
@@ -366,7 +369,7 @@ export class TransactionCreationFormComponent {
     let partyFormPayload: any;
     if ('customer' in party) {
       partyFormPayload = {
-        _id: party.customerStoreInfo.customerId,
+        partyId: party.customerStoreInfo.customerId,
         name: party.customerStoreInfo.name,
         tradeName: party.customerStoreInfo.tradeName,
         phoneNumber: party.customer.phoneNumber,
@@ -378,7 +381,7 @@ export class TransactionCreationFormComponent {
       };
     } else {
       partyFormPayload = {
-        _id: party._id,
+        partyId: party._id,
         name: party.name,
         tradeName: party.tradeName,
         phoneNumber: party.phoneNumber,
@@ -435,50 +438,6 @@ export class TransactionCreationFormComponent {
         () => {},
         () => {
           this.isProductsLoading = false;
-          onLoadingFinished && onLoadingFinished();
-        }
-      );
-  }
-
-  loadCustomers(onLoadingFinished?: () => void, isReload?: boolean) {
-    if (isReload) {
-      this.resetPagination();
-    }
-    if (this.isCustomersLoading) {
-      return;
-    }
-    if (!this.currentStoreInfo?._id) {
-      return;
-    }
-    this.isCustomersLoading = true;
-    this.partiesService
-      .getAllStoreParties(this.currentStoreInfo?._id, this.selectedPartyTab, {
-        page: this.partyCurrentPage.toString(),
-        pageSize: this.partyPageSize.toString(),
-        ...this.filters,
-      })
-      .subscribe(
-        (response) => {
-          //@ts-ignore
-          if (response.message === 'Success') {
-            //@ts-ignore
-            //@ts-ignore
-            this.parties = !isReload
-              ? //@ts-ignore
-                [...this.parties, ...response.body.parties]
-              : //@ts-ignore
-                [...response.body.parties];
-
-            //@ts-ignore
-            const pagination = response.body.pagination;
-            this.partyCurrentPage = pagination.page;
-            this.partyPageSize = pagination.pageSize;
-            this.partyTotalPages = pagination.totalPages;
-          }
-        },
-        (error) => {},
-        () => {
-          this.isCustomersLoading = false;
           onLoadingFinished && onLoadingFinished();
         }
       );
@@ -830,7 +789,7 @@ export class TransactionCreationFormComponent {
 
   createPaymentDone(): FormGroup {
     return this.fb.group({
-      mode: ['UNPAID', Validators.required],
+      mode: [PaymentStatusEnum.UNPAID, Validators.required],
       amount: ['0', Validators.required],
     });
   }
@@ -863,7 +822,7 @@ export class TransactionCreationFormComponent {
   }
   createPartyFormGroup(): FormGroup {
     return this.fb.group({
-      _id: [''],
+      partyId: [''],
       name: ['', Validators.required],
       tradeName: [''],
       phoneNumber: [''],

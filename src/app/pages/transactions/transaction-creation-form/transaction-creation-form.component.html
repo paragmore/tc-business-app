@@ -10,12 +10,76 @@
     *ngIf="transactionType === TransactionTypeEnum.EXPENSE"
   ></app-expense-creation-form>
   <div
+    class="transaction-form-margin"
     *ngIf="transactionType !== TransactionTypeEnum.EXPENSE"
-    style="margin-right: 100px"
   >
+    <ion-row class="invoice-form">
+      <ion-col size-md="6">
+        <form [formGroup]="salesForm">
+          <ion-row>
+            <ion-col>
+              <p class="bodySecondary">Invoice details</p>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-input
+              label-placement="stacked"
+              fill="outline"
+              label="Invoice Number"
+              formControlName="invoiceId"
+            ></ion-input>
+          </ion-row>
+          <ion-row>
+            <ion-input
+              id="invoice-date-selection-popover-button"
+              label-placement="stacked"
+              fill="outline"
+              label="Invoice Date"
+              formControlName="date"
+            ></ion-input>
+            <ion-popover
+              trigger="invoice-date-selection-popover-button"
+              [showBackdrop]="false"
+              [dismissOnSelect]="true"
+              [keyboardClose]="false"
+            >
+              <ng-template>
+                <ion-content>
+                  <ion-datetime></ion-datetime>
+                </ion-content>
+              </ng-template>
+            </ion-popover>
+          </ion-row>
+          <ion-row>
+            <ion-input
+              label-placement="stacked"
+              fill="outline"
+              label="State of Suppy"
+              id="state-selection-popover-button"
+              formControlName="stateOfSupply"
+              [readonly]="true"
+            ></ion-input>
+            <ion-popover
+              trigger="state-selection-popover-button"
+              [showBackdrop]="false"
+              [dismissOnSelect]="true"
+              [keyboardClose]="false"
+            >
+              <ng-template>
+                <ion-content>
+                  <app-state-popover
+                    (onSelect)="onStateSelect($event)"
+                  ></app-state-popover>
+                </ion-content>
+              </ng-template>
+            </ion-popover>
+          </ion-row>
+        </form>
+      </ion-col>
+    </ion-row>
     <ion-grid>
       <ion-row>
-        <ion-col size-md="6">
+        <ion-col size-xs="12" size-md="6">
           <ion-searchbar
             id="party-selection-popover-button"
             placeholder="Select {{ selectedPartyTab }}"
@@ -36,432 +100,352 @@
                     Create new
                   </ion-button>
                 </ion-item>
-                <ion-list
-                  style="max-height: 350px; overflow-y: scroll"
-                  class="scrollbar"
-                  id="style-1"
-                >
-                  <ion-item
-                    *ngFor="let party of parties; let i = index"
-                    [button]="true"
-                    [detail]="false"
-                    (click)="selectTransactionParty(party)"
-                    ><div
-                      style="
-                        display: flex;
-                        flex-direction: column;
-                        padding: 10px;
-                      "
-                    >
-                      <p>{{ getPartyDetails(party).name }}</p>
-                    </div></ion-item
-                  >
-                </ion-list>
+                <app-party-selection
+                  [selectedPartyTab]="selectedPartyTab"
+                  (onSelect)="selectTransactionParty($event)"
+                ></app-party-selection>
               </ion-content>
             </ng-template>
           </ion-popover>
         </ion-col>
       </ion-row>
-      <div *ngIf="selectedParty" style="padding: 15px">
-        <ion-row class="item-detail-row">
-          <ion-col>
-            <p class="bodySecondary">Legal name</p>
-            <p class="bodyRegularMobile">
-              {{ selectedParty && getPartyDetails(selectedParty).name }}
+      <ion-accordion-group [multiple]="true" [value]="[]">
+        <ion-accordion value="first">
+          <ion-item slot="header">
+            <p
+              *ngIf="selectedParty"
+              style="color: var(--ion-color-primary)"
+              class="titleRegular"
+            >
+              {{ selectedPartyTab | capitalizeWords }} Details
             </p>
-          </ion-col>
-          <ion-col>
-            <p class="bodySecondary">Trade name</p>
-            <p class="bodyRegularMobile">
-              {{ selectedParty && getCustomerDetails(selectedParty).tradeName }}
+            <p
+              *ngIf="!selectedParty"
+              style="color: var(--ion-color-primary)"
+              class="titleRegular"
+            >
+              Add walk-in {{ selectedPartyTab | capitalizeWords }}
             </p>
-          </ion-col>
-          <ion-col> </ion-col>
-        </ion-row>
-        <ion-row class="item-detail-row">
-          <ion-col>
-            <p class="bodySecondary">GSTIN</p>
-            <p class="bodyRegularMobile">
-              {{ selectedParty && getPartyDetails(selectedParty).gstin }}
-            </p>
-          </ion-col>
-          <ion-col>
-            <p class="bodySecondary">Phone Number</p>
-            <p class="bodyRegularMobile">
-              {{
-                selectedParty && getCustomerDetails(selectedParty).phoneNumber
-              }}
-            </p>
-          </ion-col>
-          <ion-col> </ion-col>
-        </ion-row>
-        <ion-row
-          *ngIf="
-            selectedParty &&
-            getPartyDetails(selectedParty) &&
-            getPartyDetails(selectedParty).addresses as addresses
-          "
-          class="item-detail-row"
-        >
-          <ion-col>
-            <ion-col>
-              <p class="bodySecondary">Shipping Address</p>
-            </ion-col>
-            <ion-col>
-              <p class="bodyRegularMobile">
-                {{ addresses[0].shipping.line1 }}
-              </p>
-              <p class="bodyRegularMobile">
-                {{ addresses[0].shipping.line2 }}
-              </p>
-              <p class="bodyRegularMobile">
-                {{ addresses[0].shipping.city }}
-                {{ addresses[0].shipping.state }}
-                {{ addresses[0].shipping.pinCode }}
-              </p>
-            </ion-col>
-          </ion-col>
-          <ion-col>
-            <ion-col>
-              <p class="bodySecondary">Billing Address</p>
-            </ion-col>
-            <ion-checkbox [checked]="addresses[0].billingSameAsShipping">
-              Same as shipping address
-            </ion-checkbox>
-            <ion-col *ngIf="!addresses[0].billingSameAsShipping">
-              <p class="bodyRegularMobile">
-                {{ addresses[0].billing?.line1 }}
-              </p>
-              <p class="bodyRegularMobile">
-                {{ addresses[0].billing?.line2 }}
-              </p>
-              <p class="bodyRegularMobile">
-                {{ addresses[0].billing?.city }}
-                {{ addresses[0].billing?.state }}
-                {{ addresses[0].billing?.pinCode }}
-              </p>
-            </ion-col>
-          </ion-col>
-        </ion-row>
-      </div>
-      <form [formGroup]="salesForm">
-        <div *ngIf="!selectedParty" formGroupName="party">
-          <ion-row>
-            <ion-col size-md="3">
-              <ion-input
-                label="Legal name"
-                label-placement="stacked"
-                fill="outline"
-                formControlName="name"
-              ></ion-input>
-            </ion-col>
-            <ion-col size-md="3">
-              <ion-input
-                label="Trade name"
-                label-placement="stacked"
-                fill="outline"
-                formControlName="tradeName"
-              ></ion-input>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col size-md="3">
-              <ion-input
-                label="GSTIN"
-                label-placement="stacked"
-                fill="outline"
-                formControlName="gstin"
-              ></ion-input>
-            </ion-col>
-            <ion-col size-md="3">
-              <ion-input
-                label="Phone number"
-                label-placement="stacked"
-                fill="outline"
-                formControlName="phoneNumber"
-              ></ion-input>
-            </ion-col>
-          </ion-row>
-          <div formGroupName="address">
-            <ion-row>
-              <ion-col>
-                <ion-row formGroupName="shipping">
-                  <ion-grid>
-                    <ion-row>
-                      <p class="bodySecondary">Shipping Address</p>
-                    </ion-row>
-                    <ion-row>
-                      <ion-col>
-                        <ion-input
-                          label="Flat, House no., Building, Company, Apartment"
-                          label-placement="stacked"
-                          fill="outline"
-                          formControlName="line1"
-                        ></ion-input>
-                      </ion-col>
-                    </ion-row>
-                    <ion-row>
-                      <ion-col>
-                        <ion-input
-                          label="Area, Street, Sector, Village"
-                          label-placement="stacked"
-                          fill="outline"
-                          formControlName="line2"
-                        ></ion-input>
-                      </ion-col>
-                    </ion-row>
-                    <ion-row>
-                      <ion-col>
-                        <ion-input
-                          label="PIN Code"
-                          label-placement="stacked"
-                          fill="outline"
-                          formControlName="pinCode"
-                        ></ion-input>
-                      </ion-col>
-                    </ion-row>
-                    <ion-row>
-                      <ion-col>
-                        <ion-input
-                          label="City"
-                          label-placement="stacked"
-                          fill="outline"
-                          formControlName="city"
-                        ></ion-input>
-                      </ion-col>
-                    </ion-row>
-                    <ion-row>
-                      <ion-col>
-                        <ion-input
-                          label="State"
-                          label-placement="stacked"
-                          fill="outline"
-                          formControlName="state"
-                          id="party-shipping-state-selection-popover-button"
-                          [readonly]="true"
-                        ></ion-input>
-                        <ion-popover
-                          trigger="party-shipping-state-selection-popover-button"
-                          [showBackdrop]="false"
-                          [dismissOnSelect]="true"
-                          [keyboardClose]="false"
-                        >
-                          <ng-template>
-                            <ion-content>
-                              <app-state-popover
-                                (onSelect)="onPartyShippingStateSelect($event)"
-                              ></app-state-popover>
-                            </ion-content>
-                          </ng-template>
-                        </ion-popover>
-                      </ion-col>
-                    </ion-row>
-                  </ion-grid>
+          </ion-item>
+          <div slot="content">
+            <div *ngIf="selectedParty" style="padding: 15px">
+              <ion-row class="item-detail-row">
+                <ion-col size-xs="12" size-md="6">
+                  <p class="bodySecondary">Legal name</p>
+                  <p class="bodyRegularMobile">
+                    {{ selectedParty && getPartyDetails(selectedParty).name }}
+                  </p>
+                </ion-col>
+                <ion-col size-xs="12" size-md="6">
+                  <p class="bodySecondary">Trade name</p>
+                  <p class="bodyRegularMobile">
+                    {{
+                      selectedParty &&
+                        getCustomerDetails(selectedParty).tradeName
+                    }}
+                  </p>
+                </ion-col>
+              </ion-row>
+              <ion-row class="item-detail-row">
+                <ion-col size-xs="12" size-md="6">
+                  <p class="bodySecondary">GSTIN</p>
+                  <p class="bodyRegularMobile">
+                    {{ selectedParty && getPartyDetails(selectedParty).gstin }}
+                  </p>
+                </ion-col>
+                <ion-col size-xs="12" size-md="6">
+                  <p class="bodySecondary">Phone Number</p>
+                  <p class="bodyRegularMobile">
+                    {{
+                      selectedParty &&
+                        getCustomerDetails(selectedParty).phoneNumber
+                    }}
+                  </p>
+                </ion-col>
+              </ion-row>
+              <ion-row
+                *ngIf="
+                  selectedParty &&
+                  getPartyDetails(selectedParty) &&
+                  getPartyDetails(selectedParty).addresses as addresses
+                "
+                class="item-detail-row"
+              >
+                <ion-col>
+                  <ion-col>
+                    <p class="bodySecondary">Shipping Address</p>
+                  </ion-col>
+                  <ion-col>
+                    <p class="bodyRegularMobile">
+                      {{ addresses[0].shipping.line1 }}
+                    </p>
+                    <p class="bodyRegularMobile">
+                      {{ addresses[0].shipping.line2 }}
+                    </p>
+                    <p class="bodyRegularMobile">
+                      {{ addresses[0].shipping.city }}
+                      {{ addresses[0].shipping.state }}
+                      {{ addresses[0].shipping.pinCode }}
+                    </p>
+                  </ion-col>
+                </ion-col>
+                <ion-col>
+                  <ion-col>
+                    <p class="bodySecondary">Billing Address</p>
+                  </ion-col>
+                  <ion-checkbox [checked]="addresses[0].billingSameAsShipping">
+                    Same as shipping address
+                  </ion-checkbox>
+                  <ion-col *ngIf="!addresses[0].billingSameAsShipping">
+                    <p class="bodyRegularMobile">
+                      {{ addresses[0].billing?.line1 }}
+                    </p>
+                    <p class="bodyRegularMobile">
+                      {{ addresses[0].billing?.line2 }}
+                    </p>
+                    <p class="bodyRegularMobile">
+                      {{ addresses[0].billing?.city }}
+                      {{ addresses[0].billing?.state }}
+                      {{ addresses[0].billing?.pinCode }}
+                    </p>
+                  </ion-col>
+                </ion-col>
+              </ion-row>
+            </div>
+            <form [formGroup]="salesForm">
+              <div *ngIf="!selectedParty" formGroupName="party">
+                <ion-row>
+                  <ion-col size-md="3">
+                    <ion-input
+                      label="Legal name"
+                      label-placement="stacked"
+                      fill="outline"
+                      formControlName="name"
+                      [required]="true"
+                    ></ion-input>
+                  </ion-col>
+                  <ion-col size-md="3">
+                    <ion-input
+                      label="Trade name"
+                      label-placement="stacked"
+                      fill="outline"
+                      formControlName="tradeName"
+                    ></ion-input>
+                  </ion-col>
                 </ion-row>
                 <ion-row>
-                  <ion-checkbox
-                    labelPlacement="end"
-                    formControlName="billingSameAsShipping"
-                    [checked]="
-                      salesForm.value.party.address.billingSameAsShipping
-                    "
-                    formControlName="billingSameAsShipping"
-                    >Billing address same as shipping address
-                  </ion-checkbox>
+                  <ion-col size-md="3">
+                    <ion-input
+                      label="GSTIN"
+                      label-placement="stacked"
+                      fill="outline"
+                      formControlName="gstin"
+                    ></ion-input>
+                  </ion-col>
+                  <ion-col size-md="3">
+                    <ion-input
+                      label="Phone number"
+                      label-placement="stacked"
+                      fill="outline"
+                      formControlName="phoneNumber"
+                      [required]="true"
+                    ></ion-input>
+                  </ion-col>
                 </ion-row>
-              </ion-col>
-              <ion-col>
-                <ion-row
-                  *ngIf="!salesForm.value.party.address.billingSameAsShipping"
-                  formGroupName="billing"
-                >
-                  <ion-grid>
-                    <ion-row>
-                      <p class="titleRegular">Billing Address</p>
-                    </ion-row>
+                <div formGroupName="address">
+                  <ion-row>
+                    <ion-col>
+                      <ion-row formGroupName="shipping">
+                        <ion-grid>
+                          <ion-row>
+                            <p class="bodySecondary">Shipping Address</p>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col>
+                              <ion-input
+                                label="Flat, House no., Building, Company, Apartment"
+                                label-placement="stacked"
+                                fill="outline"
+                                formControlName="line1"
+                              ></ion-input>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col>
+                              <ion-input
+                                label="Area, Street, Sector, Village"
+                                label-placement="stacked"
+                                fill="outline"
+                                formControlName="line2"
+                              ></ion-input>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col>
+                              <ion-input
+                                label="PIN Code"
+                                label-placement="stacked"
+                                fill="outline"
+                                formControlName="pinCode"
+                              ></ion-input>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col>
+                              <ion-input
+                                label="City"
+                                label-placement="stacked"
+                                fill="outline"
+                                formControlName="city"
+                              ></ion-input>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col>
+                              <ion-input
+                                label="State"
+                                label-placement="stacked"
+                                fill="outline"
+                                formControlName="state"
+                                id="party-shipping-state-selection-popover-button"
+                                [readonly]="true"
+                              ></ion-input>
+                              <ion-popover
+                                trigger="party-shipping-state-selection-popover-button"
+                                [showBackdrop]="false"
+                                [dismissOnSelect]="true"
+                                [keyboardClose]="false"
+                              >
+                                <ng-template>
+                                  <ion-content>
+                                    <app-state-popover
+                                      (onSelect)="
+                                        onPartyShippingStateSelect($event)
+                                      "
+                                    ></app-state-popover>
+                                  </ion-content>
+                                </ng-template>
+                              </ion-popover>
+                            </ion-col>
+                          </ion-row>
+                        </ion-grid>
+                      </ion-row>
+                      <ion-row>
+                        <ion-checkbox
+                          labelPlacement="end"
+                          formControlName="billingSameAsShipping"
+                          [checked]="
+                            salesForm.value.party.address.billingSameAsShipping
+                          "
+                          formControlName="billingSameAsShipping"
+                          >Billing address same as shipping address
+                        </ion-checkbox>
+                      </ion-row>
+                    </ion-col>
+                    <ion-col>
+                      <ion-row
+                        *ngIf="
+                          !salesForm.value.party.address.billingSameAsShipping
+                        "
+                        formGroupName="billing"
+                      >
+                        <ion-grid>
+                          <ion-row>
+                            <p class="titleRegular">Billing Address</p>
+                          </ion-row>
 
-                    <ion-row>
-                      <ion-col>
-                        <ion-input
-                          label="Flat, House no., Building, Company, Apartment"
-                          label-placement="stacked"
-                          fill="outline"
-                          formControlName="line1"
-                        ></ion-input>
-                      </ion-col>
-                    </ion-row>
-                    <ion-row>
-                      <ion-col>
-                        <ion-input
-                          label="Area, Street, Sector, Village"
-                          label-placement="stacked"
-                          fill="outline"
-                          formControlName="line2"
-                        ></ion-input>
-                      </ion-col>
-                    </ion-row>
-                    <ion-row>
-                      <ion-col>
-                        <ion-input
-                          label="PIN Code"
-                          label-placement="stacked"
-                          fill="outline"
-                          formControlName="pinCode"
-                        ></ion-input>
-                      </ion-col>
-                    </ion-row>
-                    <ion-row>
-                      <ion-col>
-                        <ion-input
-                          label="City"
-                          label-placement="stacked"
-                          fill="outline"
-                          formControlName="city"
-                        ></ion-input>
-                      </ion-col>
-                    </ion-row>
-                    <ion-row>
-                      <ion-col>
-                        <ion-input
-                          label="State"
-                          label-placement="stacked"
-                          fill="outline"
-                          formControlName="state"
-                          id="party-billing-state-selection-popover-button"
-                          [readonly]="true"
-                        ></ion-input>
-                        <ion-popover
-                          trigger="party-billing-state-selection-popover-button"
-                          [showBackdrop]="false"
-                          [dismissOnSelect]="true"
-                          [keyboardClose]="false"
-                        >
-                          <ng-template>
-                            <ion-content>
-                              <app-state-popover
-                                (onSelect)="onPartyBillingStateSelect($event)"
-                              ></app-state-popover>
-                            </ion-content>
-                          </ng-template>
-                        </ion-popover>
-                      </ion-col>
-                    </ion-row>
-                  </ion-grid>
-                </ion-row>
-              </ion-col>
-            </ion-row>
+                          <ion-row>
+                            <ion-col>
+                              <ion-input
+                                label="Flat, House no., Building, Company, Apartment"
+                                label-placement="stacked"
+                                fill="outline"
+                                formControlName="line1"
+                              ></ion-input>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col>
+                              <ion-input
+                                label="Area, Street, Sector, Village"
+                                label-placement="stacked"
+                                fill="outline"
+                                formControlName="line2"
+                              ></ion-input>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col>
+                              <ion-input
+                                label="PIN Code"
+                                label-placement="stacked"
+                                fill="outline"
+                                formControlName="pinCode"
+                              ></ion-input>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col>
+                              <ion-input
+                                label="City"
+                                label-placement="stacked"
+                                fill="outline"
+                                formControlName="city"
+                              ></ion-input>
+                            </ion-col>
+                          </ion-row>
+                          <ion-row>
+                            <ion-col>
+                              <ion-input
+                                label="State"
+                                label-placement="stacked"
+                                fill="outline"
+                                formControlName="state"
+                                id="party-billing-state-selection-popover-button"
+                                [readonly]="true"
+                              ></ion-input>
+                              <ion-popover
+                                trigger="party-billing-state-selection-popover-button"
+                                [showBackdrop]="false"
+                                [dismissOnSelect]="true"
+                                [keyboardClose]="false"
+                              >
+                                <ng-template>
+                                  <ion-content>
+                                    <app-state-popover
+                                      (onSelect)="
+                                        onPartyBillingStateSelect($event)
+                                      "
+                                    ></app-state-popover>
+                                  </ion-content>
+                                </ng-template>
+                              </ion-popover>
+                            </ion-col>
+                          </ion-row>
+                        </ion-grid>
+                      </ion-row>
+                    </ion-col>
+                  </ion-row>
+                </div>
+              </div>
+            </form>
           </div>
-        </div>
-      </form>
-
-      <ion-row class="invoice-form">
-        <ion-col size-md="6">
-          <form [formGroup]="salesForm">
-            <ion-row>
-              <ion-col>
-                <p class="bodySecondary">Invoice details</p>
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-input
-                label-placement="stacked"
-                fill="outline"
-                label="Invoice Number"
-                formControlName="invoiceId"
-              ></ion-input>
-            </ion-row>
-            <ion-row>
-              <ion-input
-                id="invoice-date-selection-popover-button"
-                label-placement="stacked"
-                fill="outline"
-                label="Invoice Date"
-                formControlName="date"
-              ></ion-input>
-              <ion-popover
-                trigger="invoice-date-selection-popover-button"
-                [showBackdrop]="false"
-                [dismissOnSelect]="true"
-                [keyboardClose]="false"
-              >
-                <ng-template>
-                  <ion-content>
-                    <ion-datetime></ion-datetime>
-                  </ion-content>
-                </ng-template>
-              </ion-popover>
-            </ion-row>
-            <ion-row>
-              <ion-input
-                label-placement="stacked"
-                fill="outline"
-                label="State of Suppy"
-                id="state-selection-popover-button"
-                formControlName="stateOfSupply"
-                [readonly]="true"
-              ></ion-input>
-              <ion-popover
-                trigger="state-selection-popover-button"
-                [showBackdrop]="false"
-                [dismissOnSelect]="true"
-                [keyboardClose]="false"
-              >
-                <ng-template>
-                  <ion-content>
-                    <app-state-popover
-                      (onSelect)="onStateSelect($event)"
-                    ></app-state-popover>
-                  </ion-content>
-                </ng-template>
-              </ion-popover>
-            </ion-row>
-          </form>
-        </ion-col>
-      </ion-row>
+        </ion-accordion>
+      </ion-accordion-group>
     </ion-grid>
 
     <div>
       <div style="display: flex; flex-direction: row"></div>
 
-      <!-- sales-form.component.html -->
-      <div style="padding: 20px">
-        <form *ngIf="!(screenState$ | async)?.isMobile" [formGroup]="salesForm">
-          <ion-row>
-            <ion-col class="item-form-col row" size-md="3">
-              <p class="subHeading" position="stacked" for="items">
-                ITEM DETAILS
-              </p>
-            </ion-col>
-            <ion-col class="item-form-col row" size="2">
-              <p class="subHeading" position="stacked" for="quantity">
-                QUANTITY
-              </p>
-            </ion-col>
-            <ion-col class="item-form-col row" size="2">
-              <p class="subHeading" position="stacked" for="sellingPrice">
-                SELLING PRICE
-              </p>
-            </ion-col>
-            <ion-col class="item-form-col row" size="2">
-              <p class="subHeading" position="stacked" for="discount">
-                DISCOUNT
-              </p>
-            </ion-col>
-            <ion-col class="item-form-col row" size="1">
-              <p class="subHeading" position="stacked" for="gst">Tax (%)</p>
-            </ion-col>
-            <ion-col class="item-form-col row last" size="2">
-              <p class="subHeading" position="stacked" for="amount1">
-                AMOUNT (₹)
-              </p>
-            </ion-col>
-          </ion-row>
+      <form *ngIf="(screenState$ | async)?.isMobile" [formGroup]="salesForm">
+        <ion-card style="color: black !important">
           <div
             formArrayName="items"
             *ngFor="let item of getFormControls.controls; let i = index"
+            style="margin-bottom: 10px"
           >
             <ion-row [formGroupName]="i">
-              <ion-col class="item-form-col" size-md="3">
+              <ion-col size-xs="12" size-md="3">
                 <div [id]="'item-selection-popover-button' + i">
                   <ion-input
                     *ngIf="!getItemDetails(i)"
@@ -556,13 +540,16 @@
                   </ng-template>
                 </ion-popover></ion-col
               >
-              <ion-col class="item-form-col" size="2">
+              <ion-col size-xs="6" size-md="2">
                 <ion-input
                   class="item-form-input"
                   fill="outline"
                   type="text"
                   type="number"
                   formControlName="quantity"
+                  label-placement="stacked"
+                  fill="outline"
+                  label="Quantity"
                 ></ion-input>
                 <ng-container *ngIf="getItemDetails(i) as itemDetails">
                   <div class="bodyMedium">
@@ -573,7 +560,7 @@
                   </div>
                 </ng-container>
               </ion-col>
-              <ion-col class="item-form-col" size="2">
+              <ion-col size-xs="6" size-md="2">
                 <ion-input
                   class="item-form-input"
                   fill="outline"
@@ -581,6 +568,9 @@
                   required
                   type="number"
                   formControlName="sellsPrice"
+                  label-placement="stacked"
+                  fill="outline"
+                  label="Sells price"
                 ></ion-input>
                 <ng-container *ngIf="getItemDetails(i) as itemDetails">
                   <div class="bodyMedium">
@@ -588,7 +578,29 @@
                   </div>
                 </ng-container>
               </ion-col>
-              <ion-col class="item-form-col" size="2">
+              <ion-col size-xs="6" size-md="1">
+                <ion-input
+                  class="item-form-input"
+                  type="number"
+                  required
+                  formControlName="gstPercentage"
+                  label-placement="stacked"
+                  fill="outline"
+                  label="GST"
+                ></ion-input>
+              </ion-col>
+              <ion-col size-xs="6" size-md="1">
+                <ion-input
+                  class="item-form-input"
+                  type="number"
+                  required
+                  formControlName="cess"
+                  label-placement="stacked"
+                  fill="outline"
+                  label="Cess"
+                ></ion-input>
+              </ion-col>
+              <ion-col size-xs="12" size-md="2">
                 <ion-item [id]="i + 'discount-selection-popover-button'">
                   <ion-button>
                     {{
@@ -784,28 +796,9 @@
                   </div>
                 </ng-container>
               </ion-col>
-              <ion-col class="item-form-col" size="1">
-                <ion-input
-                  class="item-form-input"
-                  type="number"
-                  required
-                  formControlName="gstPercentage"
-                  label-placement="stacked"
-                  fill="outline"
-                  label="GST"
-                ></ion-input>
-                <ion-input
-                  class="item-form-input"
-                  type="number"
-                  required
-                  formControlName="cess"
-                  label-placement="stacked"
-                  fill="outline"
-                  label="Cess"
-                ></ion-input>
-              </ion-col>
-              <ion-col class="item-form-col last" size="2">
+              <ion-col size-xs="12" size-md="2">
                 <div style="display: flex; flex-direction: row">
+                  <p style="flex: 1" class="title3">Item SubTotal:</p>
                   <p style="flex: 1" class="title3">
                     {{ item.value.amount }}
                   </p>
@@ -821,199 +814,616 @@
               </ion-col>
             </ion-row>
           </div>
-          <div class="form-row">
-            <div>
-              <ion-button
-                type="button"
-                class="btn btn-success"
-                (click)="addItem()"
-                >Add Item</ion-button
-              >
-            </div>
+        </ion-card>
+        <div class="form-row">
+          <div>
+            <ion-button
+              type="button"
+              class="btn btn-success"
+              (click)="addItem()"
+              >Add Item</ion-button
+            >
           </div>
-          <ion-row>
-            <ion-col size-md="8">
-              <ion-row>
-                <ion-col>
-                  <ion-card style="height: fit-content">
-                    <ion-accordion-group>
-                      <ion-accordion value="first">
-                        <ion-item slot="header">
-                          <ion-label>Add addition information</ion-label>
-                        </ion-item>
-                        <div class="ion-padding" slot="content">
-                          First Content
-                        </div>
-                      </ion-accordion>
-                    </ion-accordion-group>
-                  </ion-card>
-                  <ion-card style="padding: 10px; gap: 20px 20px">
-                    <div>
-                      <form [formGroup]="salesForm">
-                        <ion-input
-                          formControlName="customerNotes"
-                          label="Customer notes"
-                          label-placement="stacked"
-                          fill="outline"
-                        ></ion-input>
-                        <p class="tiny">Will be displayed on the invoice</p>
-                        <ion-textarea
-                          label="Terms and conditions"
-                          label-placement="stacked"
-                          fill="outline"
-                          formControlName="termsAndConditions"
-                        >
-                        </ion-textarea>
-                      </form>
+        </div>
+      </form>
+
+      <!-- sales-form.component.html -->
+      <div style="padding: 20px">
+        <form [formGroup]="salesForm">
+          <div *ngIf="!(screenState$ | async)?.isMobile">
+            <ion-row>
+              <ion-col class="item-form-col row" size-md="3">
+                <p class="subHeading" position="stacked" for="items">
+                  ITEM DETAILS
+                </p>
+              </ion-col>
+              <ion-col class="item-form-col row" size="2">
+                <p class="subHeading" position="stacked" for="quantity">
+                  QUANTITY
+                </p>
+              </ion-col>
+              <ion-col class="item-form-col row" size="2">
+                <p class="subHeading" position="stacked" for="sellingPrice">
+                  SELLING PRICE
+                </p>
+              </ion-col>
+              <ion-col class="item-form-col row" size="2">
+                <p class="subHeading" position="stacked" for="discount">
+                  DISCOUNT
+                </p>
+              </ion-col>
+              <ion-col class="item-form-col row" size="1">
+                <p class="subHeading" position="stacked" for="gst">Tax (%)</p>
+              </ion-col>
+              <ion-col class="item-form-col row last" size="2">
+                <p class="subHeading" position="stacked" for="amount1">
+                  AMOUNT (₹)
+                </p>
+              </ion-col>
+            </ion-row>
+            <div
+              formArrayName="items"
+              *ngFor="let item of getFormControls.controls; let i = index"
+            >
+              <ion-row [formGroupName]="i">
+                <ion-col class="item-form-col" size-xs="12" size-md="3">
+                  <div [id]="'item-selection-popover-button' + i">
+                    <ion-input
+                      *ngIf="!getItemDetails(i)"
+                      class="item-form-input"
+                      type="text"
+                      fill="outline"
+                      placeholder="Type or click to select an item"
+                      required
+                    ></ion-input>
+                  </div>
+
+                  <ng-container
+                    style="width: 100%"
+                    *ngIf="getItemDetails(i) as itemDetails"
+                  >
+                    <div style="display: flex; flex-direction: row">
+                      <p style="flex: 1" class="bodyRegular">
+                        {{ itemDetails.name }}
+                      </p>
+                      <ion-icon
+                        style="cursor: pointer"
+                        (click)="openEditProductModal(itemDetails)"
+                        name="pencil"
+                        color="primary"
+                      ></ion-icon>
                     </div>
-                  </ion-card>
+                    <div
+                      style="
+                        background-color: var(--ion-color-primary);
+                        width: fit-content;
+                        padding: 4px;
+                        border-radius: 10px;
+                      "
+                    >
+                      <p class="tiny">
+                        {{ itemDetails.isService ? "SERVICE" : "GOODS" }}
+                      </p>
+                    </div>
+                    <p class="bodyMedium">
+                      HSN Code: {{ itemDetails.hsnCode }}
+                    </p>
+                  </ng-container>
+
+                  <ion-popover
+                    size="cover"
+                    [trigger]="'item-selection-popover-button' + i"
+                    [showBackdrop]="false"
+                    [dismissOnSelect]="true"
+                    [keyboardClose]="false"
+                  >
+                    <ng-template>
+                      <ion-content>
+                        <ion-item [detail]="false">
+                          <ion-button (click)="openAddProductModal()">
+                            Create new
+                          </ion-button>
+                        </ion-item>
+                        <ion-list
+                          style="max-height: 350px; overflow-y: scroll"
+                          class="scrollbar"
+                          id="style-1"
+                        >
+                          <ion-item
+                            *ngFor="
+                              let product of getRemainingProducts();
+                              let prodI = index
+                            "
+                            [button]="true"
+                            [detail]="false"
+                            (click)="onSelectItem(product, i)"
+                            ><div
+                              style="
+                                display: flex;
+                                flex-direction: row;
+                                padding: 10px;
+                              "
+                            >
+                              <div>
+                                <p>{{ product.name }}</p>
+                                <p class="caption">
+                                  Sells price: {{ product.sellsPrice }}
+                                </p>
+                              </div>
+                              <div class="bodyMedium">
+                                <p>Stock on hand</p>
+                                <p>
+                                  {{ product.quantity }}
+                                </p>
+                              </div>
+                            </div></ion-item
+                          >
+                        </ion-list>
+                      </ion-content>
+                    </ng-template>
+                  </ion-popover></ion-col
+                >
+                <ion-col class="item-form-col" size-xs="6" size-md="2">
+                  <ion-input
+                    class="item-form-input"
+                    fill="outline"
+                    type="text"
+                    type="number"
+                    formControlName="quantity"
+                  ></ion-input>
+                  <ng-container *ngIf="getItemDetails(i) as itemDetails">
+                    <div class="bodyMedium">
+                      <p>Stock on hand</p>
+                      <p>
+                        {{ itemDetails.quantity }}
+                      </p>
+                    </div>
+                  </ng-container>
+                </ion-col>
+                <ion-col class="item-form-col" size-xs="6" size-md="2">
+                  <ion-input
+                    class="item-form-input"
+                    fill="outline"
+                    type="text"
+                    required
+                    type="number"
+                    formControlName="sellsPrice"
+                  ></ion-input>
+                  <ng-container *ngIf="getItemDetails(i) as itemDetails">
+                    <div class="bodyMedium">
+                      <p *ngIf="itemDetails.taxIncluded">( Tax Inclusive )</p>
+                    </div>
+                  </ng-container>
+                </ion-col>
+                <ion-col class="item-form-col" size-xs="6" size-md="2">
+                  <ion-item [id]="i + 'discount-selection-popover-button'">
+                    <ion-button>
+                      {{
+                        item.value.discount.value
+                          ? "Change discount"
+                          : "Add discount"
+                      }}</ion-button
+                    >
+                  </ion-item>
+                  <ng-container>
+                    <div class="bodyMedium">
+                      <div>
+                        <div *ngIf="item.value.discount as bestDiscount">
+                          <ion-item
+                            *ngIf="item.value.discount.value"
+                            [button]="true"
+                            [detail]="false"
+                            ><div
+                              style="
+                                display: flex;
+                                flex-direction: column;
+                                padding: 10px;
+                              "
+                            >
+                              <ion-icon
+                                style="
+                                  font-size: 24px;
+                                  cursor: pointer;
+                                  position: absolute;
+                                  top: 10px;
+                                  z-index: 10;
+                                  right: 10px;
+                                "
+                                (click)="removeDiscount(i)"
+                                color="danger"
+                                name="close-circle-outline"
+                              ></ion-icon>
+                              <ion-row
+                                style="
+                                  gap: 10px;
+                                  margin-bottom: 10px;
+                                  padding: 0px;
+                                  margin: 0px;
+                                "
+                              >
+                                <ion-col>
+                                  <div
+                                    style="display: flex; flex-direction: row"
+                                  >
+                                    <p
+                                      style="text-wrap: nowrap; flex: 1"
+                                      class="bodyMedium"
+                                    >
+                                      Code: {{ bestDiscount.code }}
+                                    </p>
+                                  </div>
+                                </ion-col>
+                                <ion-col>
+                                  <p
+                                    style="text-wrap: nowrap"
+                                    class="bodyMedium"
+                                  >
+                                    Value :
+                                    {{
+                                      bestDiscount.type === "percentage"
+                                        ? bestDiscount.value + "%"
+                                        : "₹ " + bestDiscount.value
+                                    }}
+                                  </p>
+                                </ion-col>
+                              </ion-row>
+                              <ion-row
+                                style="
+                                  display: flex;
+                                  flex-direction: row;
+                                  gap: 10px;
+                                "
+                              >
+                                <ion-col>
+                                  <p class="bodySmall">
+                                    {{
+                                      bestDiscount.minType === "orderQuantity"
+                                        ? "Min order quantity:" +
+                                          bestDiscount.minimum
+                                        : "Min order value:" +
+                                          bestDiscount.minimum
+                                    }}
+                                  </p>
+                                </ion-col>
+                                <ion-col>
+                                  <p
+                                    *ngIf="bestDiscount.type === 'percentage'"
+                                    class="bodySmall"
+                                  >
+                                    Maximum
+                                    {{
+                                      bestDiscount.type === "percentage"
+                                        ? "₹ " + bestDiscount.maxDiscount
+                                        : ""
+                                    }}
+                                  </p>
+                                </ion-col>
+                              </ion-row>
+                            </div></ion-item
+                          >
+                        </div>
+                      </div>
+                      <ion-popover
+                        [trigger]="i + 'discount-selection-popover-button'"
+                        [showBackdrop]="false"
+                        [dismissOnSelect]="true"
+                        [keyboardClose]="false"
+                      >
+                        <ng-template>
+                          <ion-content>
+                            <ion-list
+                              style="max-height: 350px; overflow-y: scroll"
+                              class="scrollbar"
+                              id="style-1"
+                            >
+                              <ion-item>
+                                <ion-button (click)="openDiscountsModal(i)">
+                                  Create new</ion-button
+                                >
+                              </ion-item>
+                              <ion-item
+                                (click)="onDiscountChange(i, discount)"
+                                *ngFor="
+                                  let discount of selectBestDiscount(
+                                    getItemDetails(i).discounts,
+                                    item.value.quantity,
+                                    item.value.sellsPrice
+                                  ).applicableDiscounts;
+                                  let discountI = index
+                                "
+                                [button]="true"
+                                [detail]="false"
+                                ><div
+                                  style="
+                                    display: flex;
+                                    flex-direction: column;
+                                    padding: 10px;
+                                  "
+                                >
+                                  <div
+                                    style="
+                                      display: flex;
+                                      flex-direction: row;
+                                      gap: 10px;
+                                      margin-bottom: 10px;
+                                    "
+                                  >
+                                    <p class="bodyMedium">
+                                      Code: {{ discount.code }}
+                                    </p>
+                                    <p class="bodyMedium">
+                                      Value :
+                                      {{
+                                        discount.type === "percentage"
+                                          ? discount.value + "%"
+                                          : "₹ " + discount.value
+                                      }}
+                                    </p>
+                                  </div>
+                                  <div
+                                    style="
+                                      display: flex;
+                                      flex-direction: row;
+                                      gap: 10px;
+                                    "
+                                  >
+                                    <p class="bodySmall">
+                                      {{
+                                        discount.minType === "orderQuantity"
+                                          ? "Min order quantity:" +
+                                            discount.minimum
+                                          : "Min order value:" +
+                                            discount.minimum
+                                      }}
+                                    </p>
+                                    <p
+                                      *ngIf="discount.type === 'percentage'"
+                                      class="bodySmall"
+                                    >
+                                      Maximum
+                                      {{
+                                        discount.type === "percentage"
+                                          ? "₹ " + discount.maxDiscount
+                                          : ""
+                                      }}
+                                    </p>
+                                  </div>
+                                </div></ion-item
+                              >
+                            </ion-list>
+                          </ion-content>
+                        </ng-template>
+                      </ion-popover>
+                    </div>
+                  </ng-container>
+                </ion-col>
+                <ion-col class="item-form-col" size-xs="6" size-md="1">
+                  <ion-input
+                    class="item-form-input"
+                    type="number"
+                    required
+                    formControlName="gstPercentage"
+                    label-placement="stacked"
+                    fill="outline"
+                    label="GST"
+                  ></ion-input>
+                  <ion-input
+                    class="item-form-input"
+                    type="number"
+                    required
+                    formControlName="cess"
+                    label-placement="stacked"
+                    fill="outline"
+                    label="Cess"
+                  ></ion-input>
+                </ion-col>
+                <ion-col class="item-form-col last" size-xs="12" size-md="2">
+                  <div style="display: flex; flex-direction: row">
+                    <p style="flex: 1" class="title3">
+                      {{ item.value.amount }}
+                    </p>
+                    <div>
+                      <ion-icon
+                        *ngIf="i > 0"
+                        style="cursor: pointer; font-size: 22px"
+                        (click)="removeItem(i)"
+                        name="trash-outline"
+                      ></ion-icon>
+                    </div>
+                  </div>
                 </ion-col>
               </ion-row>
-            </ion-col>
-            <ion-col>
-              <div
-                class="total-info"
-                style="
-                  display: flex;
-                  gap: 30px;
-                  background-color: var(--ion-color-light);
-                  border-radius: 10px;
-                  padding: 20px;
-                "
-              >
-                <ion-col *ngIf="getTotalInformation() as totalInformation">
-                  <ion-row style="display: flex">
-                    <div style="flex: 1">
-                      <p class="bodyRegularMobile">Sub Total</p>
-                      <p class="tiny">( Tax inclusive )</p>
-                    </div>
-                    <div>
-                      <p class="bodySecondary">
-                        {{ totalInformation.subTotal }}
-                      </p>
-                    </div>
-                  </ion-row>
-                  <ion-row style="display: flex">
-                    <div style="flex: 1">
-                      <p class="bodyRegularMobile">CSGT</p>
-                    </div>
-                    <div>
-                      <p class="bodySecondary">
-                        {{ totalInformation.gst / 2 }}
-                      </p>
-                    </div>
-                  </ion-row>
-                  <ion-row style="display: flex">
-                    <div style="flex: 1">
-                      <p class="bodyRegularMobile">SGST</p>
-                    </div>
-                    <div>
-                      <p class="bodySecondary">
-                        {{ totalInformation.gst / 2 }}
-                      </p>
-                    </div>
-                  </ion-row>
-                  <ion-row style="display: flex">
-                    <div style="flex: 1">
-                      <p class="bodyRegularMobile">Cess</p>
-                    </div>
-                    <div>
-                      <p class="bodySecondary">
-                        {{ totalInformation.cess }}
-                      </p>
-                    </div>
-                  </ion-row>
-                  <ion-row style="display: flex">
-                    <div style="flex: 1">
-                      <p class="bodyRegularMobile">Discounts</p>
-                    </div>
-                    <div>
-                      <p class="bodySecondary">
-                        {{ totalInformation.discounts }}
-                      </p>
-                    </div>
-                  </ion-row>
-                  <!-- <ion-row style="display: flex">
-                    <div style="flex: 1">
-                      <p class="bodyRegularMobile">Round off</p>
-                    </div>
-                    <div>
-                      <p class="bodySecondary">
-                        {{ 1000 }}
-                      </p>
-                    </div>
-                  </ion-row> -->
-                  <ion-row style="display: flex">
-                    <div style="flex: 1">
-                      <p class="title2">Total ( ₹ )</p>
-                    </div>
-                    <div>
-                      <p class="title2">
-                        {{ totalInformation.total }}
-                      </p>
-                    </div>
-                  </ion-row>
-                  <form [formGroup]="salesForm">
-                    <div formGroupName="paymentDone">
-                      <ion-row style="margin-top: 20px; margin-bottom: 10px">
-                        <ion-radio-group
-                          style="display: flex; flex-direction: row; gap: 10px"
-                          [value]="salesForm.value.paymentDone.mode"
-                          (ionChange)="onPaymentStatusChange($event)"
-                        >
-                          <ion-radio
-                            labelPlacement="end"
-                            [value]="PaymentStatusEnum.UNPAID"
-                            >Unpaid</ion-radio
-                          >
-                          <ion-radio
-                            labelPlacement="end"
-                            [value]="PaymentModeEnum.CASH"
-                            >Cash</ion-radio
-                          >
-                          <ion-radio
-                            labelPlacement="end"
-                            [value]="PaymentModeEnum.ONLINE"
-                            >Online</ion-radio
-                          >
-                        </ion-radio-group>
-                      </ion-row>
-                      <ion-row
-                        *ngIf="
-                          salesForm.value.paymentDone.mode ===
-                            PaymentModeEnum.CASH ||
-                          salesForm.value.paymentDone.mode ===
-                            PaymentModeEnum.ONLINE
-                        "
-                      >
-                        <ion-input
-                          label-placement="stacked"
-                          fill="outline"
-                          label="Amount Paid"
-                          [required]="true"
-                          formControlName="amount"
-                        ></ion-input>
-                      </ion-row>
-                    </div>
-                  </form>
-
-                  <ion-row style="display: flex">
-                    <div style="flex: 1">
-                      <p class="title3">Balance Due ( ₹ )</p>
-                    </div>
-                    <div>
-                      <p class="title3">
-                        ₹ {{ getBalanceDue(totalInformation.total) }}
-                      </p>
-                    </div>
-                  </ion-row>
-                </ion-col>
+            </div>
+            <div class="form-row">
+              <div>
+                <ion-button
+                  type="button"
+                  class="btn btn-success"
+                  (click)="addItem()"
+                  >Add Item</ion-button
+                >
               </div>
-            </ion-col>
-          </ion-row>
+            </div>
+          </div>
         </form>
       </div>
+      <ion-row>
+        <ion-col size-xs="12" size-md="8">
+          <ion-accordion-group>
+            <ion-accordion value="first">
+              <ion-item slot="header">
+                <ion-label>Add additional information</ion-label>
+              </ion-item>
+              <div class="ion-padding" slot="content">
+                <ion-row>
+                  <ion-col>
+                    <ion-card style="padding: 10px; gap: 20px 20px">
+                      <div>
+                        <form [formGroup]="salesForm">
+                          <ion-input
+                            formControlName="customerNotes"
+                            label="Customer notes"
+                            label-placement="stacked"
+                            fill="outline"
+                          ></ion-input>
+                          <p class="tiny">Will be displayed on the invoice</p>
+                          <ion-textarea
+                            label="Terms and conditions"
+                            label-placement="stacked"
+                            fill="outline"
+                            formControlName="termsAndConditions"
+                          >
+                          </ion-textarea>
+                        </form>
+                      </div>
+                    </ion-card>
+                  </ion-col>
+                </ion-row>
+              </div>
+            </ion-accordion>
+          </ion-accordion-group>
+        </ion-col>
+        <ion-col>
+          <div
+            class="total-info"
+            style="
+              display: flex;
+              gap: 30px;
+              background-color: var(--ion-color-light);
+              border-radius: 10px;
+              padding: 20px;
+            "
+          >
+            <ion-col *ngIf="getTotalInformation() as totalInformation">
+              <ion-row style="display: flex">
+                <div style="flex: 1">
+                  <p class="bodyRegularMobile">Sub Total</p>
+                  <p class="tiny">( Tax inclusive )</p>
+                </div>
+                <div>
+                  <p class="bodySecondary">
+                    {{ totalInformation.subTotal }}
+                  </p>
+                </div>
+              </ion-row>
+              <ion-row style="display: flex">
+                <div style="flex: 1">
+                  <p class="bodyRegularMobile">CSGT</p>
+                </div>
+                <div>
+                  <p class="bodySecondary">
+                    {{ totalInformation.gst / 2 }}
+                  </p>
+                </div>
+              </ion-row>
+              <ion-row style="display: flex">
+                <div style="flex: 1">
+                  <p class="bodyRegularMobile">SGST</p>
+                </div>
+                <div>
+                  <p class="bodySecondary">
+                    {{ totalInformation.gst / 2 }}
+                  </p>
+                </div>
+              </ion-row>
+              <ion-row style="display: flex">
+                <div style="flex: 1">
+                  <p class="bodyRegularMobile">Cess</p>
+                </div>
+                <div>
+                  <p class="bodySecondary">
+                    {{ totalInformation.cess }}
+                  </p>
+                </div>
+              </ion-row>
+              <ion-row style="display: flex">
+                <div style="flex: 1">
+                  <p class="bodyRegularMobile">Discounts</p>
+                </div>
+                <div>
+                  <p class="bodySecondary">
+                    {{ totalInformation.discounts }}
+                  </p>
+                </div>
+              </ion-row>
+              <!-- <ion-row style="display: flex">
+                <div style="flex: 1">
+                  <p class="bodyRegularMobile">Round off</p>
+                </div>
+                <div>
+                  <p class="bodySecondary">
+                    {{ 1000 }}
+                  </p>
+                </div>
+              </ion-row> -->
+              <ion-row style="display: flex">
+                <div style="flex: 1">
+                  <p class="title2">Total ( ₹ )</p>
+                </div>
+                <div>
+                  <p class="title2">
+                    {{ totalInformation.total }}
+                  </p>
+                </div>
+              </ion-row>
+              <form [formGroup]="salesForm">
+                <div formGroupName="paymentDone">
+                  <ion-row style="margin-top: 20px; margin-bottom: 10px">
+                    <ion-radio-group
+                      style="display: flex; flex-direction: row; gap: 10px"
+                      [value]="salesForm.value.paymentDone.mode"
+                      (ionChange)="onPaymentStatusChange($event)"
+                    >
+                      <ion-radio
+                        labelPlacement="end"
+                        [value]="PaymentStatusEnum.UNPAID"
+                        >Unpaid</ion-radio
+                      >
+                      <ion-radio
+                        labelPlacement="end"
+                        [value]="PaymentModeEnum.CASH"
+                        >Cash</ion-radio
+                      >
+                      <ion-radio
+                        labelPlacement="end"
+                        [value]="PaymentModeEnum.ONLINE"
+                        >Online</ion-radio
+                      >
+                    </ion-radio-group>
+                  </ion-row>
+                  <ion-row
+                    *ngIf="
+                      salesForm.value.paymentDone.mode ===
+                        PaymentModeEnum.CASH ||
+                      salesForm.value.paymentDone.mode ===
+                        PaymentModeEnum.ONLINE
+                    "
+                  >
+                    <ion-input
+                      label-placement="stacked"
+                      fill="outline"
+                      label="Amount Paid"
+                      [required]="true"
+                      formControlName="amount"
+                    ></ion-input>
+                  </ion-row>
+                </div>
+              </form>
 
+              <ion-row style="display: flex">
+                <div style="flex: 1">
+                  <p class="title3">Balance Due ( ₹ )</p>
+                </div>
+                <div>
+                  <p class="title3">
+                    ₹ {{ getBalanceDue(totalInformation.total) }}
+                  </p>
+                </div>
+              </ion-row>
+            </ion-col>
+          </div>
+        </ion-col>
+      </ion-row>
       <div
         style="display: flex; flex-direction: row; margin-bottom: 100px"
       ></div>

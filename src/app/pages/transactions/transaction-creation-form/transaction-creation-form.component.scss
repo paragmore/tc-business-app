@@ -16,14 +16,18 @@
 // }
 
 .item-form-input {
-  --border-color: transparent;
   font-size: 14px;
+  @media only screen and (min-width: 768px) {
+    --border-color: transparent;
+  }
 }
 
 .item-form-col {
-  border-bottom: 1px solid var(--ion-color-light-shade);
-  border-right: 1px solid var(--ion-color-light-shade);
-  padding: 10px;
+  @media only screen and (min-width: 768px) {
+    border-bottom: 1px solid var(--ion-color-light-shade);
+    border-right: 1px solid var(--ion-color-light-shade);
+    padding: 10px;
+  }
 }
 
 .item-form-col.last {
@@ -44,4 +48,11 @@
 
 .total-info ion-row {
   padding: 5px;
+}
+
+.transaction-form-margin {
+  margin-right: 100px;
+  @media only screen and (max-width: 768px) {
+    margin: 0px;
+  }
 }
