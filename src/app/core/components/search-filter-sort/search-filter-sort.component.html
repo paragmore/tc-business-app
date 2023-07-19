@@ -32,9 +32,15 @@
     </ion-col>
     <ion-col size-md="2" size-xs="2">
       <div style="display: flex" *ngIf="!isSearching">
-        <ion-button fill="clear" [id]="filterSortLists.searchPlaceholder + 'sort-popover-button'">
+        <ion-button
+          fill="clear"
+          [id]="filterSortLists.searchPlaceholder + 'sort-popover-button'"
+        >
           <div style="display: flex; flex-direction: column">
-            <ion-icon name="funnel-outline"></ion-icon>
+            <ion-icon
+              style="font-size: 20px !important"
+              name="funnel-outline"
+            ></ion-icon>
             <p class="tiny">Sort & Filters</p>
           </div>
         </ion-button>
@@ -43,7 +49,10 @@
         > -->
       </div>
     </ion-col>
-    <ion-popover [trigger]="filterSortLists.searchPlaceholder + 'sort-popover-button'" [dismissOnSelect]="true">
+    <ion-popover
+      [trigger]="filterSortLists.searchPlaceholder + 'sort-popover-button'"
+      [dismissOnSelect]="true"
+    >
       <ng-template>
         <ion-content>
           <ion-list>
