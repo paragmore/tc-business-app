@@ -1,3 +1,249 @@
-<p>
-  payment-creation-form works!
-</p>
+<ion-header>
+  <ion-toolbar>
+    <app-dialog-header
+      style="width: 100%"
+      [headerTitle]="'Pay'"
+      [onClose]="onClosePaymentCreationModal"
+    >
+    </app-dialog-header>
+  </ion-toolbar>
+</ion-header>
+<ion-row>
+  <ion-col size-xs="12" size-md="6">
+    <ion-searchbar
+      id="party-selection-popover-button"
+      placeholder="Select {{ selectedPartyTab }}"
+      (ionClear)="removeSelectedParty()"
+      [value]="selectedParty && getPartyDetails(selectedParty).name"
+    >
+    </ion-searchbar>
+    <ion-popover
+      trigger="party-selection-popover-button"
+      [showBackdrop]="false"
+      [dismissOnSelect]="true"
+      [keyboardClose]="false"
+    >
+      <ng-template>
+        <ion-content>
+          <ion-item [detail]="false">
+            <ion-button (click)="openAddPartyModal()"> Create new </ion-button>
+          </ion-item>
+          <app-party-selection
+            [selectedPartyTab]="selectedPartyTab"
+            (onSelect)="selectTransactionParty($event)"
+          ></app-party-selection>
+        </ion-content>
+      </ng-template>
+    </ion-popover>
+  </ion-col>
+</ion-row>
+<ion-accordion-group style="width: 100%" [multiple]="true" [value]="[]">
+  <ion-accordion *ngIf="selectedParty" value="first">
+    <ion-item slot="header">
+      <p
+        *ngIf="selectedParty"
+        style="color: var(--ion-color-primary)"
+        class="titleRegular"
+      >
+        {{ selectedPartyTab | capitalizeWords }} Details
+      </p>
+    </ion-item>
+    <div slot="content">
+      <div *ngIf="selectedParty" style="padding: 15px">
+        <ion-row class="item-detail-row">
+          <ion-col size-xs="12" size-md="6">
+            <p class="bodySecondary">Legal name</p>
+            <p class="bodyRegularMobile">
+              {{ selectedParty && getPartyDetails(selectedParty).name }}
+            </p>
+          </ion-col>
+          <ion-col size-xs="12" size-md="6">
+            <p class="bodySecondary">Trade name</p>
+            <p class="bodyRegularMobile">
+              {{ selectedParty && getCustomerDetails(selectedParty).tradeName }}
+            </p>
+          </ion-col>
+        </ion-row>
+        <ion-row class="item-detail-row">
+          <ion-col size-xs="12" size-md="6">
+            <p class="bodySecondary">GSTIN</p>
+            <p class="bodyRegularMobile">
+              {{ selectedParty && getPartyDetails(selectedParty).gstin }}
+            </p>
+          </ion-col>
+          <ion-col size-xs="12" size-md="6">
+            <p class="bodySecondary">Phone Number</p>
+            <p class="bodyRegularMobile">
+              {{
+                selectedParty && getCustomerDetails(selectedParty).phoneNumber
+              }}
+            </p>
+          </ion-col>
+        </ion-row>
+        <ion-row
+          *ngIf="
+            selectedParty &&
+            getPartyDetails(selectedParty) &&
+            getPartyDetails(selectedParty).addresses as addresses
+          "
+          class="item-detail-row"
+        >
+          <ion-col>
+            <ion-col>
+              <p class="bodySecondary">Shipping Address</p>
+            </ion-col>
+            <ion-col>
+              <p class="bodyRegularMobile">
+                {{ addresses[0].shipping.line1 }}
+              </p>
+              <p class="bodyRegularMobile">
+                {{ addresses[0].shipping.line2 }}
+              </p>
+              <p class="bodyRegularMobile">
+                {{ addresses[0].shipping.city }}
+                {{ addresses[0].shipping.state }}
+                {{ addresses[0].shipping.pinCode }}
+              </p>
+            </ion-col>
+          </ion-col>
+          <ion-col>
+            <ion-col>
+              <p class="bodySecondary">Billing Address</p>
+            </ion-col>
+            <ion-checkbox [checked]="addresses[0].billingSameAsShipping">
+              Same as shipping address
+            </ion-checkbox>
+            <ion-col *ngIf="!addresses[0].billingSameAsShipping">
+              <p class="bodyRegularMobile">
+                {{ addresses[0].billing?.line1 }}
+              </p>
+              <p class="bodyRegularMobile">
+                {{ addresses[0].billing?.line2 }}
+              </p>
+              <p class="bodyRegularMobile">
+                {{ addresses[0].billing?.city }}
+                {{ addresses[0].billing?.state }}
+                {{ addresses[0].billing?.pinCode }}
+              </p>
+            </ion-col>
+          </ion-col>
+        </ion-row>
+      </div>
+    </div>
+  </ion-accordion>
+</ion-accordion-group>
+
+<form [formGroup]="paymentForm">
+  <ion-row>
+    <ion-col size-xs="12" size-md="6">
+      <ion-input
+        class="item-form-input"
+        fill="outline"
+        type="text"
+        type="number"
+        formControlName="amount"
+        label-placement="stacked"
+        fill="outline"
+        label="Amount"
+      ></ion-input>
+      <ion-checkbox
+        [value]="receivedFullAmt"
+        (ionChange)="onReceivedAmtToggle($event)"
+      >
+        Received full amount ( ₹1,770.00)</ion-checkbox
+      >
+    </ion-col>
+    <ion-col size-xs="12" size-md="6">
+      <ion-input
+        class="item-form-input"
+        fill="outline"
+        type="text"
+        type="number"
+        formControlName="paymentNumber"
+        label-placement="stacked"
+        fill="outline"
+        label="Payment Id#"
+        [readonly]="true"
+      ></ion-input>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-input
+      id="payment-date-selection-popover-button"
+      label-placement="stacked"
+      fill="outline"
+      label="Payment Date"
+      formControlName="date"
+    ></ion-input>
+    <ion-popover
+      trigger="payment-date-selection-popover-button"
+      [showBackdrop]="false"
+      [dismissOnSelect]="true"
+      [keyboardClose]="false"
+    >
+      <ng-template>
+        <ion-content>
+          <ion-datetime></ion-datetime>
+        </ion-content>
+      </ng-template>
+    </ion-popover>
+  </ion-row>
+
+  <ion-row>
+    <ion-checkbox
+      [value]="paymentForm.value.taxDeducted"
+      (ionChange)="onTaxDeductedStatusChange($event)"
+    >
+      Is tax deducted? TDS (IncomeTax)</ion-checkbox
+    >
+  </ion-row>
+  <ion-row>
+    <ion-textarea
+      formControlName="notes"
+      label="Notes"
+      label-placement="stacked"
+      fill="outline"
+    ></ion-textarea>
+  </ion-row>
+  <div
+    formArrayName="invoicePayments"
+    *ngFor="let item of getFormControls.controls; let i = index"
+  >
+    <ion-row [formGroupName]="i">
+      <div *ngIf="getTransactionDetails(i) as transaction">
+        <ion-card>
+          <ion-row>
+            <ion-col size-md="4" size-xs="12">
+              <ion-row>
+                <p class="titleSmall">#{{ transaction.invoiceId }}</p>
+                <p>{{ transaction.date | dateFormat }}</p>
+              </ion-row>
+              <ion-row> </ion-row>
+            </ion-col>
+            <ion-col size-md="4" size-xs="12">
+              <ion-row>
+                <p>Invoice amount: {{ transaction.totalInformation.total }}</p>
+
+                <p>Due: {{ transaction.totalInformation.total }}</p>
+              </ion-row>
+            </ion-col>
+            <ion-col size-md="4" size-xs="12">
+              <ion-row>
+                <ion-input
+                  class="item-form-input"
+                  fill="outline"
+                  type="text"
+                  type="number"
+                  formControlName="paymentAmount"
+                  label-placement="stacked"
+                  fill="outline"
+                  label="Payment Amount"
+                ></ion-input>
+              </ion-row>
+            </ion-col>
+          </ion-row>
+        </ion-card>
+      </div>
+    </ion-row>
+  </div>
+</form>
