@@ -48,6 +48,7 @@ import {
 } from 'src/app/store/actions/parties.action';
 import { ConfirmationModalComponent } from 'src/app/core/components/confirmation-modal/confirmation-modal.component';
 import { toastAlert } from 'src/app/core/utils/toastAlert';
+import { ItemNotFoundComponentInputI } from 'src/app/core/components/item-not-found/item-not-found.component';
 
 @Component({
   selector: 'app-customers-list',
@@ -205,6 +206,9 @@ export class CustomersListComponent implements OnInit, DoCheck {
     isSelected: (id) => {
       return this.isPartySelected(id);
     },
+    getNotFoundInput: () => {
+      return this.getNotFoundInput();
+    },
   };
   ngOnInit() {
     this.currentPartyId = this.activatedRoute.snapshot.paramMap.get(
@@ -262,7 +266,32 @@ export class CustomersListComponent implements OnInit, DoCheck {
       isSelected: (id) => {
         return this.isPartySelected(id);
       },
+      getNotFoundInput: () => {
+        return this.getNotFoundInput();
+      },
     };
+  }
+
+  getNotFoundInput() {
+    if (this.selectedTab === PartyTypeEnum.CUSTOMER) {
+      const notfoundInput: ItemNotFoundComponentInputI = {
+        title: 'Customers not found',
+        subtitle: 'Please create new customer',
+      };
+      return notfoundInput;
+    }
+    if (this.selectedTab === PartyTypeEnum.SUPPLIER) {
+      const notfoundInput: ItemNotFoundComponentInputI = {
+        title: 'Suppliers not found',
+        subtitle: 'Please create new supplier',
+      };
+      return notfoundInput;
+    }
+    const notfoundInput: ItemNotFoundComponentInputI = {
+      title: '',
+      subtitle: '',
+    };
+    return notfoundInput;
   }
   onViewReportsClicked = () => {};
 

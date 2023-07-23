@@ -22,7 +22,7 @@ import { StoreInfoModel } from 'src/app/store/models/userStoreInfo.models';
 import { toJpeg, toPng } from 'html-to-image';
 import { InvoiceTemplatePreviewComponent } from 'src/app/core/components/invoice-template-preview/invoice-template-preview.component';
 import { RightHeaderComponent } from 'src/app/right-header/right-header.component';
-import { PaymentCreationFormComponent } from '../payment-creation-form/payment-creation-form.component';
+import { PaymentCreationFormComponent } from '../../payments/payment-creation-form/payment-creation-form.component';
 
 @Component({
   selector: 'app-transaction-details',
@@ -108,7 +108,10 @@ export class TransactionDetailsComponent implements OnInit, AfterViewInit {
   async openPaymentCreationModal() {
     const modal = await this.modalController.create({
       component: PaymentCreationFormComponent,
-      componentProps: { transactionType: this.transactionType },
+      componentProps: {
+        transactionType: this.transactionType,
+        transactionDetails: this.transactionDetails,
+      },
       backdropDismiss: true,
       cssClass: 'side-modal',
     });
