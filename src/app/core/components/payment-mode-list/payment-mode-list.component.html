@@ -1,3 +1,17 @@
-<p>
-  payment-mode-list works!
-</p>
+<div>
+  <ion-list
+    style="max-height: 350px; overflow-y: scroll"
+    class="scrollbar"
+    id="style-1"
+  >
+    <ion-item
+      *ngFor="let paymentMode of paymentModesList; let i = index"
+      [button]="true"
+      [detail]="false"
+      (click)="onSelectEvent(paymentMode)"
+      ><div style="display: flex; flex-direction: column; padding: 10px">
+        <p>{{ paymentMode }}</p>
+      </div></ion-item
+    >
+  </ion-list>
+</div>
