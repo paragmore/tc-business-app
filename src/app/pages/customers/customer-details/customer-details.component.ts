@@ -33,6 +33,14 @@ import { RightHeaderComponent } from 'src/app/right-header/right-header.componen
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/store/models/state.model';
 import { setSelectedParty } from 'src/app/store/actions/parties.action';
+import {
+  SortOrder,
+  TransactionOverviewI,
+  TransactionTypeEnum,
+  TransactionsOverviewFilterByI,
+  TransactionsService,
+} from 'src/app/core/services/transactions/transactions.service';
+import { format } from 'date-fns';
 
 @Component({
   selector: 'app-customer-details',
@@ -48,6 +56,13 @@ import { setSelectedParty } from 'src/app/store/actions/parties.action';
   ],
 })
 export class CustomerDetailsComponent implements OnInit {
+  currentPage = 1;
+  totalPages = 100;
+  pageSize = 10;
+  sortBy: string = 'name';
+  sortOrder: SortOrder = 'asc';
+  isTransactionsOverviewLoading = false;
+  isMobile = false;
   currentPartyId: string | undefined;
   previousParams: any;
   currentStoreInfo: StoreInfoModel | undefined;
@@ -57,36 +72,11 @@ export class CustomerDetailsComponent implements OnInit {
   addresses: Array<AdrressesI> | undefined;
   parsedPartyDetails: CustomerStoreInfoI | SupplierI | undefined;
   gstin: string | undefined;
+  filters: TransactionsOverviewFilterByI = {};
+  transactionOverviews: TransactionOverviewI[] = [];
   // Define dummy data
-  dummyData: EntriesLedgerDataI = {
-    ledgerItems: [
-      {
-        col1: {
-          text: 'Item 1',
-          subtext: 'Subtext 1',
-          color: 'red',
-        },
-        col2: {
-          text: 'Item 2',
-          subtext: 'Subtext 2',
-          color: 'blue',
-        },
-        col3: {
-          text: 'Item 3',
-          subtext: 'Subtext 3',
-          color: 'green',
-        },
-        onClick: (ledger: EntriesLedgerItemI) => {
-          // Handle onClick logic here
-          console.log('Clicked on ledger item:', ledger);
-        },
-        openItemDetailsPage: (ledger: EntriesLedgerItemI) => {
-          // Handle openItemDetailsPage logic here
-          console.log('Opened item details page for ledger:', ledger);
-        },
-      },
-      // Add more ledger items as needed
-    ],
+  ledgerData: EntriesLedgerDataI = {
+    ledgerItems: [],
     onSort: () => {
       // Handle onSort logic here
       console.log('Sorting...');
@@ -102,10 +92,40 @@ export class CustomerDetailsComponent implements OnInit {
       // Handle changePageSize logic here
       console.log('Change page size:', event.target.value);
     },
-    col1Title: 'Column 1',
-    col2Title: 'Column 2',
-    col3Title: 'Column 3',
+    col1Title: 'Entries',
+    col2Title: 'You Gave',
+    col3Title: 'You Got',
   };
+
+  ngDoCheck() {
+    // this.ledgerData = {
+    //   ledgerItems: this.ledgerData.ledgerItems,
+    //   onSort: this.toggleSort,
+    //   isLoading: this.isTransactionsOverviewLoading,
+    //   currentPage: this.currentPage,
+    //   totalPages: this.totalPages,
+    //   goToPage: this.goToPage,
+    //   changePageSize: this.changePageSize,
+    //   col1Title: 'Name',
+    //   col2Title: 'Amount',
+    //   onSelectionToggle: (event: any, partyId: string) => {
+    //     this.onTransactionSelectionToggle(event, partyId);
+    //   },
+    //   onLongPress: () => {
+    //     this.onLongPress();
+    //   },
+    //   selectAllToggle: (event) => {
+    //     this.selectAllToggle(event);
+    //   },
+    //   enableMultiSelect: this.enableMultiSelect,
+    //   isSelected: (id) => {
+    //     return this.isTransactionSelected(id);
+    //   },
+    //   getNotFoundInput: () => {
+    //     return this.getNotFoundInput();
+    //   },
+    // };
+  }
 
   constructor(
     private _location: Location,
@@ -113,7 +133,8 @@ export class CustomerDetailsComponent implements OnInit {
     private currentStoreInfoService: CurrentStoreInfoService,
     private activatedRoute: ActivatedRoute,
     private modalController: ModalController,
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    private transactionsService: TransactionsService
   ) {}
   ngOnInit() {
     this._location.onUrlChange((url, state) => {
@@ -128,8 +149,12 @@ export class CustomerDetailsComponent implements OnInit {
       const type = typeMatch && typeMatch[1];
 
       this.currentPartyId = id as string;
+      this.filters = {
+        partyId: this.currentPartyId,
+      };
       this.partyType = type as PartyTypeEnum;
       this.getStoreCustomerById();
+      this.loadTransactionsOverview();
     });
     combineLatest([
       this.currentStoreInfoService.getCurrentStoreInfo(),
@@ -138,6 +163,8 @@ export class CustomerDetailsComponent implements OnInit {
         const [currentStoreInfoResponse] = v;
         this.currentStoreInfo = currentStoreInfoResponse;
         this.getStoreCustomerById();
+
+        this.loadTransactionsOverview();
       },
       error: (e) => console.error(e),
       complete: () => console.info('complete'),
@@ -150,6 +177,70 @@ export class CustomerDetailsComponent implements OnInit {
         this.updateBasicPartyDetails();
       });
     console.log('kss', this.currentPartyId);
+  }
+
+  updateLedgerData() {
+    this.ledgerData.ledgerItems = this.transactionOverviews.map(
+      (transactionOverview) => {
+        let ledgerItem: EntriesLedgerItemI;
+        ledgerItem = {
+          col1: {
+            text: format(new Date(transactionOverview.date), 'dd MMM yyyy'),
+            color: '',
+            subtext: '',
+          },
+          col2: { text: '', color: 'danger', subtext: '' },
+          col3: { text: '', color: 'success', subtext: '' },
+          onClick: (led) => {},
+          openItemDetailsPage: (l) => {},
+        };
+        if (this.partyType === PartyTypeEnum.CUSTOMER) {
+          if (
+            transactionOverview.transactionType === TransactionTypeEnum.SALE
+          ) {
+            ledgerItem.col2 = {
+              text:
+                'amount' in transactionOverview.transactionId
+                  ? transactionOverview.transactionId.amount.toString()
+                  : transactionOverview.transactionId.totalInformation.total.toString(),
+            };
+          }
+          if (
+            transactionOverview.transactionType === TransactionTypeEnum.PAYMENT
+          ) {
+            ledgerItem.col3 = {
+              text:
+                'amount' in transactionOverview.transactionId
+                  ? transactionOverview.transactionId.amount.toString()
+                  : transactionOverview.transactionId.totalInformation.total.toString(),
+            };
+          }
+        } else {
+          if (
+            transactionOverview.transactionType === TransactionTypeEnum.SALE
+          ) {
+            ledgerItem.col3 = {
+              text:
+                'amount' in transactionOverview.transactionId
+                  ? transactionOverview.transactionId.amount.toString()
+                  : transactionOverview.transactionId.totalInformation.total.toString(),
+            };
+          }
+          if (
+            transactionOverview.transactionType === TransactionTypeEnum.PAYMENT
+          ) {
+            ledgerItem.col2 = {
+              text:
+                'amount' in transactionOverview.transactionId
+                  ? transactionOverview.transactionId.amount.toString()
+                  : transactionOverview.transactionId.totalInformation.total.toString(),
+            };
+          }
+        }
+
+        return ledgerItem;
+      }
+    );
   }
 
   updateBasicPartyDetails() {
@@ -253,8 +344,82 @@ export class CustomerDetailsComponent implements OnInit {
 
   getInitialStoreCustomer() {
     this.currentPartyId = this.activatedRoute.snapshot.params['id'];
+    this.filters = {
+      partyId: this.currentPartyId,
+    };
     this.partyType = this.activatedRoute.snapshot.queryParams['type'];
     this.getStoreCustomerById();
+    this.loadTransactionsOverview();
+  }
+
+  resetPagination() {
+    this.currentPage = 1;
+    this.totalPages = 1;
+    this.pageSize = 10;
+  }
+
+  loadTransactionsOverview(onLoadingFinished?: () => void, isReload?: boolean) {
+    if (isReload) {
+      this.resetPagination();
+    }
+    if (this.isTransactionsOverviewLoading) {
+      return;
+    }
+    if (!this.currentStoreInfo?._id) {
+      return;
+    }
+    this.isTransactionsOverviewLoading = true;
+    console.log(1);
+    this.transactionsService
+      .getAllStoreTransactionsOverview(this.currentStoreInfo?._id, {
+        page: this.currentPage.toString(),
+        pageSize: this.pageSize.toString(),
+        sortBy: this.sortBy,
+        sortOrder: this.sortOrder,
+        ...this.filters,
+      })
+      .subscribe(
+        (response) => {
+          console.log('FILTERS', this.filters);
+
+          //@ts-ignore
+          if (response.message === 'Success') {
+            //@ts-ignore
+            console.log(response.body.transactions);
+            //@ts-ignore
+            const newTransactions =
+              this.isMobile && !isReload
+                ? //@ts-ignore
+                  [...this.transactions, ...response.body.transactions]
+                : //@ts-ignore
+                  [...response.body.transactions];
+            // this.store.dispatch(
+            //   setTransactionsList({ transactionsList: newTransactions })
+            // );
+
+            //@ts-ignore
+            const pagination = response.body.pagination;
+            this.currentPage = pagination.page;
+            this.pageSize = pagination.pageSize;
+            this.totalPages = pagination.totalPages;
+            //@ts-ignore
+
+            // !this.isMobile &&
+            // !this.currentTransactionId &&
+            // !this.isMobile &&
+            // !this.currentTransactionId &&
+            // '_id' in this.transactions[0]
+            //   ? this.openTransactionDetails(this.transactions[0]._id)
+            //   : null;
+          }
+        },
+        (error) => {},
+        () => {
+          this.isTransactionsOverviewLoading = false;
+          onLoadingFinished && onLoadingFinished();
+        }
+      );
+    console.log(3);
   }
 
   getStoreCustomerById() {
