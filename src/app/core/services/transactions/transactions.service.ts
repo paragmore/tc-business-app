@@ -31,7 +31,7 @@ export class TransactionsService {
     return this.httpClient.post(url, body, { headers: headers });
   }
   createStorePayment(createPaymentRequest: CreatePaymentRequestI) {
-    const url = `${this.baseUrl}/transactions/create`;
+    const url = `${this.baseUrl}/transactions/create/payment`;
     const headers = getAuthHeaders();
     const body = {
       ...createPaymentRequest,
@@ -99,6 +99,60 @@ export class TransactionsService {
     const url = `${
       this.baseUrl
     }/transactions/${storeId}?${queryParams.toString()}`;
+    const headers = getAuthHeaders();
+    return this.httpClient.get(url, { headers: headers });
+  }
+
+  getAllStoreTransactionsOverview(
+    storeId: string,
+    options?: GetTransactionsOverviewQueryParamsI
+  ) {
+    const queryParams = new URLSearchParams();
+    if (options?.pageSize) {
+      queryParams.append('pageSize', options.pageSize);
+    }
+    if (options?.page) {
+      queryParams.append('page', options.page);
+    }
+    if (options?.sortBy) {
+      queryParams.append('sortBy', options.sortBy);
+    }
+    if (options?.sortOrder) {
+      queryParams.append('sortOrder', options.sortOrder);
+    }
+    if (options?.partyId) {
+      queryParams.append('partyId', options.partyId);
+    }
+    const url = `${
+      this.baseUrl
+    }/transactions/overview/${storeId}?${queryParams.toString()}`;
+    const headers = getAuthHeaders();
+    return this.httpClient.get(url, { headers: headers });
+  }
+
+  getAllStorePayments(storeId: string, options?: GetPaymentsQueryParamsI) {
+    const queryParams = new URLSearchParams();
+    if (options?.pageSize) {
+      queryParams.append('pageSize', options.pageSize);
+    }
+    if (options?.page) {
+      queryParams.append('page', options.page);
+    }
+    if (options?.sortBy) {
+      queryParams.append('sortBy', options.sortBy);
+    }
+    if (options?.sortOrder) {
+      queryParams.append('sortOrder', options.sortOrder);
+    }
+    if (options?.paymentType) {
+      queryParams.append('paymentType', options.paymentType);
+    }
+    if (options?.partyId) {
+      queryParams.append('partyId', options.partyId);
+    }
+    const url = `${
+      this.baseUrl
+    }/transactions/payment/${storeId}?${queryParams.toString()}`;
     const headers = getAuthHeaders();
     return this.httpClient.get(url, { headers: headers });
   }
@@ -176,6 +230,7 @@ interface TransactionI {
     cess?: number;
     discounts?: number;
     total: number;
+    amountPaid: number;
   };
   paymentDone: {
     amount: number;
@@ -266,7 +321,7 @@ export interface UpdateTransactionRequestI {
 }
 
 export interface TransactionPartyI {
-  partyId?: string;
+  partyId: string;
   name: string;
   phoneNumber: string;
   tradeName?: string;
@@ -429,6 +484,10 @@ export interface GetTransactionsQueryParamsI
   extends TransactionsFilterByQueryI,
     PaginationQueryParamsI {}
 
+export interface GetPaymentsQueryParamsI
+  extends PaymentsFilterByQueryI,
+    PaginationQueryParamsI {}
+
 export interface PaginationQueryParamsI {
   pageSize?: string;
   page?: string;
@@ -452,6 +511,7 @@ export enum TransactionTypeEnum {
   SALE = 'SALE',
   PURCHASE = 'PURCHASE',
   EXPENSE = 'EXPENSE',
+  PAYMENT = 'PAYMENT',
 }
 
 export enum PaymentTypeEnum {
@@ -476,4 +536,46 @@ export interface CreatePaymentRequestI {
   taxAccount?: string;
   invoicePayments: InvoicePaymentI[];
   notes?: string;
+}
+
+export interface PaymentI {
+  _id: string;
+  storeId: string;
+  partyId: string;
+  paymentType: PaymentTypeEnum;
+  amount: number;
+  date: Date;
+  paymentNumber: number;
+  paymentMode: string;
+  paymentAccount: string;
+  taxDeducted: boolean;
+  taxAccount?: string;
+  invoicePayments: InvoicePaymentI[];
+  notes?: string;
+}
+
+export interface TransactionOverviewI {
+  _id: string;
+  storeId: string;
+  date: Date;
+  transactionId: TransactionI | PaymentI;
+  transactionType: TransactionTypeEnum;
+  partyId: string;
+}
+
+export interface PaymentsFilterByQueryI {
+  paymentType: string;
+  partyId?: string;
+}
+
+export interface GetTransactionsOverviewQueryParamsI
+  extends TransactionsOverviewByQueryI,
+    PaginationQueryParamsI {}
+
+export interface TransactionsOverviewByQueryI {
+  partyId?: string;
+}
+
+export interface TransactionsOverviewFilterByI {
+  partyId?: string;
 }
