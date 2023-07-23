@@ -36,6 +36,7 @@ export class AppComponent {
   public appPages = [
     { title: 'Home', url: '/home', icon: 'home' },
     { title: 'Transactions', url: '/transactions', icon: 'receipt' },
+    { title: 'Payments', url: '/payments', icon: 'cash' },
     { title: 'Items', url: '/items', icon: 'pricetags' },
     { title: 'Parties', url: '/parties', icon: 'people' },
     { title: 'Reports', url: '/reports', icon: 'bar-chart' },

@@ -75,6 +75,41 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
+    path: 'payments/create',
+    loadComponent: () =>
+      import(
+        './pages/payments/payment-creation-form/payment-creation-form.component'
+      ).then((m) => m.PaymentCreationFormComponent),
+    pathMatch: 'full',
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'payments',
+    loadComponent: () =>
+      import('./pages/payments/payments.component').then(
+        (m) => m.PaymentsComponent
+      ),
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'payment/:id',
+    loadComponent: () =>
+      import('./pages/payments/payment-details/payment-details.component').then(
+        (m) => m.PaymentDetailsComponent
+      ),
+    pathMatch: 'full',
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'payments/:id',
+    loadComponent: () =>
+      import('./pages/payments/payments.component').then(
+        (m) => m.PaymentsComponent
+      ),
+    pathMatch: 'full',
+    canActivate: [AuthGuard],
+  },
+  {
     path: 'item/:id',
     loadComponent: () =>
       import(
