@@ -25,6 +25,7 @@ import {
   PaymentStatusEnum,
   PaymentTypeEnum,
   TransactionI,
+  TransactionPartyI,
   TransactionTypeEnum,
   TransactionsService,
 } from 'src/app/core/services/transactions/transactions.service';
@@ -37,6 +38,8 @@ import { DialogHeaderComponent } from 'src/app/core/components/dialog-header/dia
 import { PartySelectionComponent } from 'src/app/core/components/party-selection/party-selection.component';
 import { CapitalizeWordsPipe } from 'src/app/core/pipes/capitalize.pipe';
 import { DateFormatPipe } from 'src/app/core/pipes/date-format.pipe';
+import { PaymentModeListComponent } from 'src/app/core/components/payment-mode-list/payment-mode-list.component';
+import { PaymentAccountListComponent } from 'src/app/core/components/payment-account-list/payment-account-list.component';
 
 @Component({
   selector: 'app-payment-creation-form',
@@ -52,12 +55,16 @@ import { DateFormatPipe } from 'src/app/core/pipes/date-format.pipe';
     CapitalizeWordsPipe,
     ReactiveFormsModule,
     DateFormatPipe,
+    PaymentModeListComponent,
+    PaymentAccountListComponent,
   ],
 })
 export class PaymentCreationFormComponent implements OnInit {
   paymentForm: FormGroup;
   paymentType!: PaymentTypeEnum;
   @Input() transactionType!: TransactionTypeEnum;
+
+  @Input() transactionDetails: TransactionI | undefined;
 
   public screenState$: Observable<ScreenModel> | undefined;
   partyCurrentPage = 1;
@@ -70,7 +77,11 @@ export class PaymentCreationFormComponent implements OnInit {
   itemsTotalPages = 100;
   itemsPageSize = 10;
   currentStoreInfo: StoreInfoModel | undefined;
-  selectedParty: GetAllCustomersResponseI | SupplierI | undefined;
+  selectedParty:
+    | GetAllCustomersResponseI
+    | SupplierI
+    | TransactionPartyI
+    | undefined;
   isUpdatingForm = false;
   PaymentStatusEnum = PaymentStatusEnum;
   PaymentModeEnum = PaymentModeEnum;
@@ -109,10 +120,10 @@ export class PaymentCreationFormComponent implements OnInit {
     this.paymentForm = this.fb.group({
       partyId: ['', Validators.required],
       party: this.createPartyFormGroup(),
-      paymentType: ['', Validators.required],
+      paymentType: [this.paymentType, Validators.required],
       amount: ['', Validators.required],
       date: [new Date(), Validators.required],
-      paymentNumber: ['', Validators.required],
+      paymentNumber: ['1', Validators.required],
       paymentMode: ['', Validators.required],
       paymentAccount: ['', Validators.required],
       taxDeducted: [false, Validators.required],
@@ -120,6 +131,18 @@ export class PaymentCreationFormComponent implements OnInit {
       invoicePayments: this.fb.array([]),
       notes: [''],
     });
+
+    if (this.transactionDetails) {
+      this.paymentForm.patchValue({
+        party: this.transactionDetails.party,
+        partyId: this.transactionDetails.party.partyId,
+        amount:
+          this.transactionDetails.totalInformation.total -
+          this.transactionDetails.totalInformation.amountPaid,
+      });
+      this.addItem(this.transactionDetails.invoiceId);
+      this.selectedParty = this.transactionDetails.party;
+    }
     this.currentStoreInfoService.getCurrentStoreInfo().subscribe((response) => {
       this.currentStoreInfo = response;
     });
@@ -131,6 +154,16 @@ export class PaymentCreationFormComponent implements OnInit {
   onClosePaymentCreationModal = () => {
     this.modalController.dismiss();
   };
+
+  onPaymentModeSelect(paymentMode: string) {
+    console.log('STATE', paymentMode);
+    this.paymentForm.patchValue({ paymentMode: paymentMode });
+  }
+
+  onPaymentAccountSelect(paymentAccount: string) {
+    console.log('STATE', paymentAccount);
+    this.paymentForm.patchValue({ paymentAccount: paymentAccount });
+  }
 
   onReceivedAmtToggle = (event: any) => {
     this.receivedFullAmt = event.detail.checked;
@@ -170,9 +203,9 @@ export class PaymentCreationFormComponent implements OnInit {
     const paymentFormValue: {
       partyId: string;
       paymentType: PaymentTypeEnum;
-      amount: string;
+      amount: number;
       date: Date;
-      paymentNumber: string;
+      paymentNumber: number;
       paymentMode: string;
       paymentAccount: string;
       taxDeducted: boolean;
@@ -185,12 +218,6 @@ export class PaymentCreationFormComponent implements OnInit {
       ...paymentFormValue,
       paymentType: this.paymentType,
       partyId: paymentFormValue.partyId,
-      amount: 0,
-      paymentNumber: 0,
-      paymentMode: '',
-      paymentAccount: '',
-      taxDeducted: false,
-      invoicePayments: [],
     };
     console.log(paymentPayload);
     const replaced = this.replaceEmptyObjectsWithUndefined(paymentPayload);
@@ -217,7 +244,9 @@ export class PaymentCreationFormComponent implements OnInit {
     );
   }
 
-  getCustomerDetails(party: GetAllCustomersResponseI | SupplierI) {
+  getCustomerDetails(
+    party: GetAllCustomersResponseI | SupplierI | TransactionPartyI
+  ) {
     if ('customer' in party) {
       return party.customer;
     }
@@ -268,7 +297,10 @@ export class PaymentCreationFormComponent implements OnInit {
     };
     this.paymentForm.patchValue({
       party: partyFormPayload,
+      partyId: '',
     });
+    const items = this.paymentForm.get('invoicePayments') as FormArray;
+    items.clear();
   }
 
   selectTransactionParty(party: GetAllCustomersResponseI | SupplierI) {
@@ -310,9 +342,18 @@ export class PaymentCreationFormComponent implements OnInit {
     this.partyPageSize = 10;
   }
 
-  getPartyDetails(party: GetAllCustomersResponseI | SupplierI) {
+  getPartyDetails(
+    party: GetAllCustomersResponseI | SupplierI | TransactionPartyI
+  ) {
     if ('customer' in party) {
       return party.customerStoreInfo;
+    }
+    if ('partyId' in party) {
+      return {
+        ...party,
+        _id: party.partyId,
+        addresses: party.address ? [party.address] : [],
+      };
     }
     return party;
   }
@@ -369,9 +410,7 @@ export class PaymentCreationFormComponent implements OnInit {
 
   onTaxDeductedStatusChange(event: any) {
     this.paymentForm.patchValue({
-      taxDeducted: {
-        mode: event.detail.value,
-      },
+      taxDeducted: event.detail.value,
     });
   }
 
