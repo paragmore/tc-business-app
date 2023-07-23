@@ -110,6 +110,13 @@
             </ion-col>
           </ion-row>
           <div
+            *ngIf="!ledgerData.isLoading && ledgerData.ledgerItems.length <= 0"
+          >
+            <app-item-not-found
+              [notfoundInput]="ledgerData.getNotFoundInput()"
+            ></app-item-not-found>
+          </div>
+          <div
             *ngFor="let ledger of ledgerData.ledgerItems; trackBy: trackByFn"
           >
             <ion-row

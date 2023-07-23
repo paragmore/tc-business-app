@@ -15,6 +15,10 @@ import { AppState } from 'src/app/store/models/state.model';
 import { PaginationComponentComponent } from '../pagination-component/pagination-component.component';
 import { SortOrder } from '../../services/products/products.service';
 import { LongPressDirective } from '../../directives/long-press.directive';
+import {
+  ItemNotFoundComponent,
+  ItemNotFoundComponentInputI,
+} from '../item-not-found/item-not-found.component';
 
 @Component({
   selector: 'app-credit-debit-ledger-list',
@@ -26,6 +30,7 @@ import { LongPressDirective } from '../../directives/long-press.directive';
     IonicModule,
     PaginationComponentComponent,
     LongPressDirective,
+    ItemNotFoundComponent,
   ],
 })
 export class CreditDebitLedgerListComponent implements OnInit {
@@ -87,4 +92,5 @@ export interface LedgerDataI {
   selectAllToggle: (event: any) => void;
   enableMultiSelect: boolean;
   isSelected: (id: string) => boolean;
+  getNotFoundInput: () => ItemNotFoundComponentInputI;
 }
