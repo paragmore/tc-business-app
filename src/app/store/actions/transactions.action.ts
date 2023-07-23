@@ -2,6 +2,7 @@ import { createAction, props } from '@ngrx/store';
 import { TransactionsModel } from '../models/transactions.model';
 import {
   ExpenseI,
+  PaymentI,
   TransactionI,
 } from 'src/app/core/services/transactions/transactions.service';
 
@@ -60,4 +61,23 @@ export const updateExpenseInList = createAction(
 export const deleteExpenseInList = createAction(
   TransactionsActionType.DELETE_TRANSACTION_IN_LIST,
   props<{ expense: string }>()
+);
+
+export const setSelectedPayment = createAction(
+  TransactionsActionType.UPDATE_SELECTED_TRANSACTION,
+  props<{ selectedPayment: PaymentI | undefined }>()
+);
+
+export const setPaymentsList = createAction(
+  TransactionsActionType.SET_TRANSACTION_LIST,
+  props<{ paymentsList: Array<PaymentI> }>()
+);
+export const updatePaymentInList = createAction(
+  TransactionsActionType.UPDATE_TRANSACTION_IN_LIST,
+  props<{ payment: PaymentI }>()
+);
+
+export const deletePaymentInList = createAction(
+  TransactionsActionType.DELETE_TRANSACTION_IN_LIST,
+  props<{ payment: string }>()
 );
