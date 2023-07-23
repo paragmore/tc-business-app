@@ -42,6 +42,7 @@ import { toastAlert } from 'src/app/core/utils/toastAlert';
 import { MobilePartiesListHeaderComponent } from '../../parties/mobile-parties-list-header/mobile-parties-list-header.component';
 import { format } from 'date-fns';
 import { MobileTransactionsListHeaderComponent } from '../mobile-transactions-list-header/mobile-transactions-list-header.component';
+import { ItemNotFoundComponentInputI } from 'src/app/core/components/item-not-found/item-not-found.component';
 
 @Component({
   selector: 'app-transactions-list',
@@ -122,6 +123,9 @@ export class TransactionsListComponent implements OnInit, DoCheck {
     enableMultiSelect: this.enableMultiSelect,
     isSelected: (id) => {
       return this.isTransactionSelected(id);
+    },
+    getNotFoundInput: () => {
+      return this.getNotFoundInput();
     },
   };
   constructor(
@@ -285,7 +289,32 @@ export class TransactionsListComponent implements OnInit, DoCheck {
       isSelected: (id) => {
         return this.isTransactionSelected(id);
       },
+      getNotFoundInput: () => {
+        return this.getNotFoundInput();
+      },
     };
+  }
+
+  getNotFoundInput() {
+    if (this.selectedTab === TransactionTypeEnum.PURCHASE) {
+      const notfoundInput: ItemNotFoundComponentInputI = {
+        title: 'Purchases not found',
+        subtitle: 'Please create new purchase',
+      };
+      return notfoundInput;
+    }
+    if (this.selectedTab === TransactionTypeEnum.SALE) {
+      const notfoundInput: ItemNotFoundComponentInputI = {
+        title: 'Sales not found',
+        subtitle: 'Please create new sale',
+      };
+      return notfoundInput;
+    }
+    const notfoundInput: ItemNotFoundComponentInputI = {
+      title: '',
+      subtitle: '',
+    };
+    return notfoundInput;
   }
 
   updateLedgerData() {
