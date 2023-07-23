@@ -39,5 +39,8 @@ export interface StoreInfoModel {
   lastInvoiceInfo: {
     sequence: string;
     invoiceId: number;
+    billId: number;
+    billSequence: string;
+    paymentNumber: number;
   };
 }
