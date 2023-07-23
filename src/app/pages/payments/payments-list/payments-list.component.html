@@ -1,0 +1,93 @@
+<div style="display: flex; flex-direction: column; overflow: hidden">
+  <ion-row class="header-row">
+    <ion-buttons fill="clear" class="menu-button-mobile">
+      <ion-menu-button fill="clear"></ion-menu-button>
+    </ion-buttons>
+    <app-search-filter-sort
+      [filterSortLists]="filterSortOptions"
+      (onSearchSortFilter)="onSearchSortFilter($event)"
+    ></app-search-filter-sort>
+  </ion-row>
+  <div style="display: flex; flex-direction: column" class="item-list-body">
+    <ion-segment
+      *ngIf="!isMobile"
+      (ionChange)="updateSelectedTab($event)"
+      [value]="selectedTab"
+    >
+      <ion-segment-button [value]="PaymentTypeEnum.IN">
+        <ion-label>Payments Recieved</ion-label>
+      </ion-segment-button>
+      <ion-segment-button [value]="PaymentTypeEnum.OUT">
+        <ion-label>Payments Made</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+    <app-credit-debit-summary-card
+      *ngIf="creditDebitSummaryData && !isMobile"
+      [creditDebitInput]="creditDebitSummaryData"
+    >
+    </app-credit-debit-summary-card>
+    <app-credit-debit-ledger-list
+      class="list-height"
+      [ledgerData]="ledgerData"
+      (onloadMoreData)="loadMoreData($event)"
+      [injector]="partiesInjector"
+    ></app-credit-debit-ledger-list>
+  </div>
+</div>
+
+<ion-row
+  style="
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    position: sticky;
+    height: 60px;
+    bottom: 0px;
+    padding: 10px;
+  "
+  *ngIf="
+    (isMobile && enableMultiSelect) ||
+    (!isMobile && selectedTransactions.length > 0)
+  "
+>
+  <ion-col size="5">
+    <ion-button
+      style="width: 100%"
+      color="danger"
+      (click)="openDeleteConfirmationModal()"
+      >Delete</ion-button
+    >
+  </ion-col>
+  <ion-col size="5">
+    <ion-button
+      color="light"
+      style="width: 100%"
+      (click)="onMultipleSelectCancel()"
+      >Cancel</ion-button
+    >
+  </ion-col>
+</ion-row>
+
+<ion-row
+  style="
+    display: flex;
+    position: sticky;
+    height: 60px;
+    align-items: center;
+    bottom: 0px;
+    justify-content: flex-end;
+    padding: 10px;
+  "
+>
+  <ion-col>
+    <ion-button
+      style="width: 100%"
+      (click)="openPaymentCreationModal()"
+      type="submit"
+      class="btn btn-primary"
+      >Create Payment</ion-button
+    >
+  </ion-col>
+</ion-row>
