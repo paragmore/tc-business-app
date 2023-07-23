@@ -1,3 +1,30 @@
-<p>
-  payment-account-list works!
-</p>
+<div>
+  <ion-list
+    style="max-height: 350px; overflow-y: scroll"
+    class="scrollbar"
+    id="style-1"
+  >
+    <div
+      style="margin-bottom: 20px; margin-top: 10px"
+      *ngFor="let paymentAccountlistType of paymentAccountsTypeList"
+    >
+      <p
+        style="margin-left: 10px; color: var(--ion-color-primary)"
+        class="title3"
+      >
+        {{ paymentAccountlistType }}
+      </p>
+      <ion-item
+        *ngFor="
+          let paymentAccount of getPaymentAccountsArray(paymentAccountlistType)
+        "
+        [button]="true"
+        [detail]="false"
+        (click)="onSelectEvent(paymentAccount)"
+        ><div style="display: flex; flex-direction: column; padding: 10px">
+          <p>{{ paymentAccount }}</p>
+        </div></ion-item
+      >
+    </div>
+  </ion-list>
+</div>
